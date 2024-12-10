@@ -26,7 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MysqlRabbitConnector {
 
-		public static void main(String[] args) {
-				SpringApplication.run(MysqlRabbitConnector.class, args);
-		}
+    public static void main(String[] args) {
+        SpringApplication.run(MysqlRabbitConnector.class, args);
+    }
 }

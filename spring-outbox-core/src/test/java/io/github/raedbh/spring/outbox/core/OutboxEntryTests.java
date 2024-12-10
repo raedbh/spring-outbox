@@ -31,26 +31,26 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  */
 class OutboxEntryTests {
 
-		@Test
-		void rejectNullId() {
-				assertThatExceptionOfType(IllegalArgumentException.class)
-						.isThrownBy(() -> new OutboxEntry(null, "SmsNotification", new byte[]{}, null, Map.of()))
-						.withMessageContaining("Identifier");
-		}
+    @Test
+    void rejectNullId() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(() -> new OutboxEntry(null, "SmsNotification", new byte[]{}, null, Map.of()))
+          .withMessageContaining("Identifier");
+    }
 
-		@Test
-		void rejectNullType() {
-				assertThatExceptionOfType(IllegalArgumentException.class)
-						.isThrownBy(() -> new OutboxEntry(new OutboxEntry.Identifier(UUID.randomUUID()),
-								null, new byte[]{}, null, Map.of()))
-						.withMessageContaining("Type");
-		}
+    @Test
+    void rejectNullType() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(() -> new OutboxEntry(new OutboxEntry.Identifier(UUID.randomUUID()),
+            null, new byte[]{}, null, Map.of()))
+          .withMessageContaining("Type");
+    }
 
-		@Test
-		void rejectNullPayload() {
-				assertThatExceptionOfType(IllegalArgumentException.class)
-						.isThrownBy(() -> new OutboxEntry(new OutboxEntry.Identifier(UUID.randomUUID()),
-								"SmsNotification", null, null, Map.of()))
-						.withMessageContaining("Payload");
-		}
+    @Test
+    void rejectNullPayload() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(() -> new OutboxEntry(new OutboxEntry.Identifier(UUID.randomUUID()),
+            "SmsNotification", null, null, Map.of()))
+          .withMessageContaining("Payload");
+    }
 }

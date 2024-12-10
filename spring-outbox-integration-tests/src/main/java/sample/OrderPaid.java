@@ -23,12 +23,12 @@ import io.github.raedbh.spring.outbox.core.EventOutboxed;
  */
 class OrderPaid extends EventOutboxed<Order> {
 
-		protected OrderPaid(Order source) {
-				super(source);
-		}
+    protected OrderPaid(Order source) {
+        super(source);
+    }
 
-		@Override
-		public String getOperation() {
-				return "payment";
-		}
+    @Override
+    public String getOperation() {
+        return "payment";
+    }
 }

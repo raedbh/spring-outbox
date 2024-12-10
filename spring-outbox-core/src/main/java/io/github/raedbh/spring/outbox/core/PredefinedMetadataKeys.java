@@ -22,12 +22,12 @@ package io.github.raedbh.spring.outbox.core;
  */
 public final class PredefinedMetadataKeys {
 
-		public static final String EVENT_ENTITY_TYPE = "event_entity_type";
-		public static final String EVENT_ENTITY_ID = "event_entity_id";
-		public static final String EVENT_OCCURRED_AT = "event_occurred_at";
-		public static final String OPERATION = "operation";
+    public static final String EVENT_ENTITY_TYPE = "event_entity_type";
+    public static final String EVENT_ENTITY_ID = "event_entity_id";
+    public static final String EVENT_OCCURRED_AT = "event_occurred_at";
+    public static final String OPERATION = "operation";
 
-		private PredefinedMetadataKeys() {
-				/* prevent instantiation */
-		}
+    private PredefinedMetadataKeys() {
+        /* prevent instantiation */
+    }
 }

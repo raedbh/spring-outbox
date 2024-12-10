@@ -56,137 +56,137 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 class OutboxManagerTests {
 
-		OutboxManager outboxManager;
+    OutboxManager outboxManager;
 
-		@Mock OutboxRepository outboxRepository;
-		@Spy OutboxDefaultSerializer outboxSerializer;
-		@Mock PlatformTransactionManager transactionManager;
-		@Mock SerializableTargetConverterRegistry converterRegistry;
+    @Mock OutboxRepository outboxRepository;
+    @Spy OutboxDefaultSerializer outboxSerializer;
+    @Mock PlatformTransactionManager transactionManager;
+    @Mock SerializableTargetConverterRegistry converterRegistry;
 
-		@Mock Supplier<Object> proceedSave;
+    @Mock Supplier<Object> proceedSave;
 
-		@BeforeEach
-		void setUp() {
-				outboxManager = new OutboxManager(outboxRepository, outboxSerializer, transactionManager, converterRegistry);
-		}
+    @BeforeEach
+    void setUp() {
+        outboxManager = new OutboxManager(outboxRepository, outboxSerializer, transactionManager, converterRegistry);
+    }
 
-		@Test
-		void proceedInvocationThenSaveOutboxEntriesForEvent() throws Exception {
+    @Test
+    void proceedInvocationThenSaveOutboxEntriesForEvent() throws Exception {
 
-				var order = new Order();
-				var orderPaid = new OrderPaid(order);
+        var order = new Order();
+        var orderPaid = new OrderPaid(order);
 
-				order.assignEvent(orderPaid);
+        order.assignEvent(orderPaid);
 
-				InOrder inOrder = inOrder(outboxSerializer, proceedSave, outboxRepository);
+        InOrder inOrder = inOrder(outboxSerializer, proceedSave, outboxRepository);
 
-				outboxManager.proceedInvocationAndSaveOutboxEntries(order, proceedSave);
+        outboxManager.proceedInvocationAndSaveOutboxEntries(order, proceedSave);
 
-				ArgumentCaptor<OutboxEntry> entryCaptor = forClass(OutboxEntry.class);
+        ArgumentCaptor<OutboxEntry> entryCaptor = forClass(OutboxEntry.class);
 
-				inOrder.verify(outboxSerializer).serializeToByteArray(order); // called first
-				inOrder.verify(proceedSave).get(); // next
-				inOrder.verify(outboxRepository).save(entryCaptor.capture()); // last
+        inOrder.verify(outboxSerializer).serializeToByteArray(order); // called first
+        inOrder.verify(proceedSave).get(); // next
+        inOrder.verify(outboxRepository).save(entryCaptor.capture()); // last
 
-				List<OutboxEntry> savedEntries = entryCaptor.getAllValues();
-				assertThat(savedEntries).hasSize(1);
+        List<OutboxEntry> savedEntries = entryCaptor.getAllValues();
+        assertThat(savedEntries).hasSize(1);
 
-				// validate the main event outbox entry
-				OutboxEntry mainEntry = savedEntries.get(0);
-				assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
-				assertThat(mainEntry.getRelatedTo()).isNull();
-				assertThat(mainEntry.getMetadata())
-						.containsEntry(EVENT_ENTITY_ID, order.getId().toString())
-						.containsEntry(EVENT_ENTITY_TYPE, "Order")
-						.containsEntry(OPERATION, orderPaid.getOperation())
-						.containsKey(EVENT_OCCURRED_AT);
-		}
+        // validate the main event outbox entry
+        OutboxEntry mainEntry = savedEntries.get(0);
+        assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
+        assertThat(mainEntry.getRelatedTo()).isNull();
+        assertThat(mainEntry.getMetadata())
+          .containsEntry(EVENT_ENTITY_ID, order.getId().toString())
+          .containsEntry(EVENT_ENTITY_TYPE, "Order")
+          .containsEntry(OPERATION, orderPaid.getOperation())
+          .containsKey(EVENT_OCCURRED_AT);
+    }
 
-		@Test
-		void proceedInvocationThenSaveOutboxEntriesForEventAndCommands() throws Exception {
+    @Test
+    void proceedInvocationThenSaveOutboxEntriesForEventAndCommands() throws Exception {
 
-				var order = new Order();
+        var order = new Order();
 
-				var orderPaid = new OrderPaid(order);
-				var smsNotification = new SmsNotification();
-				var emailNotification = new EmailNotification();
+        var orderPaid = new OrderPaid(order);
+        var smsNotification = new SmsNotification();
+        var emailNotification = new EmailNotification();
 
-				orderPaid.addCommands(smsNotification, emailNotification);
+        orderPaid.addCommands(smsNotification, emailNotification);
 
-				order.assignEvent(orderPaid);
+        order.assignEvent(orderPaid);
 
-				InOrder inOrder = inOrder(outboxSerializer, proceedSave, outboxRepository);
+        InOrder inOrder = inOrder(outboxSerializer, proceedSave, outboxRepository);
 
-				outboxManager.proceedInvocationAndSaveOutboxEntries(order, proceedSave);
+        outboxManager.proceedInvocationAndSaveOutboxEntries(order, proceedSave);
 
-				ArgumentCaptor<OutboxEntry> entryCaptor = forClass(OutboxEntry.class);
+        ArgumentCaptor<OutboxEntry> entryCaptor = forClass(OutboxEntry.class);
 
-				inOrder.verify(outboxSerializer).serializeToByteArray(order); // called first
-				inOrder.verify(outboxSerializer).serializeToByteArray(smsNotification);
-				inOrder.verify(outboxSerializer).serializeToByteArray(emailNotification);
-				inOrder.verify(proceedSave).get();
-				inOrder.verify(outboxRepository, times(3)).save(entryCaptor.capture()); // last
+        inOrder.verify(outboxSerializer).serializeToByteArray(order); // called first
+        inOrder.verify(outboxSerializer).serializeToByteArray(smsNotification);
+        inOrder.verify(outboxSerializer).serializeToByteArray(emailNotification);
+        inOrder.verify(proceedSave).get();
+        inOrder.verify(outboxRepository, times(3)).save(entryCaptor.capture()); // last
 
-				List<OutboxEntry> savedEntries = entryCaptor.getAllValues();
-				assertThat(savedEntries).hasSize(3);
+        List<OutboxEntry> savedEntries = entryCaptor.getAllValues();
+        assertThat(savedEntries).hasSize(3);
 
-				// validate the main event outbox entry
-				OutboxEntry mainEntry = savedEntries.get(0);
-				assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
-				assertThat(mainEntry.getRelatedTo()).isNull();
-				assertThat(mainEntry.getMetadata())
-						.containsEntry(EVENT_ENTITY_ID, order.getId().toString())
-						.containsEntry(EVENT_ENTITY_TYPE, "Order")
-						.containsEntry(OPERATION, orderPaid.getOperation())
-						.containsKey(EVENT_OCCURRED_AT);
+        // validate the main event outbox entry
+        OutboxEntry mainEntry = savedEntries.get(0);
+        assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
+        assertThat(mainEntry.getRelatedTo()).isNull();
+        assertThat(mainEntry.getMetadata())
+          .containsEntry(EVENT_ENTITY_ID, order.getId().toString())
+          .containsEntry(EVENT_ENTITY_TYPE, "Order")
+          .containsEntry(OPERATION, orderPaid.getOperation())
+          .containsKey(EVENT_OCCURRED_AT);
 
-				// validate the 1st command entry - SmsNotification
-				OutboxEntry smsEntry = savedEntries.get(1);
-				assertThat(smsEntry.getType()).isEqualTo(smsNotification.getName());
-				assertThat(smsEntry.getRelatedTo()).isEqualTo(mainEntry.getId());
+        // validate the 1st command entry - SmsNotification
+        OutboxEntry smsEntry = savedEntries.get(1);
+        assertThat(smsEntry.getType()).isEqualTo(smsNotification.getName());
+        assertThat(smsEntry.getRelatedTo()).isEqualTo(mainEntry.getId());
 
-				// validate the 2nd command entry - EmailNotification
-				OutboxEntry emailEntry = savedEntries.get(2);
-				assertThat(emailEntry.getType()).isEqualTo(emailNotification.getName());
-				assertThat(emailEntry.getRelatedTo()).isEqualTo(mainEntry.getId());
-		}
+        // validate the 2nd command entry - EmailNotification
+        OutboxEntry emailEntry = savedEntries.get(2);
+        assertThat(emailEntry.getType()).isEqualTo(emailNotification.getName());
+        assertThat(emailEntry.getRelatedTo()).isEqualTo(mainEntry.getId());
+    }
 
-		@Test
-		void proceedInvocationThenSaveOutboxEntriesForEventWithConversionToMessageBody() throws Exception {
+    @Test
+    void proceedInvocationThenSaveOutboxEntriesForEventWithConversionToMessageBody() throws Exception {
 
-				var order = new Order();
-				var orderPaid = new OrderPaid(order);
+        var order = new Order();
+        var orderPaid = new OrderPaid(order);
 
-				order.assignEvent(orderPaid);
-				given(converterRegistry.getConverter(Order.class))
-						.willReturn(Optional.of(source -> new OrderMessageBody(((Order) source).getId().toString())));
+        order.assignEvent(orderPaid);
+        given(converterRegistry.getConverter(Order.class))
+          .willReturn(Optional.of(source -> new OrderMessageBody(((Order) source).getId().toString())));
 
-				InOrder inOrder = inOrder(outboxSerializer, proceedSave, outboxRepository);
+        InOrder inOrder = inOrder(outboxSerializer, proceedSave, outboxRepository);
 
-				outboxManager.proceedInvocationAndSaveOutboxEntries(order, proceedSave);
+        outboxManager.proceedInvocationAndSaveOutboxEntries(order, proceedSave);
 
-				ArgumentCaptor<OutboxEntry> entryCaptor = forClass(OutboxEntry.class);
+        ArgumentCaptor<OutboxEntry> entryCaptor = forClass(OutboxEntry.class);
 
-				inOrder.verify(outboxSerializer).serializeToByteArray(argThat(argument -> {
-						if (argument instanceof OrderMessageBody messageBody) {
-								return messageBody.orderId.equals(order.getId().toString());
-						}
-						return false;
-				}));
-				inOrder.verify(proceedSave).get();
-				inOrder.verify(outboxRepository).save(entryCaptor.capture());
+        inOrder.verify(outboxSerializer).serializeToByteArray(argThat(argument -> {
+            if (argument instanceof OrderMessageBody messageBody) {
+                return messageBody.orderId.equals(order.getId().toString());
+            }
+            return false;
+        }));
+        inOrder.verify(proceedSave).get();
+        inOrder.verify(outboxRepository).save(entryCaptor.capture());
 
-				List<OutboxEntry> savedEntries = entryCaptor.getAllValues();
-				assertThat(savedEntries).hasSize(1);
+        List<OutboxEntry> savedEntries = entryCaptor.getAllValues();
+        assertThat(savedEntries).hasSize(1);
 
-				// validate the main event outbox entry
-				OutboxEntry mainEntry = savedEntries.get(0);
-				assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
-				assertThat(mainEntry.getRelatedTo()).isNull();
-				assertThat(mainEntry.getMetadata())
-						.containsEntry(EVENT_ENTITY_ID, order.getId().toString())
-						.containsEntry(EVENT_ENTITY_TYPE, "Order")
-						.containsEntry(OPERATION, orderPaid.getOperation())
-						.containsKey(EVENT_OCCURRED_AT);
-		}
+        // validate the main event outbox entry
+        OutboxEntry mainEntry = savedEntries.get(0);
+        assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
+        assertThat(mainEntry.getRelatedTo()).isNull();
+        assertThat(mainEntry.getMetadata())
+          .containsEntry(EVENT_ENTITY_ID, order.getId().toString())
+          .containsEntry(EVENT_ENTITY_TYPE, "Order")
+          .containsEntry(OPERATION, orderPaid.getOperation())
+          .containsKey(EVENT_OCCURRED_AT);
+    }
 }

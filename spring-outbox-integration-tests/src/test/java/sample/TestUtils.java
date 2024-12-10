@@ -26,37 +26,37 @@ import java.nio.file.Paths;
  */
 public class TestUtils {
 
-		/**
-		 * Resolves the path to a Dockerfile dynamically based on the resource directory of the test runtime.
-		 *
-		 * @param dockerfileDir connector project directory, where the Dockerfile is located.
-		 * @return resolved absolute path to the Dockerfile.
-		 */
-		public static Path resolveDockerfilePath(String dockerfileDir) {
-				return Paths.get(TestUtils.class.getResource("/").getPath())
-						.getParent().getParent().getParent() // navigate to project root
-						.resolve("spring-outbox-debezium-connectors")
-						.resolve(dockerfileDir)
-						.resolve("Dockerfile")
-						.toAbsolutePath()
-						.normalize();
-		}
+    /**
+     * Resolves the path to a Dockerfile dynamically based on the resource directory of the test runtime.
+     *
+     * @param dockerfileDir connector project directory, where the Dockerfile is located.
+     * @return resolved absolute path to the Dockerfile.
+     */
+    public static Path resolveDockerfilePath(String dockerfileDir) {
+        return Paths.get(TestUtils.class.getResource("/").getPath())
+          .getParent().getParent().getParent() // navigate to project root
+          .resolve("spring-outbox-debezium-connectors")
+          .resolve(dockerfileDir)
+          .resolve("Dockerfile")
+          .toAbsolutePath()
+          .normalize();
+    }
 
-		/**
-		 * Constants for environment-variable names used in container setup for integration tests.
-		 */
-		static class EnvVars {
+    /**
+     * Constants for environment-variable names used in container setup for integration tests.
+     */
+    static class EnvVars {
 
-				static final String SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME = "SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME";
-				static final String SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME = "SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME";
-				static final String SPRING_OUTBOX_CONNECTOR_DATABASE_SCHEMA = "SPRING_OUTBOX_CONNECTOR_DATABASE_SCHEMA";
-				static final String SPRING_OUTBOX_CONNECTOR_DATABASE_USER = "SPRING_OUTBOX_CONNECTOR_DATABASE_USER";
-				static final String SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD = "SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD";
-				static final String SPRING_OUTBOX_CONNECTOR_OFFSETSTORAGE_FILEPATH = "SPRING_OUTBOX_CONNECTOR_OFFSETSTORAGE_FILEPATH";
-				static final String SPRING_OUTBOX_CONNECTOR_SCHEMAHISTORY_FILEPATH = "SPRING_OUTBOX_CONNECTOR_SCHEMAHISTORY_FILEPATH";
-				static final String SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDERPAID_ROUTINGKEY = "SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDERPAID_ROUTINGKEY";
-				static final String SPRING_RABBITMQ_HOST = "SPRING_RABBITMQ_HOST";
-				static final String SPRING_RABBITMQ_USERNAME = "SPRING_RABBITMQ_USERNAME";
-				static final String SPRING_RABBITMQ_PASSWORD = "SPRING_RABBITMQ_PASSWORD";
-		}
+        static final String SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME = "SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME";
+        static final String SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME = "SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME";
+        static final String SPRING_OUTBOX_CONNECTOR_DATABASE_SCHEMA = "SPRING_OUTBOX_CONNECTOR_DATABASE_SCHEMA";
+        static final String SPRING_OUTBOX_CONNECTOR_DATABASE_USER = "SPRING_OUTBOX_CONNECTOR_DATABASE_USER";
+        static final String SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD = "SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD";
+        static final String SPRING_OUTBOX_CONNECTOR_OFFSETSTORAGE_FILEPATH = "SPRING_OUTBOX_CONNECTOR_OFFSETSTORAGE_FILEPATH";
+        static final String SPRING_OUTBOX_CONNECTOR_SCHEMAHISTORY_FILEPATH = "SPRING_OUTBOX_CONNECTOR_SCHEMAHISTORY_FILEPATH";
+        static final String SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDERPAID_ROUTINGKEY = "SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDERPAID_ROUTINGKEY";
+        static final String SPRING_RABBITMQ_HOST = "SPRING_RABBITMQ_HOST";
+        static final String SPRING_RABBITMQ_USERNAME = "SPRING_RABBITMQ_USERNAME";
+        static final String SPRING_RABBITMQ_PASSWORD = "SPRING_RABBITMQ_PASSWORD";
+    }
 }

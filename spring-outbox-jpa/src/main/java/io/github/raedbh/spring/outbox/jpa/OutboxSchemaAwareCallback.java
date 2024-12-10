@@ -23,5 +23,5 @@ package io.github.raedbh.spring.outbox.jpa;
 @FunctionalInterface
 interface OutboxSchemaAwareCallback {
 
-		void execute(OutboxSchemaAwareContext context);
+    void execute(OutboxSchemaAwareContext context);
 }

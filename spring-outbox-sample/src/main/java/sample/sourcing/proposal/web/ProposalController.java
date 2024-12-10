@@ -42,69 +42,69 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 @RequestMapping("/proposals")
 public class ProposalController {
 
-		final Proposals proposals;
-		final Vendors vendors;
-		final RfpRepository rfpRepository;
+    final Proposals proposals;
+    final Vendors vendors;
+    final RfpRepository rfpRepository;
 
 
-		public ProposalController(Proposals proposals, Vendors vendors, RfpRepository rfpRepository) {
-				this.proposals = proposals;
-				this.vendors = vendors;
-				this.rfpRepository = rfpRepository;
-		}
+    public ProposalController(Proposals proposals, Vendors vendors, RfpRepository rfpRepository) {
+        this.proposals = proposals;
+        this.vendors = vendors;
+        this.rfpRepository = rfpRepository;
+    }
 
 
-		@PostMapping
-		public ResponseEntity<String> createProposal(@RequestBody ProposalRequest request) {
+    @PostMapping
+    public ResponseEntity<String> createProposal(@RequestBody ProposalRequest request) {
 
-				Proposal proposal = new Proposal(rfpById(request.rfpId),
-						vendorById(request.vendorId),
-						request.details,
-						request.amount);
-				proposals.save(proposal);
+        Proposal proposal = new Proposal(rfpById(request.rfpId),
+          vendorById(request.vendorId),
+          request.details,
+          request.amount);
+        proposals.save(proposal);
 
-				return ResponseEntity.created(fromCurrentRequest().path("/{id}")
-						.buildAndExpand(proposal.getId()).toUri()).build();
-		}
+        return ResponseEntity.created(fromCurrentRequest().path("/{id}")
+          .buildAndExpand(proposal.getId()).toUri()).build();
+    }
 
-		@GetMapping("/{id}")
-		public ResponseEntity<Proposal> getProposal(@PathVariable EntityIdentifier id) {
-				Proposal proposal = proposals.findById(id)
-						.orElseThrow(() -> new IllegalArgumentException("Proposal: " + id + "Not Found"));
-				return ResponseEntity.ok(proposal);
-		}
+    @GetMapping("/{id}")
+    public ResponseEntity<Proposal> getProposal(@PathVariable EntityIdentifier id) {
+        Proposal proposal = proposals.findById(id)
+          .orElseThrow(() -> new IllegalArgumentException("Proposal: " + id + "Not Found"));
+        return ResponseEntity.ok(proposal);
+    }
 
-		@PostMapping("/{id}/submit")
-		public ResponseEntity<?> createProposal(@PathVariable("id") String proposalId) {
-				proposals.submit(EntityIdentifier.fromString(proposalId));
-				return ResponseEntity.ok().build();
-		}
+    @PostMapping("/{id}/submit")
+    public ResponseEntity<?> createProposal(@PathVariable("id") String proposalId) {
+        proposals.submit(EntityIdentifier.fromString(proposalId));
+        return ResponseEntity.ok().build();
+    }
 
-		@PostMapping("/{id}/start-review")
-		public ResponseEntity<?> reviewProposal(@PathVariable("id") String proposalId) {
-				proposals.startReview(EntityIdentifier.fromString(proposalId));
-				return ResponseEntity.ok().build();
-		}
+    @PostMapping("/{id}/start-review")
+    public ResponseEntity<?> reviewProposal(@PathVariable("id") String proposalId) {
+        proposals.startReview(EntityIdentifier.fromString(proposalId));
+        return ResponseEntity.ok().build();
+    }
 
-		@PostMapping("/{id}/award")
-		public ResponseEntity<?> awardProposal(@PathVariable("id") String proposalId) {
-				proposals.award(EntityIdentifier.fromString(proposalId));
-				return ResponseEntity.ok().build();
-		}
+    @PostMapping("/{id}/award")
+    public ResponseEntity<?> awardProposal(@PathVariable("id") String proposalId) {
+        proposals.award(EntityIdentifier.fromString(proposalId));
+        return ResponseEntity.ok().build();
+    }
 
-		// The search endpoint may expand to include additional query fields in the future
-		@GetMapping("search")
-		public ResponseEntity<?> getProposals(@RequestParam("rfpId") RequestForProposal rfp) {
-				return ResponseEntity.ok(this.proposals.findByRfp(rfp.getId()));
-		}
+    // The search endpoint may expand to include additional query fields in the future
+    @GetMapping("search")
+    public ResponseEntity<?> getProposals(@RequestParam("rfpId") RequestForProposal rfp) {
+        return ResponseEntity.ok(this.proposals.findByRfp(rfp.getId()));
+    }
 
-		private RequestForProposal rfpById(EntityIdentifier rfpId) {
-				return rfpRepository.findById(rfpId)
-						.orElseThrow(() -> new IllegalArgumentException("Rfp: " + rfpId + " not found"));
-		}
+    private RequestForProposal rfpById(EntityIdentifier rfpId) {
+        return rfpRepository.findById(rfpId)
+          .orElseThrow(() -> new IllegalArgumentException("Rfp: " + rfpId + " not found"));
+    }
 
-		private Vendor vendorById(EntityIdentifier vendorId) {
-				return vendors.findById(vendorId)
-						.orElseThrow(() -> new IllegalArgumentException("Vendor: " + vendorId + " not found"));
-		}
+    private Vendor vendorById(EntityIdentifier vendorId) {
+        return vendors.findById(vendorId)
+          .orElseThrow(() -> new IllegalArgumentException("Vendor: " + vendorId + " not found"));
+    }
 }

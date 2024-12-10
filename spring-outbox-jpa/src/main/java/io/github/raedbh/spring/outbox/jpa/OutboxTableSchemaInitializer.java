@@ -34,40 +34,40 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 class OutboxTableSchemaInitializer implements InitializingBean {
 
-		private final ResourceLoader resourceLoader;
-		private final TransactionTemplate transactionTemplate;
-		private final OutboxSchemaAwareExecution outboxSchemaAwareExecution;
-		private final boolean dropExistentOutboxTable;
+    private final ResourceLoader resourceLoader;
+    private final TransactionTemplate transactionTemplate;
+    private final OutboxSchemaAwareExecution outboxSchemaAwareExecution;
+    private final boolean dropExistentOutboxTable;
 
 
-		OutboxTableSchemaInitializer(ResourceLoader resourceLoader,
-				TransactionTemplate transactionTemplate,
-				OutboxSchemaAwareExecution outboxSchemaAwareExecution,
-				HibernateProperties hibernateProperties) {
+    OutboxTableSchemaInitializer(ResourceLoader resourceLoader,
+      TransactionTemplate transactionTemplate,
+      OutboxSchemaAwareExecution outboxSchemaAwareExecution,
+      HibernateProperties hibernateProperties) {
 
-				this.resourceLoader = resourceLoader;
-				this.transactionTemplate = transactionTemplate;
-				this.outboxSchemaAwareExecution = outboxSchemaAwareExecution;
-				this.dropExistentOutboxTable = "create-drop".equals(hibernateProperties.getDdlAuto());
-		}
+        this.resourceLoader = resourceLoader;
+        this.transactionTemplate = transactionTemplate;
+        this.outboxSchemaAwareExecution = outboxSchemaAwareExecution;
+        this.dropExistentOutboxTable = "create-drop".equals(hibernateProperties.getDdlAuto());
+    }
 
 
-		@Override
-		public void afterPropertiesSet() {
-				transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-						@Override
-						protected void doInTransactionWithoutResult(TransactionStatus status) {
-								try {
-										outboxSchemaAwareExecution.execute(true, dropExistentOutboxTable, context -> {
-												String location = ResourceLoader.CLASSPATH_URL_PREFIX + "/create-outbox-table-" +
-														context.rdbms().toLowerCase() + ".sql";
-												new ResourceDatabasePopulator(resourceLoader.getResource(location))
-														.execute(context.dataSource());
-										});
-								} catch (SQLException e) {
-										throw new RuntimeException(e);
-								}
-						}
-				});
-		}
+    @Override
+    public void afterPropertiesSet() {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    outboxSchemaAwareExecution.execute(true, dropExistentOutboxTable, context -> {
+                        String location = ResourceLoader.CLASSPATH_URL_PREFIX + "/create-outbox-table-" +
+                          context.rdbms().toLowerCase() + ".sql";
+                        new ResourceDatabasePopulator(resourceLoader.getResource(location))
+                          .execute(context.dataSource());
+                    });
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
 }

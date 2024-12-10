@@ -26,13 +26,13 @@ import io.github.raedbh.spring.outbox.core.CommandOutboxed;
  */
 public class EmailNotification implements CommandOutboxed {
 
-		private final Map<String, Serializable> context;
+    private final Map<String, Serializable> context;
 
-		public EmailNotification(Map<String, Serializable> context) {
-				this.context = context;
-		}
+    public EmailNotification(Map<String, Serializable> context) {
+        this.context = context;
+    }
 
-		public Object getContext() {
-				return context;
-		}
+    public Object getContext() {
+        return context;
+    }
 }

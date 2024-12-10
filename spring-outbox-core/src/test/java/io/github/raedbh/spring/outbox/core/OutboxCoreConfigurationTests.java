@@ -40,73 +40,73 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class OutboxCoreConfigurationTests {
 
-		@Test
-		void autoConfigureWithDefaults() {
-				contextRunner().run(context -> {
-						assertThat(context).hasSingleBean(OutboxManager.class);
-						assertThat(context).hasSingleBean(OutboxDefaultSerializer.class);
-						assertThat(context).hasSingleBean(OutboxDefaultSerializer.class);
-						assertThat(context).hasSingleBean(SerializableTargetConverterRegistry.class);
-				});
-		}
+    @Test
+    void autoConfigureWithDefaults() {
+        contextRunner().run(context -> {
+            assertThat(context).hasSingleBean(OutboxManager.class);
+            assertThat(context).hasSingleBean(OutboxDefaultSerializer.class);
+            assertThat(context).hasSingleBean(OutboxDefaultSerializer.class);
+            assertThat(context).hasSingleBean(SerializableTargetConverterRegistry.class);
+        });
+    }
 
-		@Test
-		void useCustomSerializerWhenProvided() {
-				contextRunner().withUserConfiguration(CustomSerializerConfiguration.class)
-						.run(context -> {
-								Serializer<?> serializer = context.getBean(Serializer.class);
-								assertThat(serializer).isInstanceOf(CustomSerializer.class);
-						});
-		}
+    @Test
+    void useCustomSerializerWhenProvided() {
+        contextRunner().withUserConfiguration(CustomSerializerConfiguration.class)
+          .run(context -> {
+              Serializer<?> serializer = context.getBean(Serializer.class);
+              assertThat(serializer).isInstanceOf(CustomSerializer.class);
+          });
+    }
 
-		@Test
-		void useCustomDeserializerWhenProvided() {
-				contextRunner().withUserConfiguration(CustomDeserializerConfiguration.class)
-						.run(context -> {
-								Deserializer<?> deserializer = context.getBean(Deserializer.class);
-								assertThat(deserializer).isInstanceOf(CustomDeserializer.class);
-						});
-		}
+    @Test
+    void useCustomDeserializerWhenProvided() {
+        contextRunner().withUserConfiguration(CustomDeserializerConfiguration.class)
+          .run(context -> {
+              Deserializer<?> deserializer = context.getBean(Deserializer.class);
+              assertThat(deserializer).isInstanceOf(CustomDeserializer.class);
+          });
+    }
 
-		private ApplicationContextRunner contextRunner() {
-				return new ApplicationContextRunner()
-						.withConfiguration(AutoConfigurations.of(OutboxCoreConfiguration.class))
-						.withBean(OutboxRepository.class, () -> Mockito.mock(OutboxRepository.class))
-						.withBean(PlatformTransactionManager.class, () -> Mockito.mock(PlatformTransactionManager.class));
-		}
+    private ApplicationContextRunner contextRunner() {
+        return new ApplicationContextRunner()
+          .withConfiguration(AutoConfigurations.of(OutboxCoreConfiguration.class))
+          .withBean(OutboxRepository.class, () -> Mockito.mock(OutboxRepository.class))
+          .withBean(PlatformTransactionManager.class, () -> Mockito.mock(PlatformTransactionManager.class));
+    }
 
-		@Configuration(proxyBeanMethods = false)
-		static class CustomSerializerConfiguration {
+    @Configuration(proxyBeanMethods = false)
+    static class CustomSerializerConfiguration {
 
-				@Bean
-				Serializer<Serializable> outboxSerializer() {
-						return new CustomSerializer();
-				}
-		}
+        @Bean
+        Serializer<Serializable> outboxSerializer() {
+            return new CustomSerializer();
+        }
+    }
 
-		@Configuration(proxyBeanMethods = false)
-		static class CustomDeserializerConfiguration {
+    @Configuration(proxyBeanMethods = false)
+    static class CustomDeserializerConfiguration {
 
-				@Bean
-				Deserializer<Serializable> outboxDeserializer() {
-						return new CustomDeserializer();
-				}
-		}
+        @Bean
+        Deserializer<Serializable> outboxDeserializer() {
+            return new CustomDeserializer();
+        }
+    }
 
-		static class CustomSerializer implements Serializer<Serializable> {
+    static class CustomSerializer implements Serializer<Serializable> {
 
-				@Override
-				public void serialize(Serializable object, OutputStream outputStream) {
-						// Custom implementation
-				}
-		}
+        @Override
+        public void serialize(Serializable object, OutputStream outputStream) {
+            // Custom implementation
+        }
+    }
 
-		static class CustomDeserializer implements Deserializer<Serializable> {
+    static class CustomDeserializer implements Deserializer<Serializable> {
 
-				@Override
-				public Serializable deserialize(InputStream inputStream) {
-						// Custom implementation
-						return null;
-				}
-		}
+        @Override
+        public Serializable deserialize(InputStream inputStream) {
+            // Custom implementation
+            return null;
+        }
+    }
 }

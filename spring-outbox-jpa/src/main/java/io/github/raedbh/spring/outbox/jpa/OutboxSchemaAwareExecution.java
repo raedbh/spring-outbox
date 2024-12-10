@@ -40,90 +40,90 @@ import org.springframework.util.Assert;
  */
 class OutboxSchemaAwareExecution implements InitializingBean {
 
-		private final EntityManager entityManager;
-		private final String schema;
-		private final boolean schemaSpecified;
+    private final EntityManager entityManager;
+    private final String schema;
+    private final boolean schemaSpecified;
 
-		private DataSource dataSource;
-		private String rdbms;
-
-
-		OutboxSchemaAwareExecution(EntityManager entityManager, String schema) {
-				this.entityManager = entityManager;
-				this.schema = schema;
-				this.schemaSpecified = schema != null && !schema.isEmpty();
-		}
+    private DataSource dataSource;
+    private String rdbms;
 
 
-		@Override
-		public void afterPropertiesSet() throws Exception {
-				this.dataSource = ((EntityManagerFactoryInfo) entityManager.getEntityManagerFactory()).getDataSource();
-				Assert.notNull(dataSource, "DataSource must not be null");
+    OutboxSchemaAwareExecution(EntityManager entityManager, String schema) {
+        this.entityManager = entityManager;
+        this.schema = schema;
+        this.schemaSpecified = schema != null && !schema.isEmpty();
+    }
 
-				this.rdbms = JdbcUtils
-						.commonDatabaseName(
-								JdbcUtils.extractDatabaseMetaData(dataSource, DatabaseMetaData::getDatabaseProductName));
-				Assert.hasText(this.rdbms, "RDBMS must not be null or empty");
-		}
 
-		public void execute(boolean withSchemaCreation, boolean dropExistentOutboxTable, OutboxSchemaAwareCallback callback)
-				throws SQLException {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.dataSource = ((EntityManagerFactoryInfo) entityManager.getEntityManagerFactory()).getDataSource();
+        Assert.notNull(dataSource, "DataSource must not be null");
 
-				Assert.notNull(callback, "Callback must not be null");
+        this.rdbms = JdbcUtils
+          .commonDatabaseName(
+            JdbcUtils.extractDatabaseMetaData(dataSource, DatabaseMetaData::getDatabaseProductName));
+        Assert.hasText(this.rdbms, "RDBMS must not be null or empty");
+    }
 
-				if (withSchemaCreation && outboxTableExists() && !dropExistentOutboxTable) {
-						return;
-				}
+    public void execute(boolean withSchemaCreation, boolean dropExistentOutboxTable, OutboxSchemaAwareCallback callback)
+      throws SQLException {
 
-				Connection connection = null;
-				String initialSchema = null;
-				try {
-						connection = DataSourceUtils.getConnection(dataSource);
-						initialSchema = connection.getSchema();
+        Assert.notNull(callback, "Callback must not be null");
 
-						if (schemaSpecified) {
-								if (withSchemaCreation) {
-										entityManager.createNativeQuery("CREATE SCHEMA IF NOT EXISTS " + schema)
-												.executeUpdate();
-								}
-								entityManager.createNativeQuery(generateSetSchemaStatement(rdbms, schema)).executeUpdate();
-						}
+        if (withSchemaCreation && outboxTableExists() && !dropExistentOutboxTable) {
+            return;
+        }
 
-						if (dropExistentOutboxTable) {
-								entityManager.createNativeQuery("DROP TABLE IF EXISTS outbox;").executeUpdate();
-						}
+        Connection connection = null;
+        String initialSchema = null;
+        try {
+            connection = DataSourceUtils.getConnection(dataSource);
+            initialSchema = connection.getSchema();
 
-						callback.execute(new OutboxSchemaAwareContext(entityManager, dataSource, rdbms));
+            if (schemaSpecified) {
+                if (withSchemaCreation) {
+                    entityManager.createNativeQuery("CREATE SCHEMA IF NOT EXISTS " + schema)
+                      .executeUpdate();
+                }
+                entityManager.createNativeQuery(generateSetSchemaStatement(rdbms, schema)).executeUpdate();
+            }
 
-				} finally {
-						// back to the initial schema.
-						if (initialSchema != null && schemaSpecified) {
-								String setSchemaStatement = generateSetSchemaStatement(rdbms, initialSchema);
-								entityManager.createNativeQuery(setSchemaStatement).executeUpdate();
-						}
+            if (dropExistentOutboxTable) {
+                entityManager.createNativeQuery("DROP TABLE IF EXISTS outbox;").executeUpdate();
+            }
 
-						DataSourceUtils.releaseConnection(connection, dataSource);
-				}
-		}
+            callback.execute(new OutboxSchemaAwareContext(entityManager, dataSource, rdbms));
 
-		private boolean outboxTableExists() {
+        } finally {
+            // back to the initial schema.
+            if (initialSchema != null && schemaSpecified) {
+                String setSchemaStatement = generateSetSchemaStatement(rdbms, initialSchema);
+                entityManager.createNativeQuery(setSchemaStatement).executeUpdate();
+            }
 
-				String queryString = """
-						SELECT COUNT(*)
-						FROM information_schema.tables
-						WHERE table_name = 'outbox'
-						""" + (schemaSpecified ? " AND table_schema = '" + schema + "'" : "");
+            DataSourceUtils.releaseConnection(connection, dataSource);
+        }
+    }
 
-				var query = entityManager.createNativeQuery(queryString);
+    private boolean outboxTableExists() {
 
-				Number count = (Number) query.getSingleResult();
-				return count != null && count.intValue() > 0;
-		}
+        String queryString = """
+          SELECT COUNT(*)
+          FROM information_schema.tables
+          WHERE table_name = 'outbox'
+          """ + (schemaSpecified ? " AND table_schema = '" + schema + "'" : "");
 
-		private String generateSetSchemaStatement(String rdbms, String schema) {
-				if (rdbms.equals("PostgreSQL")) {
-						return "SET search_path TO " + schema;
-				}
-				throw new IllegalArgumentException("Schema setting is not supported for the database: " + rdbms);
-		}
+        var query = entityManager.createNativeQuery(queryString);
+
+        Number count = (Number) query.getSingleResult();
+        return count != null && count.intValue() > 0;
+    }
+
+    private String generateSetSchemaStatement(String rdbms, String schema) {
+        if (rdbms.equals("PostgreSQL")) {
+            return "SET search_path TO " + schema;
+        }
+        throw new IllegalArgumentException("Schema setting is not supported for the database: " + rdbms);
+    }
 }

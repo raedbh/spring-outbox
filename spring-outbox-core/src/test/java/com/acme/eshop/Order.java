@@ -23,8 +23,8 @@ import io.github.raedbh.spring.outbox.core.RootEntity;
  */
 public class Order extends RootEntity {
 
-		@Override
-		public Object getId() {
-				return "1a2b3c";
-		}
+    @Override
+    public Object getId() {
+        return "1a2b3c";
+    }
 }

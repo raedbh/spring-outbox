@@ -30,43 +30,43 @@ import sample.sourcing.rfp.RequestForProposal;
  */
 public interface Proposals extends CrudRepository<Proposal, EntityIdentifier> {
 
-		default List<Proposal> findByRfp(EntityIdentifier rfpId) {
-				return findByRfpOrderBySubmittedAt(Association.forId(rfpId));
-		}
+    default List<Proposal> findByRfp(EntityIdentifier rfpId) {
+        return findByRfpOrderBySubmittedAt(Association.forId(rfpId));
+    }
 
-		List<Proposal> findByRfpOrderBySubmittedAt(Association<RequestForProposal, EntityIdentifier> rfp);
+    List<Proposal> findByRfpOrderBySubmittedAt(Association<RequestForProposal, EntityIdentifier> rfp);
 
-		/**
-		 * Award a proposal for a given RFP and mark it as the winning bid.
-		 * <p>When a proposal is awarded, all other proposals associated with the same RFP are automatically marked as rejected.</p>
-		 *
-		 * @param proposalId the ID of the proposal to award.
-		 */
-		@Transactional
-		default void award(EntityIdentifier proposalId) {
-				Proposal awardedProposal = proposalById(proposalId);
-				List<Proposal> allProposals = findByRfpOrderBySubmittedAt(awardedProposal.getRfp());
-				allProposals.forEach(proposal -> {
-						if (proposal.equals(awardedProposal)) {
-								proposal.markAwarded();
-						} else {
-								proposal.markRejected();
-						}
-						save(proposal);
-				});
-		}
+    /**
+     * Award a proposal for a given RFP and mark it as the winning bid.
+     * <p>When a proposal is awarded, all other proposals associated with the same RFP are automatically marked as rejected.</p>
+     *
+     * @param proposalId the ID of the proposal to award.
+     */
+    @Transactional
+    default void award(EntityIdentifier proposalId) {
+        Proposal awardedProposal = proposalById(proposalId);
+        List<Proposal> allProposals = findByRfpOrderBySubmittedAt(awardedProposal.getRfp());
+        allProposals.forEach(proposal -> {
+            if (proposal.equals(awardedProposal)) {
+                proposal.markAwarded();
+            } else {
+                proposal.markRejected();
+            }
+            save(proposal);
+        });
+    }
 
-		@Transactional
-		default void submit(EntityIdentifier proposalId) {
-				proposalById(proposalId).markSubmitted();
-		}
+    @Transactional
+    default void submit(EntityIdentifier proposalId) {
+        proposalById(proposalId).markSubmitted();
+    }
 
-		@Transactional
-		default void startReview(EntityIdentifier proposalId) {
-				proposalById(proposalId).markReviewStarted();
-		}
+    @Transactional
+    default void startReview(EntityIdentifier proposalId) {
+        proposalById(proposalId).markReviewStarted();
+    }
 
-		private Proposal proposalById(EntityIdentifier proposalId) {
-				return findById(proposalId).orElseThrow(() -> new IllegalArgumentException("Proposal not found"));
-		}
+    private Proposal proposalById(EntityIdentifier proposalId) {
+        return findById(proposalId).orElseThrow(() -> new IllegalArgumentException("Proposal not found"));
+    }
 }

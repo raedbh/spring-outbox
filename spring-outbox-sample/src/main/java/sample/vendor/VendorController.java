@@ -29,14 +29,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/vendors")
 public class VendorController {
 
-		final Vendors vendors;
+    final Vendors vendors;
 
-		public VendorController(Vendors vendors) {
-				this.vendors = vendors;
-		}
+    public VendorController(Vendors vendors) {
+        this.vendors = vendors;
+    }
 
-		@GetMapping
-		public HttpEntity<Iterable<Vendor>> vendors() {
-				return ResponseEntity.ok(vendors.findAll());
-		}
+    @GetMapping
+    public HttpEntity<Iterable<Vendor>> vendors() {
+        return ResponseEntity.ok(vendors.findAll());
+    }
 }

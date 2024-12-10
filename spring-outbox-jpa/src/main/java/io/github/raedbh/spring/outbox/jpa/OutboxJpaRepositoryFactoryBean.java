@@ -38,64 +38,64 @@ import io.github.raedbh.spring.outbox.core.RootEntity;
  * @since 1.0
  */
 public class OutboxJpaRepositoryFactoryBean<T extends Repository<S, I>, S, I> extends
-		JpaRepositoryFactoryBean<T, S, I> {
+  JpaRepositoryFactoryBean<T, S, I> {
 
-		private static final Logger LOGGER = LoggerFactory.getLogger(OutboxJpaRepositoryFactoryBean.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OutboxJpaRepositoryFactoryBean.class);
 
-		private OutboxManager outboxManager;
+    private OutboxManager outboxManager;
 
-		public OutboxJpaRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
-				super(repositoryInterface);
-		}
+    public OutboxJpaRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
+        super(repositoryInterface);
+    }
 
-		@Autowired
-		void setOutboxManager(OutboxManager outboxManager) {
-				this.outboxManager = outboxManager;
-		}
+    @Autowired
+    void setOutboxManager(OutboxManager outboxManager) {
+        this.outboxManager = outboxManager;
+    }
 
-		@Override
-		public void afterPropertiesSet() {
-				addRepositoryFactoryCustomizer(factory ->
-						factory.addRepositoryProxyPostProcessor((proxyFactory, repositoryInformation) -> {
-								if (ClassUtils.isAssignable(RootEntity.class, repositoryInformation.getDomainType())) {
-										proxyFactory.addAdvice(new StateChangingMethodInterceptor(outboxManager));
-								}
-						}));
+    @Override
+    public void afterPropertiesSet() {
+        addRepositoryFactoryCustomizer(factory ->
+          factory.addRepositoryProxyPostProcessor((proxyFactory, repositoryInformation) -> {
+              if (ClassUtils.isAssignable(RootEntity.class, repositoryInformation.getDomainType())) {
+                  proxyFactory.addAdvice(new StateChangingMethodInterceptor(outboxManager));
+              }
+          }));
 
-				super.afterPropertiesSet();
-		}
+        super.afterPropertiesSet();
+    }
 
-		static class StateChangingMethodInterceptor implements MethodInterceptor {
+    static class StateChangingMethodInterceptor implements MethodInterceptor {
 
-				private final OutboxManager outboxManager;
+        private final OutboxManager outboxManager;
 
-				StateChangingMethodInterceptor(OutboxManager outboxManager) {
-						this.outboxManager = outboxManager;
-				}
+        StateChangingMethodInterceptor(OutboxManager outboxManager) {
+            this.outboxManager = outboxManager;
+        }
 
-				private static boolean stateChangingMethod(Method method) {
-						return method.getParameterCount() == 1 &&
-								(method.getName().equals("save") || method.getName().equals("delete"));
-				}
+        private static boolean stateChangingMethod(Method method) {
+            return method.getParameterCount() == 1 &&
+              (method.getName().equals("save") || method.getName().equals("delete"));
+        }
 
-				@Override
-				@Nullable
-				public Object invoke(MethodInvocation invocation) throws Throwable {
-						if (!stateChangingMethod(invocation.getMethod())) {
-								return invocation.proceed();
-						}
-						RootEntity rootEntity = (RootEntity) invocation.getArguments()[0];
-						if (rootEntity.withNoEventAssigned()) {
-								return invocation.proceed();
-						}
-						return outboxManager.proceedInvocationAndSaveOutboxEntries(rootEntity, () -> {
-								try {
-										LOGGER.info("Proceeding method invocation: {}", invocation.getMethod().getName());
-										return invocation.proceed();
-								} catch (Throwable e) {
-										throw new RuntimeException(e);
-								}
-						});
-				}
-		}
+        @Override
+        @Nullable
+        public Object invoke(MethodInvocation invocation) throws Throwable {
+            if (!stateChangingMethod(invocation.getMethod())) {
+                return invocation.proceed();
+            }
+            RootEntity rootEntity = (RootEntity) invocation.getArguments()[0];
+            if (rootEntity.withNoEventAssigned()) {
+                return invocation.proceed();
+            }
+            return outboxManager.proceedInvocationAndSaveOutboxEntries(rootEntity, () -> {
+                try {
+                    LOGGER.info("Proceeding method invocation: {}", invocation.getMethod().getName());
+                    return invocation.proceed();
+                } catch (Throwable e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
 }

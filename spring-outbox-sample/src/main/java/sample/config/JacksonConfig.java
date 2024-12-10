@@ -28,8 +28,8 @@ import com.fasterxml.jackson.databind.Module;
 @Configuration(proxyBeanMethods = false)
 class JacksonConfig {
 
-		@Bean
-		Module moneyModule() {
-				return new MoneyModule().withDefaultFormatting();
-		}
+    @Bean
+    Module moneyModule() {
+        return new MoneyModule().withDefaultFormatting();
+    }
 }

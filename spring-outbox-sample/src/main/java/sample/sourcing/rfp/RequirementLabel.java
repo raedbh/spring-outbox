@@ -31,27 +31,27 @@ import sample.common.EntityIdentifier;
 @JsonIgnoreProperties(value = "new")
 public class RequirementLabel implements AggregateRoot<RequirementLabel, EntityIdentifier> {
 
-		private final EntityIdentifier id;
-		private final String label;
+    private final EntityIdentifier id;
+    private final String label;
 
 
-		public RequirementLabel(String label) {
+    public RequirementLabel(String label) {
 
-				if (label == null || label.isBlank()) {
-						throw new IllegalArgumentException("Label cannot be null or blank");
-				}
+        if (label == null || label.isBlank()) {
+            throw new IllegalArgumentException("Label cannot be null or blank");
+        }
 
-				this.id = EntityIdentifier.generate();
-				this.label = label;
-		}
+        this.id = EntityIdentifier.generate();
+        this.label = label;
+    }
 
 
-		@Override
-		public EntityIdentifier getId() {
-				return id;
-		}
+    @Override
+    public EntityIdentifier getId() {
+        return id;
+    }
 
-		public String getLabel() {
-				return label;
-		}
+    public String getLabel() {
+        return label;
+    }
 }

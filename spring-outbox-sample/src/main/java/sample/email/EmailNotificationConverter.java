@@ -34,33 +34,33 @@ import sample.email.EmailMessageBody.Contact;
 @Mapper(componentModel = "spring")
 public interface EmailNotificationConverter extends Converter<Map<String, Object>, EmailMessageBody> {
 
-		@Mapping(target = "type", source = "source.type", qualifiedByName = "convertToString")
-		@Mapping(target = "to", expression = "java(createContactList(source.get(\"toEmail\")))")
-		@Mapping(target = "cc", ignore = true)
-		@Mapping(target = "bcc", ignore = true)
-		@Mapping(target = "lookAndFeel", ignore = true)
-		@Mapping(target = "templateParams", ignore = true)
-		EmailMessageBody map(Map<String, Object> source);
+    @Mapping(target = "type", source = "source.type", qualifiedByName = "convertToString")
+    @Mapping(target = "to", expression = "java(createContactList(source.get(\"toEmail\")))")
+    @Mapping(target = "cc", ignore = true)
+    @Mapping(target = "bcc", ignore = true)
+    @Mapping(target = "lookAndFeel", ignore = true)
+    @Mapping(target = "templateParams", ignore = true)
+    EmailMessageBody map(Map<String, Object> source);
 
-		default EmailMessageBody convert(Map<String, Object> source) {
-				return map(source);
-		}
+    default EmailMessageBody convert(Map<String, Object> source) {
+        return map(source);
+    }
 
-		default Contact createContact(Object email) {
-				return new Contact(email.toString());
-		}
+    default Contact createContact(Object email) {
+        return new Contact(email.toString());
+    }
 
-		default List<Contact> createContactList(Object email) {
-				return Collections.singletonList(createContact(email));
-		}
+    default List<Contact> createContactList(Object email) {
+        return Collections.singletonList(createContact(email));
+    }
 
-		@Named("convertToString")
-		default String convertToString(Object value) {
-				return (value != null) ? value.toString() : null;
-		}
+    @Named("convertToString")
+    default String convertToString(Object value) {
+        return (value != null) ? value.toString() : null;
+    }
 
-		default Locale map(Object value) {
-				return (Locale) value;
-		}
+    default Locale map(Object value) {
+        return (Locale) value;
+    }
 
 }

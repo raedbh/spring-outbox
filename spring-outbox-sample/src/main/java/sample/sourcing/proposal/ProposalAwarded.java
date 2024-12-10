@@ -23,12 +23,12 @@ import io.github.raedbh.spring.outbox.core.EventOutboxed;
  */
 public class ProposalAwarded extends EventOutboxed<Proposal> {
 
-		public ProposalAwarded(Proposal source) {
-				super(source);
-		}
+    public ProposalAwarded(Proposal source) {
+        super(source);
+    }
 
-		@Override
-		public String getOperation() {
-				return "award";
-		}
+    @Override
+    public String getOperation() {
+        return "award";
+    }
 }

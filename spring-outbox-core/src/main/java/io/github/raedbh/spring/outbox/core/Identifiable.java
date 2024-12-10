@@ -24,8 +24,8 @@ package io.github.raedbh.spring.outbox.core;
  */
 public interface Identifiable {
 
-		/**
-		 * @return the unique identifier.
-		 */
-		Object getId();
+    /**
+     * @return the unique identifier.
+     */
+    Object getId();
 }

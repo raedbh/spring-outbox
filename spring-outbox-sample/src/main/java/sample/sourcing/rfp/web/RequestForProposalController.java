@@ -39,43 +39,43 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 @RequestMapping("/rfps")
 public class RequestForProposalController {
 
-		final RfpManagement rfpManagement;
-		final RequirementLabelRepository labelRepository;
+    final RfpManagement rfpManagement;
+    final RequirementLabelRepository labelRepository;
 
 
-		public RequestForProposalController(RfpManagement rfpManagement, RequirementLabelRepository labelRepository) {
-				this.rfpManagement = rfpManagement;
-				this.labelRepository = labelRepository;
-		}
+    public RequestForProposalController(RfpManagement rfpManagement, RequirementLabelRepository labelRepository) {
+        this.rfpManagement = rfpManagement;
+        this.labelRepository = labelRepository;
+    }
 
 
-		@PostMapping
-		public ResponseEntity<String> createRfp(@RequestBody CreateRfpRequest request) {
+    @PostMapping
+    public ResponseEntity<String> createRfp(@RequestBody CreateRfpRequest request) {
 
-				RequestForProposal rfp = new RequestForProposal(request.title, request.description, request.submissionDeadline,
-						request.requirements.stream().map(this::toRequirementEntity).toList());
+        RequestForProposal rfp = new RequestForProposal(request.title, request.description, request.submissionDeadline,
+          request.requirements.stream().map(this::toRequirementEntity).toList());
 
-				rfpManagement.save(rfp);
+        rfpManagement.save(rfp);
 
-				return ResponseEntity.created(fromCurrentRequest().path("/{id}").buildAndExpand(rfp.getId()).toUri()).build();
-		}
+        return ResponseEntity.created(fromCurrentRequest().path("/{id}").buildAndExpand(rfp.getId()).toUri()).build();
+    }
 
-		@GetMapping("/{id}")
-		public ResponseEntity<RequestForProposal> getRfp(@PathVariable("id") String rfpId) {
-				RequestForProposal rfp = rfpManagement.find(EntityIdentifier.fromString(rfpId));
-				return ResponseEntity.ok(rfp);
-		}
+    @GetMapping("/{id}")
+    public ResponseEntity<RequestForProposal> getRfp(@PathVariable("id") String rfpId) {
+        RequestForProposal rfp = rfpManagement.find(EntityIdentifier.fromString(rfpId));
+        return ResponseEntity.ok(rfp);
+    }
 
-		@PostMapping("/{id}/publish")
-		public ResponseEntity<String> publishRfp(@PathVariable("id") String rfpId) {
-				rfpManagement.publish(EntityIdentifier.fromString(rfpId));
-				return ResponseEntity.ok().build();
-		}
+    @PostMapping("/{id}/publish")
+    public ResponseEntity<String> publishRfp(@PathVariable("id") String rfpId) {
+        rfpManagement.publish(EntityIdentifier.fromString(rfpId));
+        return ResponseEntity.ok().build();
+    }
 
-		private Requirement toRequirementEntity(CreateRfpRequest.Requirement requirement) {
-				EntityIdentifier id = EntityIdentifier.fromString(requirement.id);
-				labelRepository.findById(id)
-						.orElseThrow(() -> new IllegalArgumentException("Label with ID: " + id + "Not Found"));
-				return new Requirement(id, requirement.description);
-		}
+    private Requirement toRequirementEntity(CreateRfpRequest.Requirement requirement) {
+        EntityIdentifier id = EntityIdentifier.fromString(requirement.id);
+        labelRepository.findById(id)
+          .orElseThrow(() -> new IllegalArgumentException("Label with ID: " + id + "Not Found"));
+        return new Requirement(id, requirement.description);
+    }
 }

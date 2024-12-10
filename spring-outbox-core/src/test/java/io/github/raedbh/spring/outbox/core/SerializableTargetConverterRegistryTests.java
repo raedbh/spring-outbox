@@ -39,81 +39,81 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class SerializableTargetConverterRegistryTests {
 
-		SerializableTargetConverterRegistry registry;
+    SerializableTargetConverterRegistry registry;
 
-		@BeforeEach
-		void setUp() {
-				registry = new SerializableTargetConverterRegistry(Set.of(
-						new OrderToMessageBodyConverter(),
-						new BigDecimalToDoubleConverter(),
-						new StringToIntegerConverter()
-				));
-		}
+    @BeforeEach
+    void setUp() {
+        registry = new SerializableTargetConverterRegistry(Set.of(
+          new OrderToMessageBodyConverter(),
+          new BigDecimalToDoubleConverter(),
+          new StringToIntegerConverter()
+        ));
+    }
 
-		@Test
-		void returnConverterForSerializableTarget() {
+    @Test
+    void returnConverterForSerializableTarget() {
 
-				Optional<Converter<Object, Serializable>> converter = registry.getConverter(Order.class);
+        Optional<Converter<Object, Serializable>> converter = registry.getConverter(Order.class);
 
-				assertThat(converter).isPresent();
+        assertThat(converter).isPresent();
 
-				Order order = new Order();
-				Serializable result = converter.get().convert(order);
+        Order order = new Order();
+        Serializable result = converter.get().convert(order);
 
-				assertThat(result).isInstanceOf(OrderMessageBody.class);
-				assertThat(((OrderMessageBody) result).orderId).isEqualTo(order.getId().toString());
-		}
+        assertThat(result).isInstanceOf(OrderMessageBody.class);
+        assertThat(((OrderMessageBody) result).orderId).isEqualTo(order.getId().toString());
+    }
 
-		@Test
-		void returnEmptyWhenNoConverterIsRegisteredForGivenSourceType() {
-				assertThat(registry.getConverter(Target.class)).isEmpty();
-		}
+    @Test
+    void returnEmptyWhenNoConverterIsRegisteredForGivenSourceType() {
+        assertThat(registry.getConverter(Target.class)).isEmpty();
+    }
 
-		@Test
-		void rejectMultipleConvertersForSameSourceType() {
+    @Test
+    void rejectMultipleConvertersForSameSourceType() {
 
-				Set<Converter<?, ?>> converters = Set.of(
-						new BigDecimalToDoubleConverter(),
-						new BigDecimalToStringConverter(),
-						new StringToIntegerConverter()
-				);
+        Set<Converter<?, ?>> converters = Set.of(
+          new BigDecimalToDoubleConverter(),
+          new BigDecimalToStringConverter(),
+          new StringToIntegerConverter()
+        );
 
-				assertThatThrownBy(() -> new SerializableTargetConverterRegistry(converters))
-						.isInstanceOf(IllegalStateException.class)
-						.hasMessageContaining("Multiple converters found");
-		}
+        assertThatThrownBy(() -> new SerializableTargetConverterRegistry(converters))
+          .isInstanceOf(IllegalStateException.class)
+          .hasMessageContaining("Multiple converters found");
+    }
 
-		static class OrderToMessageBodyConverter implements Converter<Order, OrderMessageBody> {
+    static class OrderToMessageBodyConverter implements Converter<Order, OrderMessageBody> {
 
-				@Override
-				public OrderMessageBody convert(Order order) {
-						return new OrderMessageBody(order.getId().toString());
-				}
-		}
+        @Override
+        public OrderMessageBody convert(Order order) {
+            return new OrderMessageBody(order.getId().toString());
+        }
+    }
 
-		static class BigDecimalToStringConverter implements Converter<BigDecimal, String> {
+    static class BigDecimalToStringConverter implements Converter<BigDecimal, String> {
 
-				@Override
-				public String convert(BigDecimal source) {
-						return source.toString();
-				}
-		}
+        @Override
+        public String convert(BigDecimal source) {
+            return source.toString();
+        }
+    }
 
-		static class BigDecimalToDoubleConverter implements Converter<BigDecimal, Double> {
+    static class BigDecimalToDoubleConverter implements Converter<BigDecimal, Double> {
 
-				@Override
-				public Double convert(BigDecimal source) {
-						return source.doubleValue();
-				}
-		}
+        @Override
+        public Double convert(BigDecimal source) {
+            return source.doubleValue();
+        }
+    }
 
-		static class StringToIntegerConverter implements Converter<String, Integer> {
+    static class StringToIntegerConverter implements Converter<String, Integer> {
 
-				@Override
-				public Integer convert(String source) {
-						return 1234;
-				}
-		}
+        @Override
+        public Integer convert(String source) {
+            return 1234;
+        }
+    }
 
-		static class Target implements Serializable {}
+    static class Target implements Serializable {}
 }

@@ -25,19 +25,19 @@ import org.jmolecules.ddd.types.Identifier;
  */
 public record EntityIdentifier(UUID id) implements Identifier {
 
-		public static EntityIdentifier generate() {
-				return new EntityIdentifier(UUID.randomUUID());
-		}
+    public static EntityIdentifier generate() {
+        return new EntityIdentifier(UUID.randomUUID());
+    }
 
-		public static EntityIdentifier fromString(String id) {
-				if (id == null) {
-						throw new IllegalArgumentException("Id cannot be null");
-				}
-				return new EntityIdentifier(UUID.fromString(id));
-		}
+    public static EntityIdentifier fromString(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        return new EntityIdentifier(UUID.fromString(id));
+    }
 
-		@Override
-		public String toString() {
-				return id == null ? null : id.toString();
-		}
+    @Override
+    public String toString() {
+        return id == null ? null : id.toString();
+    }
 }

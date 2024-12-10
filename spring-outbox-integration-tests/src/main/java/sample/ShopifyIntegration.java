@@ -16,12 +16,12 @@
 
 package sample;
 
-import io.github.raedbh.spring.outbox.core.MessageWith;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+
+import io.github.raedbh.spring.outbox.core.MessageWith;
 
 /**
  * Listens for payment events and synchronizes order details with Shopify.
@@ -34,27 +34,29 @@ import org.springframework.stereotype.Component;
 @Component
 class ShopifyIntegration {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ShopifyIntegration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShopifyIntegration.class);
 
-	final ShopifyOrderSynchronizer shopifyOrderSynchronizer;
+    final ShopifyOrderSynchronizer shopifyOrderSynchronizer;
 
-	ShopifyIntegration(ShopifyOrderSynchronizer shopifyOrderSynchronizer) {
-		this.shopifyOrderSynchronizer = shopifyOrderSynchronizer;
-	}
+    ShopifyIntegration(ShopifyOrderSynchronizer shopifyOrderSynchronizer) {
+        this.shopifyOrderSynchronizer = shopifyOrderSynchronizer;
+    }
 
-	@RabbitListener(queues = "shopify.orders")
-	void onOrderPaid(@MessageWith(operation = "payment") OrderMessageBody messageBody) {
-		shopifyOrderSynchronizer.syncOrder(messageBody);
-	}
+    @RabbitListener(queues = "shopify.orders")
+    void onOrderPaid(@MessageWith(operation = "payment") OrderMessageBody messageBody) {
+        shopifyOrderSynchronizer.syncOrder(messageBody);
+    }
 
-	@Component
-	static class ShopifyOrderSynchronizer {
+    @Component
+    static class ShopifyOrderSynchronizer {
 
-		public void syncOrder(OrderMessageBody messageBody) {
-			if (messageBody == null) return;
+        public void syncOrder(OrderMessageBody messageBody) {
+			if (messageBody == null) {
+				return;
+			}
 
-			LOGGER.info("Synchronizing order #{} with Shopify", messageBody.orderId);
-			// transform and load to Shopify
-		}
-	}
+            LOGGER.info("Synchronizing order #{} with Shopify", messageBody.orderId);
+            // transform and load to Shopify
+        }
+    }
 }

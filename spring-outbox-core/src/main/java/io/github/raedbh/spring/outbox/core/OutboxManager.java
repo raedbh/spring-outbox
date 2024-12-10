@@ -46,98 +46,98 @@ import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.OPERATI
  */
 public class OutboxManager {
 
-		private static final Logger LOGGER = LoggerFactory.getLogger(OutboxManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OutboxManager.class);
 
-		private final OutboxRepository outboxRepository;
-		private final Serializer<Serializable> outboxSerializer;
-		private final TransactionTemplate transactionTemplate;
-		private final PlatformTransactionManager transactionManager;
-		private final SerializableTargetConverterRegistry converterRegistry;
-
-
-		public OutboxManager(OutboxRepository outboxRepository, Serializer<Serializable> outboxSerializer,
-				PlatformTransactionManager transactionManager, SerializableTargetConverterRegistry converterRegistry) {
-
-				this.outboxRepository = outboxRepository;
-				this.outboxSerializer = outboxSerializer;
-				this.transactionTemplate = new TransactionTemplate(transactionManager);
-				this.transactionManager = transactionManager;
-				this.converterRegistry = converterRegistry;
-		}
+    private final OutboxRepository outboxRepository;
+    private final Serializer<Serializable> outboxSerializer;
+    private final TransactionTemplate transactionTemplate;
+    private final PlatformTransactionManager transactionManager;
+    private final SerializableTargetConverterRegistry converterRegistry;
 
 
-		@Nullable
-		public Object proceedInvocationAndSaveOutboxEntries(RootEntity rootEntity, Supplier<Object> proceed) {
-				List<OutboxEntry> entries = outboxEntriesFor(rootEntity);
-				return transactionTemplate.execute(status -> {
+    public OutboxManager(OutboxRepository outboxRepository, Serializer<Serializable> outboxSerializer,
+      PlatformTransactionManager transactionManager, SerializableTargetConverterRegistry converterRegistry) {
 
-						Object result = proceed.get();
+        this.outboxRepository = outboxRepository;
+        this.outboxSerializer = outboxSerializer;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.transactionManager = transactionManager;
+        this.converterRegistry = converterRegistry;
+    }
 
-						LOGGER.info("Saving outbox entries..");
 
-						entries.forEach(outboxRepository::save);
+    @Nullable
+    public Object proceedInvocationAndSaveOutboxEntries(RootEntity rootEntity, Supplier<Object> proceed) {
+        List<OutboxEntry> entries = outboxEntriesFor(rootEntity);
+        return transactionTemplate.execute(status -> {
 
-						return result;
-				});
-		}
+            Object result = proceed.get();
 
-		private List<OutboxEntry> outboxEntriesFor(RootEntity rootEntity) {
-				DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-				def.setPropagationBehavior(TransactionDefinition.PROPAGATION_NOT_SUPPORTED);
+            LOGGER.info("Saving outbox entries..");
 
-				TransactionStatus status = transactionManager.getTransaction(def); // suspend current transaction
+            entries.forEach(outboxRepository::save);
 
-				List<OutboxEntry> entries = new ArrayList<>();
+            return result;
+        });
+    }
 
-				try {
-						LOGGER.info("Building outbox entries for {}", rootEntity.getClass());
+    private List<OutboxEntry> outboxEntriesFor(RootEntity rootEntity) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_NOT_SUPPORTED);
 
-						OutboxEntry eventOutboxEntry = outboxEntryFor(rootEntity);
-						entries.add(eventOutboxEntry);
+        TransactionStatus status = transactionManager.getTransaction(def); // suspend current transaction
 
-						List<CommandOutboxed> commands = rootEntity.event().getCommands();
+        List<OutboxEntry> entries = new ArrayList<>();
 
-						if (commands.isEmpty()) {
-								return entries;
-						}
+        try {
+            LOGGER.info("Building outbox entries for {}", rootEntity.getClass());
 
-						for (CommandOutboxed command : commands) {
+            OutboxEntry eventOutboxEntry = outboxEntryFor(rootEntity);
+            entries.add(eventOutboxEntry);
 
-								byte[] commandMessagePayload = convertAndSerialize(command);
+            List<CommandOutboxed> commands = rootEntity.event().getCommands();
 
-								OutboxEntry commandOutboxEntry = new OutboxEntry(command.getName(), commandMessagePayload);
-								commandOutboxEntry.setRelatedTo(eventOutboxEntry.getId());
+            if (commands.isEmpty()) {
+                return entries;
+            }
 
-								entries.add(commandOutboxEntry);
-						}
+            for (CommandOutboxed command : commands) {
 
-						return entries;
-				} finally {
-						transactionManager.commit(status);
-				}
-		}
+                byte[] commandMessagePayload = convertAndSerialize(command);
 
-		private OutboxEntry outboxEntryFor(RootEntity rootEntity) {
-				EventOutboxed<? extends RootEntity> event = rootEntity.event();
-				byte[] outboxPayload = convertAndSerialize(rootEntity);
+                OutboxEntry commandOutboxEntry = new OutboxEntry(command.getName(), commandMessagePayload);
+                commandOutboxEntry.setRelatedTo(eventOutboxEntry.getId());
 
-				Map<String, String> metadata = Map.of(
-						EVENT_ENTITY_TYPE, rootEntity.getClass().getSimpleName(),
-						EVENT_ENTITY_ID, rootEntity.getId().toString(),
-						EVENT_OCCURRED_AT, String.valueOf(event.getOccurredAt()),
-						OPERATION, event.getOperation());
+                entries.add(commandOutboxEntry);
+            }
 
-				return new OutboxEntry(event.getName(), outboxPayload, metadata);
-		}
+            return entries;
+        } finally {
+            transactionManager.commit(status);
+        }
+    }
 
-		private byte[] convertAndSerialize(Object object) {
-				var target = converterRegistry.getConverter(object.getClass()).<Object>map(objectSerializableConverter ->
-						objectSerializableConverter.convert(object)).orElse(object);
-				try {
-						return outboxSerializer.serializeToByteArray((Serializable) target);
-				} catch (IOException e) {
-						LOGGER.error("Serialization failed", e);
-						throw new RuntimeException(e);
-				}
-		}
+    private OutboxEntry outboxEntryFor(RootEntity rootEntity) {
+        EventOutboxed<? extends RootEntity> event = rootEntity.event();
+        byte[] outboxPayload = convertAndSerialize(rootEntity);
+
+        Map<String, String> metadata = Map.of(
+          EVENT_ENTITY_TYPE, rootEntity.getClass().getSimpleName(),
+          EVENT_ENTITY_ID, rootEntity.getId().toString(),
+          EVENT_OCCURRED_AT, String.valueOf(event.getOccurredAt()),
+          OPERATION, event.getOperation());
+
+        return new OutboxEntry(event.getName(), outboxPayload, metadata);
+    }
+
+    private byte[] convertAndSerialize(Object object) {
+        var target = converterRegistry.getConverter(object.getClass()).<Object>map(objectSerializableConverter ->
+          objectSerializableConverter.convert(object)).orElse(object);
+        try {
+            return outboxSerializer.serializeToByteArray((Serializable) target);
+        } catch (IOException e) {
+            LOGGER.error("Serialization failed", e);
+            throw new RuntimeException(e);
+        }
+    }
 }

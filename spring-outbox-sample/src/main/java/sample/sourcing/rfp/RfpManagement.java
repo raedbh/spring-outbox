@@ -31,51 +31,51 @@ import sample.common.EntityIdentifier;
 @Service
 public class RfpManagement {
 
-		private final RfpRepository rfpRepository;
-		private final RequirementLabelRepository labelRepository;
+    private final RfpRepository rfpRepository;
+    private final RequirementLabelRepository labelRepository;
 
 
-		RfpManagement(RfpRepository repository, RequirementLabelRepository labelRepository) {
-				this.rfpRepository = repository;
-				this.labelRepository = labelRepository;
-		}
+    RfpManagement(RfpRepository repository, RequirementLabelRepository labelRepository) {
+        this.rfpRepository = repository;
+        this.labelRepository = labelRepository;
+    }
 
 
-		public RequestForProposal find(EntityIdentifier rfpId) {
-				return rfpRepository.findById(rfpId)
-						.orElseThrow(() -> new IllegalArgumentException("No RFP found with ID: " + rfpId));
-		}
+    public RequestForProposal find(EntityIdentifier rfpId) {
+        return rfpRepository.findById(rfpId)
+          .orElseThrow(() -> new IllegalArgumentException("No RFP found with ID: " + rfpId));
+    }
 
-		@Transactional
-		public void save(RequestForProposal rfp) {
-				rfpRepository.save(rfp);
-		}
+    @Transactional
+    public void save(RequestForProposal rfp) {
+        rfpRepository.save(rfp);
+    }
 
-		@Transactional
-		public void publish(EntityIdentifier rfpId) {
-				rfpRepository.findById(rfpId).ifPresent(rfp -> {
-						rfp.markPublished();
-						rfpRepository.save(rfp);
-				});
-		}
+    @Transactional
+    public void publish(EntityIdentifier rfpId) {
+        rfpRepository.findById(rfpId).ifPresent(rfp -> {
+            rfp.markPublished();
+            rfpRepository.save(rfp);
+        });
+    }
 
-		@Transactional
-		public void close(EntityIdentifier rfpId) {
-				RequestForProposal rfp = find(rfpId);
-				rfp.markClosed(true);
-		}
+    @Transactional
+    public void close(EntityIdentifier rfpId) {
+        RequestForProposal rfp = find(rfpId);
+        rfp.markClosed(true);
+    }
 
-		public Map<String, EntityIdentifier> labelIdsFrom(String... labels) {
-				List<RequirementLabel> labelList = labelRepository.findByLabelInIgnoreCase(List.of(labels));
-				if (labelList.size() != labels.length) {
-						throw new IllegalArgumentException("One or more labels are not found");
-				}
+    public Map<String, EntityIdentifier> labelIdsFrom(String... labels) {
+        List<RequirementLabel> labelList = labelRepository.findByLabelInIgnoreCase(List.of(labels));
+        if (labelList.size() != labels.length) {
+            throw new IllegalArgumentException("One or more labels are not found");
+        }
 
-				return labelList.stream().collect(Collectors.toMap(RequirementLabel::getLabel, RequirementLabel::getId));
-		}
+        return labelList.stream().collect(Collectors.toMap(RequirementLabel::getLabel, RequirementLabel::getId));
+    }
 
-		public EntityIdentifier labelIdFrom(String label) {
-				return labelRepository.findByLabelIgnoreCase(label)
-						.orElseThrow(() -> new IllegalArgumentException("Label Not Found: " + label)).getId();
-		}
+    public EntityIdentifier labelIdFrom(String label) {
+        return labelRepository.findByLabelIgnoreCase(label)
+          .orElseThrow(() -> new IllegalArgumentException("Label Not Found: " + label)).getId();
+    }
 }

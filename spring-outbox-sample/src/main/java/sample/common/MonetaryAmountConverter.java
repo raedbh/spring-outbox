@@ -30,13 +30,13 @@ import org.javamoney.moneta.Money;
 @Converter(autoApply = true)
 public class MonetaryAmountConverter implements AttributeConverter<MonetaryAmount, BigDecimal> {
 
-		@Override
-		public BigDecimal convertToDatabaseColumn(MonetaryAmount amount) {
-				return amount == null ? null : amount.getNumber().numberValue(BigDecimal.class);
-		}
+    @Override
+    public BigDecimal convertToDatabaseColumn(MonetaryAmount amount) {
+        return amount == null ? null : amount.getNumber().numberValue(BigDecimal.class);
+    }
 
-		@Override
-		public MonetaryAmount convertToEntityAttribute(BigDecimal column) {
-				return column == null ? null : Money.of(column, Currencies.EURO);
-		}
+    @Override
+    public MonetaryAmount convertToEntityAttribute(BigDecimal column) {
+        return column == null ? null : Money.of(column, Currencies.EURO);
+    }
 }

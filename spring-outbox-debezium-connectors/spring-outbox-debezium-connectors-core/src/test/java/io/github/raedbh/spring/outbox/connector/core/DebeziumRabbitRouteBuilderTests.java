@@ -46,87 +46,87 @@ import static org.mockito.Mockito.verify;
  */
 class DebeziumRabbitRouteBuilderTests extends CamelTestSupport {
 
-		static final String ENDPOINT_URI = "direct:start";
+    static final String ENDPOINT_URI = "direct:start";
 
-		ProducerTemplate producerTemplate;
-		OutboxMessageProducer messageProducer;
+    ProducerTemplate producerTemplate;
+    OutboxMessageProducer messageProducer;
 
-		@BeforeEach
-		public void setupContext() throws Exception {
+    @BeforeEach
+    public void setupContext() throws Exception {
 
-				messageProducer = mock(OutboxMessageProducer.class);
+        messageProducer = mock(OutboxMessageProducer.class);
 
-				CamelContext camelContext = context();
-				camelContext.addRoutes(new DebeziumRabbitRouteBuilder(messageProducer, ENDPOINT_URI));
+        CamelContext camelContext = context();
+        camelContext.addRoutes(new DebeziumRabbitRouteBuilder(messageProducer, ENDPOINT_URI));
 
-				producerTemplate = camelContext.createProducerTemplate();
-		}
+        producerTemplate = camelContext.createProducerTemplate();
+    }
 
-		@Test
-		void rejectNullMessageProducer() {
-				assertThat(catchThrowable(() -> new DebeziumRabbitRouteBuilder(null, ENDPOINT_URI)))
-						.isInstanceOf(IllegalArgumentException.class)
-						.hasMessageContaining("messageProducer");
-		}
+    @Test
+    void rejectNullMessageProducer() {
+        assertThat(catchThrowable(() -> new DebeziumRabbitRouteBuilder(null, ENDPOINT_URI)))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("messageProducer");
+    }
 
-		@Test
-		void rejectNullCamelComponentUri() {
-				assertThat(catchThrowable(() -> new DebeziumRabbitRouteBuilder(messageProducer, null)))
-						.isInstanceOf(IllegalArgumentException.class)
-						.hasMessageContaining("camelComponentUri");
-		}
+    @Test
+    void rejectNullCamelComponentUri() {
+        assertThat(catchThrowable(() -> new DebeziumRabbitRouteBuilder(messageProducer, null)))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("camelComponentUri");
+    }
 
-		@Test
-		void produceMessageForRead() throws Exception {
-				producerTemplate.sendBodyAndHeader(ENDPOINT_URI, struct(), HEADER_OPERATION, READ.code());
-				verify(messageProducer).produceMessage(any());
-		}
+    @Test
+    void produceMessageForRead() throws Exception {
+        producerTemplate.sendBodyAndHeader(ENDPOINT_URI, struct(), HEADER_OPERATION, READ.code());
+        verify(messageProducer).produceMessage(any());
+    }
 
-		@Test
-		void produceMessageForCreate() throws Exception {
-				producerTemplate.sendBodyAndHeader(ENDPOINT_URI, struct(), HEADER_OPERATION, CREATE.code());
-				verify(messageProducer).produceMessage(any());
-		}
+    @Test
+    void produceMessageForCreate() throws Exception {
+        producerTemplate.sendBodyAndHeader(ENDPOINT_URI, struct(), HEADER_OPERATION, CREATE.code());
+        verify(messageProducer).produceMessage(any());
+    }
 
-		@Test
-		void noMessageProducedForDelete() throws Exception {
-				producerTemplate.sendBodyAndHeader(ENDPOINT_URI, struct(), HEADER_OPERATION, DELETE.code());
-				verify(messageProducer, times(0)).produceMessage(any());
-		}
+    @Test
+    void noMessageProducedForDelete() throws Exception {
+        producerTemplate.sendBodyAndHeader(ENDPOINT_URI, struct(), HEADER_OPERATION, DELETE.code());
+        verify(messageProducer, times(0)).produceMessage(any());
+    }
 
-		@Test
-		void noMessageProducedForUpdate() throws Exception {
-				producerTemplate.sendBodyAndHeader(ENDPOINT_URI, struct(), HEADER_OPERATION, UPDATE.code());
-				verify(messageProducer, times(0)).produceMessage(any());
-		}
+    @Test
+    void noMessageProducedForUpdate() throws Exception {
+        producerTemplate.sendBodyAndHeader(ENDPOINT_URI, struct(), HEADER_OPERATION, UPDATE.code());
+        verify(messageProducer, times(0)).produceMessage(any());
+    }
 
-		@Test
-		void rejectUnsupportedBodyType() {
-				var exception = catchThrowable(() ->
-						producerTemplate.sendBodyAndHeader(ENDPOINT_URI, "UnsupportedBodyType", HEADER_OPERATION, CREATE.code())
-				);
+    @Test
+    void rejectUnsupportedBodyType() {
+        var exception = catchThrowable(() ->
+          producerTemplate.sendBodyAndHeader(ENDPOINT_URI, "UnsupportedBodyType", HEADER_OPERATION, CREATE.code())
+        );
 
-				assertThat(exception).isInstanceOf(CamelExecutionException.class);
-				assertThat(exception.getCause())
-						.isInstanceOf(IllegalArgumentException.class)
-						.hasMessageContaining("Unsupported type");
-		}
+        assertThat(exception).isInstanceOf(CamelExecutionException.class);
+        assertThat(exception.getCause())
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("Unsupported type");
+    }
 
-		private Struct struct() {
-				var struct = new Struct(schema());
-				struct.put("id", "12345");
-				struct.put("type", "Type");
-				struct.put("payload", "The Payload".getBytes());
-				return struct;
-		}
+    private Struct struct() {
+        var struct = new Struct(schema());
+        struct.put("id", "12345");
+        struct.put("type", "Type");
+        struct.put("payload", "The Payload".getBytes());
+        return struct;
+    }
 
-		private Schema schema() {
-				return SchemaBuilder.struct().name("test")
-						.field("id", Schema.STRING_SCHEMA)
-						.field("type", Schema.STRING_SCHEMA)
-						.field("payload", Schema.BYTES_SCHEMA)
-						.field("related_to", Schema.OPTIONAL_STRING_SCHEMA)
-						.field("metadata", Schema.OPTIONAL_STRING_SCHEMA)
-						.build();
-		}
+    private Schema schema() {
+        return SchemaBuilder.struct().name("test")
+          .field("id", Schema.STRING_SCHEMA)
+          .field("type", Schema.STRING_SCHEMA)
+          .field("payload", Schema.BYTES_SCHEMA)
+          .field("related_to", Schema.OPTIONAL_STRING_SCHEMA)
+          .field("metadata", Schema.OPTIONAL_STRING_SCHEMA)
+          .build();
+    }
 }

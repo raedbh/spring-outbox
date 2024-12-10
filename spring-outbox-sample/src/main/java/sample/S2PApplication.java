@@ -15,7 +15,7 @@ import io.github.raedbh.spring.outbox.jpa.OutboxJpaRepositoryFactoryBean;
 @EnableJpaRepositories(repositoryFactoryBeanClass = OutboxJpaRepositoryFactoryBean.class)
 public class S2PApplication {
 
-		public static void main(String[] args) {
-				SpringApplication.run(S2PApplication.class, args);
-		}
+    public static void main(String[] args) {
+        SpringApplication.run(S2PApplication.class, args);
+    }
 }

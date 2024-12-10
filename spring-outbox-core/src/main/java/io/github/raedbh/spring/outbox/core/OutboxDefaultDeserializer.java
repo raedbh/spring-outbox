@@ -29,21 +29,21 @@ import org.springframework.core.serializer.Deserializer;
  */
 public class OutboxDefaultDeserializer implements Deserializer<Serializable> {
 
-		private final DefaultDeserializer defaultDeserializer = new DefaultDeserializer();
+    private final DefaultDeserializer defaultDeserializer = new DefaultDeserializer();
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Serializable deserialize(InputStream inputStream) throws IOException {
-				return (Serializable) defaultDeserializer.deserialize(inputStream);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Serializable deserialize(InputStream inputStream) throws IOException {
+        return (Serializable) defaultDeserializer.deserialize(inputStream);
+    }
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public Serializable deserializeFromByteArray(byte[] serialized) throws IOException {
-				return (Serializable) defaultDeserializer.deserializeFromByteArray(serialized);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Serializable deserializeFromByteArray(byte[] serialized) throws IOException {
+        return (Serializable) defaultDeserializer.deserializeFromByteArray(serialized);
+    }
 }

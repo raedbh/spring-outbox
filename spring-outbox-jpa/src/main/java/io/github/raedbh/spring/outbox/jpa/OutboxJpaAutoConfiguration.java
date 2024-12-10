@@ -48,43 +48,43 @@ import io.github.raedbh.spring.outbox.core.OutboxRepository;
 @EnableConfigurationProperties(RdbmsConfigurationProperties.class)
 public class OutboxJpaAutoConfiguration {
 
-		@Bean
-		static BeanPostProcessor entityManagerFactoryBeanPostProcessor() {
-				return new BeanPostProcessor() {
-						@Override
-						public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-								if (bean instanceof LocalContainerEntityManagerFactoryBean factoryBean) {
-										factoryBean.setPersistenceUnitPostProcessors(pui -> {
-												String name = JpaOutboxEntry.class.getName();
-												pui.addManagedClassName(name);
-										});
-								}
-								return bean;
-						}
-				};
-		}
+    @Bean
+    static BeanPostProcessor entityManagerFactoryBeanPostProcessor() {
+        return new BeanPostProcessor() {
+            @Override
+            public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+                if (bean instanceof LocalContainerEntityManagerFactoryBean factoryBean) {
+                    factoryBean.setPersistenceUnitPostProcessors(pui -> {
+                        String name = JpaOutboxEntry.class.getName();
+                        pui.addManagedClassName(name);
+                    });
+                }
+                return bean;
+            }
+        };
+    }
 
-		@Bean
-		OutboxSchemaAwareExecution outboxSchemaAwareExecution(EntityManager entityManager,
-				RdbmsConfigurationProperties rdbmsConfigProperties) {
-				return new OutboxSchemaAwareExecution(entityManager, rdbmsConfigProperties.getSchema());
-		}
+    @Bean
+    OutboxSchemaAwareExecution outboxSchemaAwareExecution(EntityManager entityManager,
+      RdbmsConfigurationProperties rdbmsConfigProperties) {
+        return new OutboxSchemaAwareExecution(entityManager, rdbmsConfigProperties.getSchema());
+    }
 
-		@Bean
-		OutboxRepository outboxRepository(OutboxSchemaAwareExecution outboxSchemaAwareExecution) {
-				return new JpaOutboxRepository(outboxSchemaAwareExecution);
-		}
+    @Bean
+    OutboxRepository outboxRepository(OutboxSchemaAwareExecution outboxSchemaAwareExecution) {
+        return new JpaOutboxRepository(outboxSchemaAwareExecution);
+    }
 
-		@Bean
-		@ConditionalOnProperty(prefix = "spring.outbox.rdbms", name = "auto-create", havingValue = "true")
-		OutboxTableSchemaInitializer outboxTableSchemaInitializer(ResourceLoader resourceLoader,
-				TransactionTemplate transactionTemplate,
-				OutboxSchemaAwareExecution outboxSchemaAwareExecution,
-				HibernateProperties hibernateProperties) {
+    @Bean
+    @ConditionalOnProperty(prefix = "spring.outbox.rdbms", name = "auto-create", havingValue = "true")
+    OutboxTableSchemaInitializer outboxTableSchemaInitializer(ResourceLoader resourceLoader,
+      TransactionTemplate transactionTemplate,
+      OutboxSchemaAwareExecution outboxSchemaAwareExecution,
+      HibernateProperties hibernateProperties) {
 
-				return new OutboxTableSchemaInitializer(resourceLoader,
-						transactionTemplate,
-						outboxSchemaAwareExecution,
-						hibernateProperties);
-		}
+        return new OutboxTableSchemaInitializer(resourceLoader,
+          transactionTemplate,
+          outboxSchemaAwareExecution,
+          hibernateProperties);
+    }
 }

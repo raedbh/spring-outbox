@@ -23,19 +23,19 @@ import java.io.Serializable;
  */
 public class ProposalMessageBody implements Serializable {
 
-		public String id;
-		public String rfpId;
-		public String vendorId;
-		public String status;
+    public String id;
+    public String rfpId;
+    public String vendorId;
+    public String status;
 
 
-		public ProposalMessageBody() {
-		}
+    public ProposalMessageBody() {
+    }
 
-		public ProposalMessageBody(String id, String rfpId, String vendorId, String status) {
-				this.id = id;
-				this.rfpId = rfpId;
-				this.vendorId = vendorId;
-				this.status = status;
-		}
+    public ProposalMessageBody(String id, String rfpId, String vendorId, String status) {
+        this.id = id;
+        this.rfpId = rfpId;
+        this.vendorId = vendorId;
+        this.status = status;
+    }
 }

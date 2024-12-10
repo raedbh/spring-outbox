@@ -24,14 +24,14 @@ import java.util.List;
  */
 public class CreateRfpRequest {
 
-		public String title;
-		public String description;
-		public List<Requirement> requirements;
-		public LocalDateTime submissionDeadline;
+    public String title;
+    public String description;
+    public List<Requirement> requirements;
+    public LocalDateTime submissionDeadline;
 
-		public static class Requirement {
+    public static class Requirement {
 
-				public String id;
-				public String description;
-		}
+        public String id;
+        public String description;
+    }
 }

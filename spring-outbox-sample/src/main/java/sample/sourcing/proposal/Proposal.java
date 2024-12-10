@@ -40,149 +40,149 @@ import sample.vendor.Vendor;
 @Table(name = "proposals")
 public class Proposal extends RootEntity implements AggregateRoot<Proposal, EntityIdentifier> {
 
-		private final EntityIdentifier id;
-		private final Association<RequestForProposal, EntityIdentifier> rfp;
-		private final Association<Vendor, EntityIdentifier> vendor;
-		private final String details;
-		private final MonetaryAmount proposalAmount;
+    private final EntityIdentifier id;
+    private final Association<RequestForProposal, EntityIdentifier> rfp;
+    private final Association<Vendor, EntityIdentifier> vendor;
+    private final String details;
+    private final MonetaryAmount proposalAmount;
 
-		private LocalDateTime submittedAt;
-		private LocalDateTime reviewStartedAt;
-		private Status status;
-
-
-		public Proposal(RequestForProposal rfp, Vendor vendor, String details, BigDecimal proposalAmount) {
-				this.id = EntityIdentifier.generate();
-				this.rfp = Association.forAggregate(rfp);
-				this.vendor = Association.forAggregate(vendor);
-				this.details = details;
-				this.proposalAmount = Money.of(proposalAmount, Currencies.EURO);
-				this.submittedAt = null;
-				this.reviewStartedAt = null;
-				this.status = Status.CREATED;
-		}
+    private LocalDateTime submittedAt;
+    private LocalDateTime reviewStartedAt;
+    private Status status;
 
 
-		public Proposal markSubmitted() {
-				return markSubmittedAt(LocalDateTime.now());
-		}
+    public Proposal(RequestForProposal rfp, Vendor vendor, String details, BigDecimal proposalAmount) {
+        this.id = EntityIdentifier.generate();
+        this.rfp = Association.forAggregate(rfp);
+        this.vendor = Association.forAggregate(vendor);
+        this.details = details;
+        this.proposalAmount = Money.of(proposalAmount, Currencies.EURO);
+        this.submittedAt = null;
+        this.reviewStartedAt = null;
+        this.status = Status.CREATED;
+    }
 
-		public Proposal markSubmittedAt(LocalDateTime submittedAt) {
-				Assert.state(this.status == Status.CREATED,
-						"The proposal can be submitted only after being created. Current status: " + this.status);
 
-				this.status = Status.SUBMITTED;
-				this.submittedAt = submittedAt;
-				return this;
-		}
+    public Proposal markSubmitted() {
+        return markSubmittedAt(LocalDateTime.now());
+    }
 
-		public Proposal markReviewStarted() {
-				return markReviewStartedAt(LocalDateTime.now());
-		}
+    public Proposal markSubmittedAt(LocalDateTime submittedAt) {
+        Assert.state(this.status == Status.CREATED,
+          "The proposal can be submitted only after being created. Current status: " + this.status);
 
-		public Proposal markReviewStartedAt(LocalDateTime reviewStartedAt) {
-				Assert.state(this.status == Status.SUBMITTED,
-						"The proposal review can be started only after the proposal is submitted. Current status: " + this.status);
+        this.status = Status.SUBMITTED;
+        this.submittedAt = submittedAt;
+        return this;
+    }
 
-				this.status = Status.UNDER_REVIEW;
-				this.reviewStartedAt = reviewStartedAt;
-				return this;
-		}
+    public Proposal markReviewStarted() {
+        return markReviewStartedAt(LocalDateTime.now());
+    }
 
-		/**
-		 * Mark the proposal as awarded, indicating it has been selected as the winning bid.
-		 */
-		public Proposal markAwarded() {
-				Assert.state(this.status == Status.UNDER_REVIEW,
-						"Cannot award a proposal that is not under review! Current status: " + this.status);
-				this.status = Status.AWARDED;
+    public Proposal markReviewStartedAt(LocalDateTime reviewStartedAt) {
+        Assert.state(this.status == Status.SUBMITTED,
+          "The proposal review can be started only after the proposal is submitted. Current status: " + this.status);
 
-				assignEvent(new ProposalAwarded(this));
+        this.status = Status.UNDER_REVIEW;
+        this.reviewStartedAt = reviewStartedAt;
+        return this;
+    }
 
-				return this;
-		}
+    /**
+     * Mark the proposal as awarded, indicating it has been selected as the winning bid.
+     */
+    public Proposal markAwarded() {
+        Assert.state(this.status == Status.UNDER_REVIEW,
+          "Cannot award a proposal that is not under review! Current status: " + this.status);
+        this.status = Status.AWARDED;
 
-		public Proposal markRejected() {
-				Assert.state(this.status != Status.AWARDED, "An awarded proposal cannot be rejected!");
-				this.status = Status.REJECTED;
-				return this;
-		}
+        assignEvent(new ProposalAwarded(this));
 
-		@Override
-		public boolean equals(Object obj) {
-				if (this == obj) {
-						return true;
-				}
-				if (obj == null || getClass() != obj.getClass()) {
-						return false;
-				}
-				Proposal proposal = (Proposal) obj;
-				return Objects.equals(id, proposal.id);
-		}
+        return this;
+    }
 
-		@Override
-		public int hashCode() {
-				return Objects.hash(id);
-		}
+    public Proposal markRejected() {
+        Assert.state(this.status != Status.AWARDED, "An awarded proposal cannot be rejected!");
+        this.status = Status.REJECTED;
+        return this;
+    }
 
-		@Override
-		public EntityIdentifier getId() {
-				return id;
-		}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Proposal proposal = (Proposal) obj;
+        return Objects.equals(id, proposal.id);
+    }
 
-		public Association<RequestForProposal, EntityIdentifier> getRfp() {
-				return rfp;
-		}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
-		public Association<Vendor, EntityIdentifier> getVendor() {
-				return vendor;
-		}
+    @Override
+    public EntityIdentifier getId() {
+        return id;
+    }
 
-		public String getDetails() {
-				return details;
-		}
+    public Association<RequestForProposal, EntityIdentifier> getRfp() {
+        return rfp;
+    }
 
-		public MonetaryAmount getProposalAmount() {
-				return proposalAmount;
-		}
+    public Association<Vendor, EntityIdentifier> getVendor() {
+        return vendor;
+    }
 
-		public LocalDateTime getSubmittedAt() {
-				return submittedAt;
-		}
+    public String getDetails() {
+        return details;
+    }
 
-		public LocalDateTime getReviewStartedAt() {
-				return reviewStartedAt;
-		}
+    public MonetaryAmount getProposalAmount() {
+        return proposalAmount;
+    }
 
-		public Status getStatus() {
-				return status;
-		}
+    public LocalDateTime getSubmittedAt() {
+        return submittedAt;
+    }
 
-		public enum Status {
+    public LocalDateTime getReviewStartedAt() {
+        return reviewStartedAt;
+    }
 
-				/**
-				 * The proposal has been created but not yet submitted by the vendor.
-				 */
-				CREATED,
+    public Status getStatus() {
+        return status;
+    }
 
-				/**
-				 * The proposal has been submitted by a vendor and is awaiting review.
-				 */
-				SUBMITTED,
+    public enum Status {
 
-				/**
-				 * The proposal is under review and being evaluated by the purchasing department.
-				 */
-				UNDER_REVIEW,
+        /**
+         * The proposal has been created but not yet submitted by the vendor.
+         */
+        CREATED,
 
-				/**
-				 * The proposal has been awarded as the winning bid.
-				 */
-				AWARDED,
+        /**
+         * The proposal has been submitted by a vendor and is awaiting review.
+         */
+        SUBMITTED,
 
-				/**
-				 * The proposal has been rejected after review.
-				 */
-				REJECTED
-		}
+        /**
+         * The proposal is under review and being evaluated by the purchasing department.
+         */
+        UNDER_REVIEW,
+
+        /**
+         * The proposal has been awarded as the winning bid.
+         */
+        AWARDED,
+
+        /**
+         * The proposal has been rejected after review.
+         */
+        REJECTED
+    }
 }

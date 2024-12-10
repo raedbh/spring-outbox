@@ -44,40 +44,40 @@ import org.springframework.util.ClassUtils;
  */
 public class SerializableTargetConverterRegistry {
 
-		private static final Logger LOGGER = LoggerFactory.getLogger(SerializableTargetConverterRegistry.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SerializableTargetConverterRegistry.class);
 
-		private final Map<Class<?>, Converter<Object, Serializable>> serializableTargetConverters = new HashMap<>();
+    private final Map<Class<?>, Converter<Object, Serializable>> serializableTargetConverters = new HashMap<>();
 
-		@SuppressWarnings("unchecked")
-		public SerializableTargetConverterRegistry(Set<Converter<?, ?>> converters) {
-				for (Converter<?, ?> converter : converters) {
-						for (Type type : converter.getClass().getGenericInterfaces()) {
+    @SuppressWarnings("unchecked")
+    public SerializableTargetConverterRegistry(Set<Converter<?, ?>> converters) {
+        for (Converter<?, ?> converter : converters) {
+            for (Type type : converter.getClass().getGenericInterfaces()) {
 
-								if (type instanceof ParameterizedType paramType &&
-										paramType.getRawType() == Converter.class &&
-										paramType.getActualTypeArguments().length == 2) {
+                if (type instanceof ParameterizedType paramType &&
+                  paramType.getRawType() == Converter.class &&
+                  paramType.getActualTypeArguments().length == 2) {
 
-										Type[] typeArgs = paramType.getActualTypeArguments();
+                    Type[] typeArgs = paramType.getActualTypeArguments();
 
-										if (ClassUtils.isAssignable(Serializable.class, typeArgs[1].getClass())) {
-												Class<?> sourceType = (Class<?>) typeArgs[0];
+                    if (ClassUtils.isAssignable(Serializable.class, typeArgs[1].getClass())) {
+                        Class<?> sourceType = (Class<?>) typeArgs[0];
 
-												if (serializableTargetConverters.putIfAbsent(sourceType,
-														(Converter<Object, Serializable>) converter) != null) {
-														throw new IllegalStateException(
-																"Multiple converters found for source type: " + sourceType.getName());
-												}
+                        if (serializableTargetConverters.putIfAbsent(sourceType,
+                          (Converter<Object, Serializable>) converter) != null) {
+                            throw new IllegalStateException(
+                              "Multiple converters found for source type: " + sourceType.getName());
+                        }
 
-												LOGGER.info(
-														"Registered converter with a serializable target for source type: {}",
-														sourceType.getName());
-										}
-								}
-						}
-				}
-		}
+                        LOGGER.info(
+                          "Registered converter with a serializable target for source type: {}",
+                          sourceType.getName());
+                    }
+                }
+            }
+        }
+    }
 
-		Optional<Converter<Object, Serializable>> getConverter(Class<?> sourceType) {
-				return Optional.ofNullable(serializableTargetConverters.get(sourceType));
-		}
+    Optional<Converter<Object, Serializable>> getConverter(Class<?> sourceType) {
+        return Optional.ofNullable(serializableTargetConverters.get(sourceType));
+    }
 }

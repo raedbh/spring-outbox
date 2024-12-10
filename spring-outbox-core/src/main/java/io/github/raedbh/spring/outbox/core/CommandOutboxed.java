@@ -27,7 +27,7 @@ import java.io.Serializable;
  */
 public interface CommandOutboxed extends Serializable {
 
-		default String getName() {
-				return this.getClass().getSimpleName();
-		}
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

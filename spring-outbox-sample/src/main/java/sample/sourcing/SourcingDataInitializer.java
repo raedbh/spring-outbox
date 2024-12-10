@@ -30,23 +30,23 @@ import sample.sourcing.rfp.RequirementLabelRepository;
 @Component
 class SourcingDataInitializer implements ApplicationRunner {
 
-		private final RequirementLabelRepository labels;
+    private final RequirementLabelRepository labels;
 
-		SourcingDataInitializer(RequirementLabelRepository labels) {
-				this.labels = labels;
-		}
+    SourcingDataInitializer(RequirementLabelRepository labels) {
+        this.labels = labels;
+    }
 
-		@Override
-		public void run(ApplicationArguments args) {
-				if (noRequirementLabelsExist()) {
-						labels.saveAll(Arrays.asList(
-								new RequirementLabel("Technical Skills"), new RequirementLabel("Project Management"),
-								new RequirementLabel("Deliverables"), new RequirementLabel("Time Frame"),
-								new RequirementLabel("Experience"), new RequirementLabel("Communication")));
-				}
-		}
+    @Override
+    public void run(ApplicationArguments args) {
+        if (noRequirementLabelsExist()) {
+            labels.saveAll(Arrays.asList(
+              new RequirementLabel("Technical Skills"), new RequirementLabel("Project Management"),
+              new RequirementLabel("Deliverables"), new RequirementLabel("Time Frame"),
+              new RequirementLabel("Experience"), new RequirementLabel("Communication")));
+        }
+    }
 
-		boolean noRequirementLabelsExist() {
-				return labels.count() == 0;
-		}
+    boolean noRequirementLabelsExist() {
+        return labels.count() == 0;
+    }
 }

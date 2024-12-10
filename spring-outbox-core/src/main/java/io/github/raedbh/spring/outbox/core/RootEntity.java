@@ -31,24 +31,24 @@ import org.springframework.util.Assert;
  */
 public abstract class RootEntity implements Identifiable, Serializable {
 
-		@Nullable
-		transient private EventOutboxed<? extends RootEntity> event;
+    @Nullable
+    transient private EventOutboxed<? extends RootEntity> event;
 
-		public abstract Object getId();
+    public abstract Object getId();
 
-		public void assignEvent(EventOutboxed<? extends RootEntity> event) {
-				Assert.notNull(event, "Event must not be null");
-				Assert.state(this.event == null, "An event has already been assigned for this entity");
+    public void assignEvent(EventOutboxed<? extends RootEntity> event) {
+        Assert.notNull(event, "Event must not be null");
+        Assert.state(this.event == null, "An event has already been assigned for this entity");
 
-				this.event = event;
-		}
+        this.event = event;
+    }
 
-		@Nullable
-		EventOutboxed<? extends RootEntity> event() {
-				return event;
-		}
+    @Nullable
+    EventOutboxed<? extends RootEntity> event() {
+        return event;
+    }
 
-		public boolean withNoEventAssigned() {
-				return this.event == null;
-		}
+    public boolean withNoEventAssigned() {
+        return this.event == null;
+    }
 }

@@ -22,5 +22,5 @@ package io.github.raedbh.spring.outbox.core;
  */
 public interface OutboxRepository {
 
-		void save(OutboxEntry entry);
+    void save(OutboxEntry entry);
 }

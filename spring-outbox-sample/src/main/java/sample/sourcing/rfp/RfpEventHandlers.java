@@ -28,21 +28,21 @@ import sample.sourcing.common.ProposalMessageBody;
  */
 class RfpEventHandlers {
 
-		@Component
-		static class ProposalAwardHandler {
+    @Component
+    static class ProposalAwardHandler {
 
-				private final RfpManagement rfpManagement;
+        private final RfpManagement rfpManagement;
 
-				ProposalAwardHandler(RfpManagement rfpManagement) {
-						this.rfpManagement = rfpManagement;
-				}
+        ProposalAwardHandler(RfpManagement rfpManagement) {
+            this.rfpManagement = rfpManagement;
+        }
 
-				@RabbitListener(queues = "rfp.proposals")
-				void onProposalAwarded(@MessageWith(operation = "award") ProposalMessageBody proposalMessageBody) {
-						if (proposalMessageBody == null) {
-								return;
-						}
-						rfpManagement.close(EntityIdentifier.fromString(proposalMessageBody.rfpId));
-				}
-		}
+        @RabbitListener(queues = "rfp.proposals")
+        void onProposalAwarded(@MessageWith(operation = "award") ProposalMessageBody proposalMessageBody) {
+            if (proposalMessageBody == null) {
+                return;
+            }
+            rfpManagement.close(EntityIdentifier.fromString(proposalMessageBody.rfpId));
+        }
+    }
 }

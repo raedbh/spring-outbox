@@ -24,16 +24,16 @@ import io.github.raedbh.spring.outbox.core.EventOutboxed;
  */
 public class OrderPaid extends EventOutboxed<Order> {
 
-		public OrderPaid(Order source) {
-				super(source);
-		}
+    public OrderPaid(Order source) {
+        super(source);
+    }
 
-		public OrderPaid(Order source, CommandOutboxed cmd) {
-				super(source, cmd);
-		}
+    public OrderPaid(Order source, CommandOutboxed cmd) {
+        super(source, cmd);
+    }
 
-		@Override
-		public String getOperation() {
-				return "payment";
-		}
+    @Override
+    public String getOperation() {
+        return "payment";
+    }
 }

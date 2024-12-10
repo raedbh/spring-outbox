@@ -23,16 +23,17 @@ import java.math.BigDecimal;
  * @author Raed Ben Hamouda
  */
 public class OrderMessageBody implements Serializable {
-	public String orderId;
-	public String customerId;
-	public BigDecimal totalAmount;
 
-	public OrderMessageBody() {
-	}
+    public String orderId;
+    public String customerId;
+    public BigDecimal totalAmount;
 
-	public OrderMessageBody(String orderId, String customerId, BigDecimal totalAmount) {
-		this.orderId = orderId;
-		this.customerId = customerId;
-		this.totalAmount = totalAmount;
-	}
+    public OrderMessageBody() {
+    }
+
+    public OrderMessageBody(String orderId, String customerId, BigDecimal totalAmount) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.totalAmount = totalAmount;
+    }
 }

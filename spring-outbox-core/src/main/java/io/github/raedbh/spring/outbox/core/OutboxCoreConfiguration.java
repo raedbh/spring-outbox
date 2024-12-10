@@ -36,26 +36,26 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration(proxyBeanMethods = false)
 public class OutboxCoreConfiguration {
 
-		@Bean
-		SerializableTargetConverterRegistry converterRegistry(Set<Converter<?, ?>> converters) {
-				return new SerializableTargetConverterRegistry(converters);
-		}
+    @Bean
+    SerializableTargetConverterRegistry converterRegistry(Set<Converter<?, ?>> converters) {
+        return new SerializableTargetConverterRegistry(converters);
+    }
 
-		@Bean
-		@ConditionalOnMissingBean
-		Serializer<Serializable> outboxSerializer() {
-				return new OutboxDefaultSerializer();
-		}
+    @Bean
+    @ConditionalOnMissingBean
+    Serializer<Serializable> outboxSerializer() {
+        return new OutboxDefaultSerializer();
+    }
 
-		@Bean
-		@ConditionalOnMissingBean
-		Deserializer<Serializable> outboxDeserializer() {
-				return new OutboxDefaultDeserializer();
-		}
+    @Bean
+    @ConditionalOnMissingBean
+    Deserializer<Serializable> outboxDeserializer() {
+        return new OutboxDefaultDeserializer();
+    }
 
-		@Bean
-		OutboxManager outboxManager(OutboxRepository outboxRepository, Serializer<Serializable> outboxSerializer,
-				PlatformTransactionManager transactionManager, SerializableTargetConverterRegistry converterRegistry) {
-				return new OutboxManager(outboxRepository, outboxSerializer, transactionManager, converterRegistry);
-		}
+    @Bean
+    OutboxManager outboxManager(OutboxRepository outboxRepository, Serializer<Serializable> outboxSerializer,
+      PlatformTransactionManager transactionManager, SerializableTargetConverterRegistry converterRegistry) {
+        return new OutboxManager(outboxRepository, outboxSerializer, transactionManager, converterRegistry);
+    }
 }

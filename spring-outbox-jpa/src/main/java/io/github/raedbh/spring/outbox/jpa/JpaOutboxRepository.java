@@ -29,27 +29,25 @@ import io.github.raedbh.spring.outbox.core.OutboxRepository;
  */
 class JpaOutboxRepository implements OutboxRepository {
 
-		private final OutboxSchemaAwareExecution outboxSchemaAwareExecution;
+    private final OutboxSchemaAwareExecution outboxSchemaAwareExecution;
 
+    JpaOutboxRepository(OutboxSchemaAwareExecution outboxSchemaAwareExecution) {
+        this.outboxSchemaAwareExecution = outboxSchemaAwareExecution;
+    }
 
-		JpaOutboxRepository(OutboxSchemaAwareExecution outboxSchemaAwareExecution) {
-				this.outboxSchemaAwareExecution = outboxSchemaAwareExecution;
-		}
+    @Override
+    public void save(OutboxEntry entry) {
+        try {
+            outboxSchemaAwareExecution.execute(false, false, context -> {
+                var relatedTo = entry.getRelatedTo() == null ? null : entry.getRelatedTo().value();
+                JpaOutboxEntry jpaEntry = new JpaOutboxEntry(entry.getId().value(),
+                  entry.getType(), entry.getPayload(),
+                  relatedTo, entry.getMetadata());
 
-
-		@Override
-		public void save(OutboxEntry entry) {
-				try {
-						outboxSchemaAwareExecution.execute(false, false, context -> {
-								var relatedTo = entry.getRelatedTo() == null ? null : entry.getRelatedTo().value();
-								JpaOutboxEntry jpaEntry = new JpaOutboxEntry(entry.getId().value(),
-										entry.getType(), entry.getPayload(),
-										relatedTo, entry.getMetadata());
-
-								context.entityManager().persist(jpaEntry);
-						});
-				} catch (SQLException e) {
-						throw new RuntimeException(e);
-				}
-		}
+                context.entityManager().persist(jpaEntry);
+            });
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

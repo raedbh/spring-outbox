@@ -25,8 +25,8 @@ import sample.common.EntityIdentifier;
  */
 public class ProposalRequest {
 
-		public EntityIdentifier rfpId;
-		public EntityIdentifier vendorId;
-		public String details;
-		public BigDecimal amount;
+    public EntityIdentifier rfpId;
+    public EntityIdentifier vendorId;
+    public String details;
+    public BigDecimal amount;
 }

@@ -27,11 +27,11 @@ import sample.sourcing.common.ProposalMessageBody;
 @Component
 public class ProposalAwardedConverter implements Converter<Proposal, ProposalMessageBody> {
 
-		@Override
-		public ProposalMessageBody convert(Proposal from) {
-				return new ProposalMessageBody(from.getId().toString(),
-						from.getRfp().getId().toString(),
-						from.getVendor().getId().toString(),
-						from.getStatus().toString());
-		}
+    @Override
+    public ProposalMessageBody convert(Proposal from) {
+        return new ProposalMessageBody(from.getId().toString(),
+          from.getRfp().getId().toString(),
+          from.getVendor().getId().toString(),
+          from.getStatus().toString());
+    }
 }

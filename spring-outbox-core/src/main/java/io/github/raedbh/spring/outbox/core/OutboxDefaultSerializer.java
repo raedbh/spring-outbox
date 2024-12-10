@@ -30,24 +30,24 @@ import org.springframework.core.serializer.Serializer;
  */
 public class OutboxDefaultSerializer implements Serializer<Serializable> {
 
-		private final DefaultSerializer defaultSerializer = new DefaultSerializer();
+    private final DefaultSerializer defaultSerializer = new DefaultSerializer();
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void serialize(Serializable object, OutputStream outputStream) throws IOException {
-				defaultSerializer.serialize(object, outputStream);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void serialize(Serializable object, OutputStream outputStream) throws IOException {
+        defaultSerializer.serialize(object, outputStream);
+    }
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public byte[] serializeToByteArray(Serializable object) throws IOException {
-				try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-						defaultSerializer.serialize(object, outputStream);
-						return outputStream.toByteArray();
-				}
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] serializeToByteArray(Serializable object) throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            defaultSerializer.serialize(object, outputStream);
+            return outputStream.toByteArray();
+        }
+    }
 }

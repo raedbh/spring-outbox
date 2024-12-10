@@ -30,14 +30,14 @@ import org.springframework.core.serializer.Deserializer;
 @AutoConfiguration
 public class OutboxRabbitAutoConfiguration implements RabbitListenerConfigurer {
 
-		private final Deserializer<Serializable> deserializer;
+    private final Deserializer<Serializable> deserializer;
 
-		public OutboxRabbitAutoConfiguration(Deserializer<Serializable> deserializer) {
-				this.deserializer = deserializer;
-		}
+    public OutboxRabbitAutoConfiguration(Deserializer<Serializable> deserializer) {
+        this.deserializer = deserializer;
+    }
 
-		@Override
-		public void configureRabbitListeners(RabbitListenerEndpointRegistrar registrar) {
-				registrar.setCustomMethodArgumentResolvers(new OutboxMethodArgumentResolver(deserializer));
-		}
+    @Override
+    public void configureRabbitListeners(RabbitListenerEndpointRegistrar registrar) {
+        registrar.setCustomMethodArgumentResolvers(new OutboxMethodArgumentResolver(deserializer));
+    }
 }

@@ -27,5 +27,5 @@ import sample.common.EntityIdentifier;
  */
 public interface Vendors extends CrudRepository<Vendor, EntityIdentifier> {
 
-		Optional<Vendor> findByName(String name);
+    Optional<Vendor> findByName(String name);
 }

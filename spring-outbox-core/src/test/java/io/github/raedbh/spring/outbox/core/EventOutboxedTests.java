@@ -34,40 +34,40 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  */
 class EventOutboxedTests {
 
-		@Test
-		void rejectNullSource() {
-				assertThatExceptionOfType(IllegalArgumentException.class)
-						.isThrownBy(() -> new OrderPaid(null))
-						.withMessageContaining("source");
-		}
+    @Test
+    void rejectNullSource() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(() -> new OrderPaid(null))
+          .withMessageContaining("source");
+    }
 
-		@Test
-		void rejectNullCommand() {
+    @Test
+    void rejectNullCommand() {
 
-				assertThatExceptionOfType(IllegalArgumentException.class)
-						.isThrownBy(() -> new OrderPaid(new Order(), null))
-						.withMessageContaining("Command");
+        assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(() -> new OrderPaid(new Order(), null))
+          .withMessageContaining("Command");
 
-				assertThatExceptionOfType(IllegalArgumentException.class)
-						.isThrownBy(() -> new OrderPaid(new Order()).addCommand(null))
-						.withMessageContaining("Command");
+        assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(() -> new OrderPaid(new Order()).addCommand(null))
+          .withMessageContaining("Command");
 
-				assertThatExceptionOfType(IllegalArgumentException.class)
-						.isThrownBy(() -> new OrderPaid(new Order()).addCommands(null, null))
-						.withMessageContaining("Command");
-		}
+        assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(() -> new OrderPaid(new Order()).addCommands(null, null))
+          .withMessageContaining("Command");
+    }
 
-		@Test
-		void withCommands() {
+    @Test
+    void withCommands() {
 
-				SmsNotification smsNotification = new SmsNotification();
-				EmailNotification emailNotification = new EmailNotification();
+        SmsNotification smsNotification = new SmsNotification();
+        EmailNotification emailNotification = new EmailNotification();
 
-				OrderPaid event = new OrderPaid(new Order());
-				event.addCommands(smsNotification, emailNotification);
+        OrderPaid event = new OrderPaid(new Order());
+        event.addCommands(smsNotification, emailNotification);
 
-				assertThat(event.getCommands())
-						.hasSize(2)
-						.containsExactly(smsNotification, emailNotification);
-		}
+        assertThat(event.getCommands())
+          .hasSize(2)
+          .containsExactly(smsNotification, emailNotification);
+    }
 }

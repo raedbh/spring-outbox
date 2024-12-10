@@ -30,34 +30,34 @@ import org.springframework.lang.Nullable;
  */
 class RabbitConfigProvider {
 
-		private static final String CONFIG_PREFIX = "spring.outbox.connector.rabbit.messages";
+    private static final String CONFIG_PREFIX = "spring.outbox.connector.rabbit.messages";
 
-		private final Map<String, String> configCache;
-		private final Environment environment;
-
-
-		RabbitConfigProvider(Environment environment) {
-				this.environment = environment;
-				this.configCache = new HashMap<>();
-		}
+    private final Map<String, String> configCache;
+    private final Environment environment;
 
 
-		private static String toKebabCase(String input) {
-				return input.replaceAll("([a-z])([A-Z])", "$1-$2").toLowerCase();
-		}
+    RabbitConfigProvider(Environment environment) {
+        this.environment = environment;
+        this.configCache = new HashMap<>();
+    }
 
-		RabbitConfig rabbitConfig(String outboxType) {
-				String typeKey = toKebabCase(outboxType);
 
-				String routingKey = getConfigValue(typeKey, "routing-key");
-				String exchange = getConfigValue(typeKey, "exchange");
+    private static String toKebabCase(String input) {
+        return input.replaceAll("([a-z])([A-Z])", "$1-$2").toLowerCase();
+    }
 
-				return new RabbitConfig(routingKey, exchange);
-		}
+    RabbitConfig rabbitConfig(String outboxType) {
+        String typeKey = toKebabCase(outboxType);
 
-		@Nullable
-		private String getConfigValue(String typeKey, String configName) {
-				String propertyKey = "%s.%s.%s".formatted(RabbitConfigProvider.CONFIG_PREFIX, typeKey, configName);
-				return configCache.computeIfAbsent(propertyKey, environment::getProperty);
-		}
+        String routingKey = getConfigValue(typeKey, "routing-key");
+        String exchange = getConfigValue(typeKey, "exchange");
+
+        return new RabbitConfig(routingKey, exchange);
+    }
+
+    @Nullable
+    private String getConfigValue(String typeKey, String configName) {
+        String propertyKey = "%s.%s.%s".formatted(RabbitConfigProvider.CONFIG_PREFIX, typeKey, configName);
+        return configCache.computeIfAbsent(propertyKey, environment::getProperty);
+    }
 }

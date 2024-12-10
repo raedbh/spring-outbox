@@ -28,7 +28,7 @@ import sample.common.EntityIdentifier;
  */
 public interface RequirementLabelRepository extends CrudRepository<RequirementLabel, EntityIdentifier> {
 
-		Optional<RequirementLabel> findByLabelIgnoreCase(String label);
+    Optional<RequirementLabel> findByLabelIgnoreCase(String label);
 
-		List<RequirementLabel> findByLabelInIgnoreCase(List<String> labels);
+    List<RequirementLabel> findByLabelInIgnoreCase(List<String> labels);
 }

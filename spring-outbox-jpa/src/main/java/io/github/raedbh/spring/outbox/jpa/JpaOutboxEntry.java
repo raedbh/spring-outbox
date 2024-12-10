@@ -39,35 +39,35 @@ import org.springframework.lang.Nullable;
 @Table(name = "outbox")
 final class JpaOutboxEntry implements Serializable {
 
-		@Id
-		@Column(length = 16) final UUID id;
+    @Id
+    @Column(length = 16) final UUID id;
 
-		final String type;
+    final String type;
 
-		final byte[] payload;
+    final byte[] payload;
 
-		@Nullable
-		@Column(length = 16) final UUID relatedTo;
+    @Nullable
+    @Column(length = 16) final UUID relatedTo;
 
-		@Nullable
-		@JdbcTypeCode(SqlTypes.JSON) private final Map<String, String> metadata;
+    @Nullable
+    @JdbcTypeCode(SqlTypes.JSON) private final Map<String, String> metadata;
 
 
-		JpaOutboxEntry(UUID id, String type, byte[] payload,
-				@Nullable UUID relatedTo, @Nullable Map<String, String> metadata) {
+    JpaOutboxEntry(UUID id, String type, byte[] payload,
+      @Nullable UUID relatedTo, @Nullable Map<String, String> metadata) {
 
-				this.id = id;
-				this.type = type;
-				this.payload = payload;
-				this.relatedTo = relatedTo;
-				this.metadata = metadata;
-		}
+        this.id = id;
+        this.type = type;
+        this.payload = payload;
+        this.relatedTo = relatedTo;
+        this.metadata = metadata;
+    }
 
-		JpaOutboxEntry() {
-				this.id = null;
-				this.type = null;
-				this.payload = null;
-				this.relatedTo = null;
-				this.metadata = null;
-		}
+    JpaOutboxEntry() {
+        this.id = null;
+        this.type = null;
+        this.payload = null;
+        this.relatedTo = null;
+        this.metadata = null;
+    }
 }

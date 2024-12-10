@@ -26,9 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface Orders extends CrudRepository<Order, UUID> {
 
-		@Transactional
-		default Order markPaid(Order order) {
-				order.markPaid();
-				return save(order);
-		}
+    @Transactional
+    default Order markPaid(Order order) {
+        order.markPaid();
+        return save(order);
+    }
 }

@@ -32,14 +32,14 @@ import sample.sourcing.rfp.RequirementLabelRepository;
 @RequestMapping("/requirements")
 public class RequirementController {
 
-		final RequirementLabelRepository labels;
+    final RequirementLabelRepository labels;
 
-		public RequirementController(RequirementLabelRepository repository) {
-				this.labels = repository;
-		}
+    public RequirementController(RequirementLabelRepository repository) {
+        this.labels = repository;
+    }
 
-		@GetMapping
-		public HttpEntity<Iterable<RequirementLabel>> labels() {
-				return ResponseEntity.ok(labels.findAll());
-		}
+    @GetMapping
+    public HttpEntity<Iterable<RequirementLabel>> labels() {
+        return ResponseEntity.ok(labels.findAll());
+    }
 }

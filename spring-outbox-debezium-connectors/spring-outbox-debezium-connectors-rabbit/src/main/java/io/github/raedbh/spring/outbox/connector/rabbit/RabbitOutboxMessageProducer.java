@@ -34,44 +34,44 @@ import io.github.raedbh.spring.outbox.connector.core.OutboxMessageProducer;
  */
 public class RabbitOutboxMessageProducer implements OutboxMessageProducer {
 
-		private static final Logger LOGGER = LoggerFactory.getLogger(RabbitOutboxMessageProducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitOutboxMessageProducer.class);
 
-		private final RabbitTemplate rabbitTemplate;
-		private final RabbitConfigProvider configProvider;
-
-
-		public RabbitOutboxMessageProducer(RabbitTemplate rabbitTemplate, Environment environment) {
-				this.rabbitTemplate = rabbitTemplate;
-				this.configProvider = new RabbitConfigProvider(environment);
-		}
+    private final RabbitTemplate rabbitTemplate;
+    private final RabbitConfigProvider configProvider;
 
 
-		@Override
-		public void produceMessage(OutboxData outboxData) throws Exception {
+    public RabbitOutboxMessageProducer(RabbitTemplate rabbitTemplate, Environment environment) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.configProvider = new RabbitConfigProvider(environment);
+    }
 
-				RabbitConfig config = configProvider.rabbitConfig(outboxData.getType());
-				if (config.routingKey() == null) {
-						LOGGER.warn("No key found for {}", outboxData.getType());
-						LOGGER.info("To use a specific routing key, make sure the config follows: "
-								+ "spring.outbox.connector.rabbit.messages.order-placed.routing-key for type=OrderPlaced");
-				}
 
-				if (config.exchange() == null) {
-						LOGGER.warn("No exchange found for {}", outboxData.getType());
-				}
+    @Override
+    public void produceMessage(OutboxData outboxData) throws Exception {
 
-				MessageProperties messageProperties = new MessageProperties();
-				Map<String, Object> metadata = outboxData.getMetadata();
-				if (isNotNullOrEmptyMap(metadata)) {
-						messageProperties.setHeaders(metadata);
-				}
-				Message message = new Message(outboxData.getPayload(), messageProperties);
+        RabbitConfig config = configProvider.rabbitConfig(outboxData.getType());
+        if (config.routingKey() == null) {
+            LOGGER.warn("No key found for {}", outboxData.getType());
+            LOGGER.info("To use a specific routing key, make sure the config follows: "
+              + "spring.outbox.connector.rabbit.messages.order-placed.routing-key for type=OrderPlaced");
+        }
 
-				rabbitTemplate.send(config.exchange(), config.routingKey(), message);
-				LOGGER.info("Message sent to exchange '{}' with routing key '{}'.", config.exchange(), config.routingKey());
-		}
+        if (config.exchange() == null) {
+            LOGGER.warn("No exchange found for {}", outboxData.getType());
+        }
 
-		private boolean isNotNullOrEmptyMap(Map<String, Object> metadata) {
-				return metadata != null && !metadata.isEmpty();
-		}
+        MessageProperties messageProperties = new MessageProperties();
+        Map<String, Object> metadata = outboxData.getMetadata();
+        if (isNotNullOrEmptyMap(metadata)) {
+            messageProperties.setHeaders(metadata);
+        }
+        Message message = new Message(outboxData.getPayload(), messageProperties);
+
+        rabbitTemplate.send(config.exchange(), config.routingKey(), message);
+        LOGGER.info("Message sent to exchange '{}' with routing key '{}'.", config.exchange(), config.routingKey());
+    }
+
+    private boolean isNotNullOrEmptyMap(Map<String, Object> metadata) {
+        return metadata != null && !metadata.isEmpty();
+    }
 }

@@ -29,24 +29,24 @@ import sample.common.EntityIdentifier;
 @Table(name = "requirements")
 public class Requirement implements Entity<RequestForProposal, EntityIdentifier> {
 
-		public final EntityIdentifier id;
-		public final Association<RequirementLabel, EntityIdentifier> labelId;
-		public final String description;
+    public final EntityIdentifier id;
+    public final Association<RequirementLabel, EntityIdentifier> labelId;
+    public final String description;
 
 
-		public Requirement(EntityIdentifier labelId, String description) {
-				this.id = EntityIdentifier.generate();
-				this.labelId = Association.forId(labelId);
-				this.description = description;
-		}
+    public Requirement(EntityIdentifier labelId, String description) {
+        this.id = EntityIdentifier.generate();
+        this.labelId = Association.forId(labelId);
+        this.description = description;
+    }
 
 
-		@Override
-		public EntityIdentifier getId() {
-				return id;
-		}
+    @Override
+    public EntityIdentifier getId() {
+        return id;
+    }
 
-		public String getDescription() {
-				return description;
-		}
+    public String getDescription() {
+        return description;
+    }
 }

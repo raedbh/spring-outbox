@@ -35,46 +35,46 @@ import static org.apache.camel.component.debezium.DebeziumConstants.HEADER_OPERA
  */
 public class DebeziumRabbitRouteBuilder extends RouteBuilder {
 
-		private static final Logger LOGGER = LoggerFactory.getLogger(DebeziumRabbitRouteBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DebeziumRabbitRouteBuilder.class);
 
-		private final String camelComponentUri;
-		private final OutboxMessageProducer messageProducer;
-
-
-		public DebeziumRabbitRouteBuilder(OutboxMessageProducer messageProducer, String camelComponentUri) {
-
-				if (messageProducer == null) {
-						throw new IllegalArgumentException("messageProducer cannot be null");
-				}
-				if (camelComponentUri == null) {
-						throw new IllegalArgumentException("camelComponentUri cannot be null");
-				}
-
-				this.messageProducer = messageProducer;
-				this.camelComponentUri = camelComponentUri;
-		}
+    private final String camelComponentUri;
+    private final OutboxMessageProducer messageProducer;
 
 
-		@Override
-		public void configure() {
-				from(camelComponentUri).choice().when(header(HEADER_OPERATION).in(READ.code(), CREATE.code()))
-						.process(camelExchange -> {
+    public DebeziumRabbitRouteBuilder(OutboxMessageProducer messageProducer, String camelComponentUri) {
 
-								String operation = camelExchange.getIn().getHeader(HEADER_OPERATION, String.class);
-								Object body = camelExchange.getIn().getBody();
+        if (messageProducer == null) {
+            throw new IllegalArgumentException("messageProducer cannot be null");
+        }
+        if (camelComponentUri == null) {
+            throw new IllegalArgumentException("camelComponentUri cannot be null");
+        }
 
-								LOGGER.info("Change processing [operation: {}] [body: {}]", operation, body);
+        this.messageProducer = messageProducer;
+        this.camelComponentUri = camelComponentUri;
+    }
 
-								if (!(body instanceof Struct struct)) {
-										throw new IllegalArgumentException(
-												"Unsupported type for OutboxData instantiation: " + body.getClass().getTypeName());
-								}
 
-								messageProducer.produceMessage(OutboxDataMapper.toOutboxData(struct));
-						})
-						.otherwise() // delete -> "d" or update -> "u"
-						.log("${header." + HEADER_OPERATION + "} operation detected."
-								+ " No action required. Key: ${header." + HEADER_KEY + "} | Body: ${body}")
-						.end();
-		}
+    @Override
+    public void configure() {
+        from(camelComponentUri).choice().when(header(HEADER_OPERATION).in(READ.code(), CREATE.code()))
+          .process(camelExchange -> {
+
+              String operation = camelExchange.getIn().getHeader(HEADER_OPERATION, String.class);
+              Object body = camelExchange.getIn().getBody();
+
+              LOGGER.info("Change processing [operation: {}] [body: {}]", operation, body);
+
+              if (!(body instanceof Struct struct)) {
+                  throw new IllegalArgumentException(
+                    "Unsupported type for OutboxData instantiation: " + body.getClass().getTypeName());
+              }
+
+              messageProducer.produceMessage(OutboxDataMapper.toOutboxData(struct));
+          })
+          .otherwise() // delete -> "d" or update -> "u"
+          .log("${header." + HEADER_OPERATION + "} operation detected."
+            + " No action required. Key: ${header." + HEADER_KEY + "} | Body: ${body}")
+          .end();
+    }
 }

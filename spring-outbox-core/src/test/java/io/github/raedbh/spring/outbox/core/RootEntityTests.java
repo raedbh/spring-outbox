@@ -32,49 +32,49 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class RootEntityTests {
 
-		private RootEntity order;
+    private RootEntity order;
 
-		@BeforeEach
-		void setUp() {
-				order = new Order();
-		}
+    @BeforeEach
+    void setUp() {
+        order = new Order();
+    }
 
-		@Test
-		void assignEventToRootEntity() {
+    @Test
+    void assignEventToRootEntity() {
 
-				assertThat(order.withNoEventAssigned()).isTrue();
+        assertThat(order.withNoEventAssigned()).isTrue();
 
-				EventOutboxed<RootEntity> event = event(order, "op");
+        EventOutboxed<RootEntity> event = event(order, "op");
 
-				order.assignEvent(event);
+        order.assignEvent(event);
 
-				assertThat(order.withNoEventAssigned()).isFalse();
-				assertThat(order.event()).isEqualTo(event);
-		}
+        assertThat(order.withNoEventAssigned()).isFalse();
+        assertThat(order.event()).isEqualTo(event);
+    }
 
-		@Test
-		void rejectNullEvent() {
-				assertThatThrownBy(() -> order.assignEvent(null))
-						.isInstanceOf(IllegalArgumentException.class)
-						.hasMessageContaining("Event");
-		}
+    @Test
+    void rejectNullEvent() {
+        assertThatThrownBy(() -> order.assignEvent(null))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("Event");
+    }
 
-		@Test
-		void rejectAssigningEventTwice() {
+    @Test
+    void rejectAssigningEventTwice() {
 
-				order.assignEvent(event(order, "op1"));
+        order.assignEvent(event(order, "op1"));
 
-				assertThatThrownBy(() -> order.assignEvent(event(order, "op2")))
-						.isInstanceOf(IllegalStateException.class)
-						.hasMessage("An event has already been assigned for this entity");
-		}
+        assertThatThrownBy(() -> order.assignEvent(event(order, "op2")))
+          .isInstanceOf(IllegalStateException.class)
+          .hasMessage("An event has already been assigned for this entity");
+    }
 
-		private EventOutboxed<RootEntity> event(RootEntity rootEntity, String operation) {
-				return new EventOutboxed<>(rootEntity) {
-						@Override
-						public String getOperation() {
-								return operation;
-						}
-				};
-		}
+    private EventOutboxed<RootEntity> event(RootEntity rootEntity, String operation) {
+        return new EventOutboxed<>(rootEntity) {
+            @Override
+            public String getOperation() {
+                return operation;
+            }
+        };
+    }
 }

@@ -32,47 +32,47 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class OutboxDataMapperTests {
 
-		private OutboxData outboxData;
+    private OutboxData outboxData;
 
-		@Test
-		void fromStructToOutboxData() {
+    @Test
+    void fromStructToOutboxData() {
 
-				Struct struct = struct();
-				struct.put("metadata", "{\"key\": \"value\"}");
+        Struct struct = struct();
+        struct.put("metadata", "{\"key\": \"value\"}");
 
-				outboxData = OutboxDataMapper.toOutboxData(struct);
+        outboxData = OutboxDataMapper.toOutboxData(struct);
 
-				assertThat(
-						new Object[]{outboxData.getId(), outboxData.getType(), outboxData.getPayload(), outboxData.getMetadata()})
-						.containsExactly("12345", "Type", "The Payload".getBytes(), singletonMap("key", "value"));
-		}
+        assertThat(
+          new Object[]{outboxData.getId(), outboxData.getType(), outboxData.getPayload(), outboxData.getMetadata()})
+          .containsExactly("12345", "Type", "The Payload".getBytes(), singletonMap("key", "value"));
+    }
 
-		@Test
-		void preventNPEWhenMetadataIsNull() {
+    @Test
+    void preventNPEWhenMetadataIsNull() {
 
-				Struct struct = struct();
-				struct.put("metadata", null);
+        Struct struct = struct();
+        struct.put("metadata", null);
 
-				outboxData = OutboxDataMapper.toOutboxData(struct);
+        outboxData = OutboxDataMapper.toOutboxData(struct);
 
-				assertThat(outboxData.getMetadata()).isEmpty();
-		}
+        assertThat(outboxData.getMetadata()).isEmpty();
+    }
 
-		private Struct struct() {
-				var struct = new Struct(schema());
-				struct.put("id", "12345");
-				struct.put("type", "Type");
-				struct.put("payload", "The Payload".getBytes());
-				return struct;
-		}
+    private Struct struct() {
+        var struct = new Struct(schema());
+        struct.put("id", "12345");
+        struct.put("type", "Type");
+        struct.put("payload", "The Payload".getBytes());
+        return struct;
+    }
 
-		private Schema schema() {
-				return SchemaBuilder.struct().name("test")
-						.field("id", Schema.STRING_SCHEMA)
-						.field("type", Schema.STRING_SCHEMA)
-						.field("payload", Schema.BYTES_SCHEMA)
-						.field("related_to", Schema.OPTIONAL_STRING_SCHEMA)
-						.field("metadata", Schema.OPTIONAL_STRING_SCHEMA)
-						.build();
-		}
+    private Schema schema() {
+        return SchemaBuilder.struct().name("test")
+          .field("id", Schema.STRING_SCHEMA)
+          .field("type", Schema.STRING_SCHEMA)
+          .field("payload", Schema.BYTES_SCHEMA)
+          .field("related_to", Schema.OPTIONAL_STRING_SCHEMA)
+          .field("metadata", Schema.OPTIONAL_STRING_SCHEMA)
+          .build();
+    }
 }

@@ -27,8 +27,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 class RabbitConfig {
 
-		@Bean
-		public Queue queue() {
-				return QueueBuilder.nonDurable("rfp.proposals").autoDelete().exclusive().build();
-		}
+    @Bean
+    public Queue queue() {
+        return QueueBuilder.nonDurable("rfp.proposals").autoDelete().exclusive().build();
+    }
 }

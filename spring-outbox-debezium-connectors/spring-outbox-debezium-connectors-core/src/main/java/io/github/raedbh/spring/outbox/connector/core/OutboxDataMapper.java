@@ -33,63 +33,63 @@ import com.fasterxml.jackson.core.type.TypeReference;
  */
 final class OutboxDataMapper {
 
-		private OutboxDataMapper() {
-				/* prevent instantiation */
-		}
+    private OutboxDataMapper() {
+        /* prevent instantiation */
+    }
 
-		public static OutboxData toOutboxData(Struct struct) {
+    public static OutboxData toOutboxData(Struct struct) {
 
-				Objects.requireNonNull(struct, "Struct must not be null");
+        Objects.requireNonNull(struct, "Struct must not be null");
 
-				String id = idFromStruct(struct, "id");
-				String type = typeFromStruct(struct);
-				byte[] payload = payloadFromStruct(struct);
-				String relatedTo = idFromStruct(struct, "related_to");
-				Map<String, Object> metadata = metadataFromStruct(struct);
+        String id = idFromStruct(struct, "id");
+        String type = typeFromStruct(struct);
+        byte[] payload = payloadFromStruct(struct);
+        String relatedTo = idFromStruct(struct, "related_to");
+        Map<String, Object> metadata = metadataFromStruct(struct);
 
-				return new OutboxData(id, type, payload, relatedTo, metadata);
-		}
+        return new OutboxData(id, type, payload, relatedTo, metadata);
+    }
 
-		private static String idFromStruct(Struct struct, String fieldName) {
-				assertFieldExists(struct, fieldName);
-				Object id = struct.get(fieldName);
-				if (id == null) {
-						return null;
-				}
+    private static String idFromStruct(Struct struct, String fieldName) {
+        assertFieldExists(struct, fieldName);
+        Object id = struct.get(fieldName);
+        if (id == null) {
+            return null;
+        }
 
-				return id.toString();
-		}
+        return id.toString();
+    }
 
-		private static String typeFromStruct(Struct struct) {
-				String fieldName = "type";
-				assertFieldExists(struct, fieldName);
-				return struct.getString(fieldName);
-		}
+    private static String typeFromStruct(Struct struct) {
+        String fieldName = "type";
+        assertFieldExists(struct, fieldName);
+        return struct.getString(fieldName);
+    }
 
-		private static byte[] payloadFromStruct(Struct struct) {
-				String fieldName = "payload";
-				assertFieldExists(struct, fieldName);
-				return struct.getBytes(fieldName);
-		}
+    private static byte[] payloadFromStruct(Struct struct) {
+        String fieldName = "payload";
+        assertFieldExists(struct, fieldName);
+        return struct.getBytes(fieldName);
+    }
 
-		private static void assertFieldExists(Struct struct, String fieldName) {
-				if (struct.schema().field(fieldName) == null) {
-						throw new IllegalArgumentException("Field '" + fieldName + "' does not exist in the struct.");
-				}
-		}
+    private static void assertFieldExists(Struct struct, String fieldName) {
+        if (struct.schema().field(fieldName) == null) {
+            throw new IllegalArgumentException("Field '" + fieldName + "' does not exist in the struct.");
+        }
+    }
 
-		private static Map<String, Object> metadataFromStruct(Struct struct) {
-				assertFieldExists(struct, "metadata");
+    private static Map<String, Object> metadataFromStruct(Struct struct) {
+        assertFieldExists(struct, "metadata");
 
-				String metadata = struct.getString("metadata");
-				if (metadata == null) {
-						return Collections.emptyMap();
-				}
-				try {
-						return JacksonMapperProvider.getInstance().readValue(metadata, new TypeReference<>() {
-						});
-				} catch (JsonProcessingException e) {
-						throw new RuntimeException(e);
-				}
-		}
+        String metadata = struct.getString("metadata");
+        if (metadata == null) {
+            return Collections.emptyMap();
+        }
+        try {
+            return JacksonMapperProvider.getInstance().readValue(metadata, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

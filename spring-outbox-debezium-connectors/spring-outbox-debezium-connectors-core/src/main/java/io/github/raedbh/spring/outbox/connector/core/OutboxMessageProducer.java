@@ -22,5 +22,5 @@ package io.github.raedbh.spring.outbox.connector.core;
  */
 public interface OutboxMessageProducer {
 
-		void produceMessage(OutboxData outboxData) throws Exception;
+    void produceMessage(OutboxData outboxData) throws Exception;
 }

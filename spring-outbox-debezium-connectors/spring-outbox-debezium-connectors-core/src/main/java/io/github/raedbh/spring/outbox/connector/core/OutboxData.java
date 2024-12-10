@@ -27,43 +27,43 @@ import java.util.Objects;
  */
 public final class OutboxData {
 
-		private final String id;
-		private final String type;
-		private final byte[] payload;
+    private final String id;
+    private final String type;
+    private final byte[] payload;
 
-		private String relatedTo;
-		private Map<String, Object> metadata;
+    private String relatedTo;
+    private Map<String, Object> metadata;
 
 
-		public OutboxData(String id, String type, byte[] payload) {
-				this.id = Objects.requireNonNull(id, "Id must not be null");
-				this.type = Objects.requireNonNull(type, "Type must not be null");
-				this.payload = Objects.requireNonNull(payload, "Payload must not be null");
-		}
+    public OutboxData(String id, String type, byte[] payload) {
+        this.id = Objects.requireNonNull(id, "Id must not be null");
+        this.type = Objects.requireNonNull(type, "Type must not be null");
+        this.payload = Objects.requireNonNull(payload, "Payload must not be null");
+    }
 
-		public OutboxData(String id, String type, byte[] payload, String relatedTo, Map<String, Object> metadata) {
-				this(id, type, payload);
-				this.relatedTo = relatedTo;
-				this.metadata = metadata;
-		}
+    public OutboxData(String id, String type, byte[] payload, String relatedTo, Map<String, Object> metadata) {
+        this(id, type, payload);
+        this.relatedTo = relatedTo;
+        this.metadata = metadata;
+    }
 
-		public String getId() {
-				return id;
-		}
+    public String getId() {
+        return id;
+    }
 
-		public String getType() {
-				return type;
-		}
+    public String getType() {
+        return type;
+    }
 
-		public byte[] getPayload() {
-				return payload;
-		}
+    public byte[] getPayload() {
+        return payload;
+    }
 
-		public String getRelatedTo() {
-				return relatedTo;
-		}
+    public String getRelatedTo() {
+        return relatedTo;
+    }
 
-		public Map<String, Object> getMetadata() {
-				return metadata;
-		}
+    public Map<String, Object> getMetadata() {
+        return metadata;
+    }
 }

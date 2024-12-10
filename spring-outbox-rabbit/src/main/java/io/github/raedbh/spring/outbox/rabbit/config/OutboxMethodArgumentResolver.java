@@ -32,27 +32,27 @@ import io.github.raedbh.spring.outbox.core.MessageWith;
  */
 public class OutboxMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-		private static final String OPERATION_HEADER = "operation";
+    private static final String OPERATION_HEADER = "operation";
 
-		private final Deserializer<Serializable> deserializer;
+    private final Deserializer<Serializable> deserializer;
 
-		public OutboxMethodArgumentResolver(Deserializer<Serializable> deserializer) {this.deserializer = deserializer;}
+    public OutboxMethodArgumentResolver(Deserializer<Serializable> deserializer) {this.deserializer = deserializer;}
 
-		@Override
-		public boolean supportsParameter(MethodParameter parameter) {
-				MessageWith annotation = parameter.getParameterAnnotation(MessageWith.class);
-				return Serializable.class.isAssignableFrom(parameter.getParameterType()) &&
-						annotation != null && annotation.operation() != null;
-		}
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        MessageWith annotation = parameter.getParameterAnnotation(MessageWith.class);
+        return Serializable.class.isAssignableFrom(parameter.getParameterType()) &&
+          annotation != null && annotation.operation() != null;
+    }
 
-		@Nullable
-		@Override
-		public Object resolveArgument(MethodParameter parameter, Message<?> message) throws Exception {
-				MessageWith annotation = parameter.getParameterAnnotation(MessageWith.class);
-				String operationHeader = message.getHeaders().get(OPERATION_HEADER, String.class);
-				if (annotation != null && annotation.operation().equals(operationHeader)) {
-						return deserializer.deserializeFromByteArray((byte[]) message.getPayload());
-				}
-				return null;
-		}
+    @Nullable
+    @Override
+    public Object resolveArgument(MethodParameter parameter, Message<?> message) throws Exception {
+        MessageWith annotation = parameter.getParameterAnnotation(MessageWith.class);
+        String operationHeader = message.getHeaders().get(OPERATION_HEADER, String.class);
+        if (annotation != null && annotation.operation().equals(operationHeader)) {
+            return deserializer.deserializeFromByteArray((byte[]) message.getPayload());
+        }
+        return null;
+    }
 }

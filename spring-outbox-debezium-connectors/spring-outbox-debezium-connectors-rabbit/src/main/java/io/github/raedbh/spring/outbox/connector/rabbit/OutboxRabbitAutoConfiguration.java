@@ -35,15 +35,15 @@ import io.github.raedbh.spring.outbox.connector.core.OutboxMessageProducer;
 @AutoConfigureAfter(RabbitAutoConfiguration.class)
 public class OutboxRabbitAutoConfiguration {
 
-		@Bean
-		OutboxMessageProducer outboxMessageProducer(RabbitTemplate rabbitTemplate, Environment environment) {
-				return new RabbitOutboxMessageProducer(rabbitTemplate, environment);
-		}
+    @Bean
+    OutboxMessageProducer outboxMessageProducer(RabbitTemplate rabbitTemplate, Environment environment) {
+        return new RabbitOutboxMessageProducer(rabbitTemplate, environment);
+    }
 
-		@Bean
-		DebeziumRabbitRouteBuilder debeziumRabbitRouteBuilder(OutboxMessageProducer outboxMessageProducer,
-				@Value("${camel.component.uri}") String camelComponentUri) {
+    @Bean
+    DebeziumRabbitRouteBuilder debeziumRabbitRouteBuilder(OutboxMessageProducer outboxMessageProducer,
+      @Value("${camel.component.uri}") String camelComponentUri) {
 
-				return new DebeziumRabbitRouteBuilder(outboxMessageProducer, camelComponentUri);
-		}
+        return new DebeziumRabbitRouteBuilder(outboxMessageProducer, camelComponentUri);
+    }
 }

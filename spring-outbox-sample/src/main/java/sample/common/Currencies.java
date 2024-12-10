@@ -24,6 +24,6 @@ import javax.money.Monetary;
  */
 public interface Currencies {
 
-		CurrencyUnit EURO = Monetary.getCurrency("EUR");
-		CurrencyUnit USD = Monetary.getCurrency("USD");
+    CurrencyUnit EURO = Monetary.getCurrency("EUR");
+    CurrencyUnit USD = Monetary.getCurrency("USD");
 }

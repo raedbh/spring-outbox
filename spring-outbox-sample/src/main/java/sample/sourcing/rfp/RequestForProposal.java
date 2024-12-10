@@ -42,139 +42,139 @@ import sample.common.EntityIdentifier;
 @EntityListeners(AuditingEntityListener.class)
 public class RequestForProposal extends RootEntity implements AggregateRoot<RequestForProposal, EntityIdentifier> {
 
-		private final EntityIdentifier id;
+    private final EntityIdentifier id;
 
-		private final String title;
+    private final String title;
 
-		private final String description;
+    private final String description;
 
-		private final LocalDateTime submissionDeadline;
+    private final LocalDateTime submissionDeadline;
 
-		@OrderColumn
-		@JoinColumn(name = "rfp_id")
-		private final List<Requirement> requirements = new ArrayList<>();
+    @OrderColumn
+    @JoinColumn(name = "rfp_id")
+    private final List<Requirement> requirements = new ArrayList<>();
 
-		@CreatedDate
-		private LocalDateTime createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
 
-		@LastModifiedDate
-		private LocalDateTime lastUpdatedAt;
+    @LastModifiedDate
+    private LocalDateTime lastUpdatedAt;
 
-		private LocalDateTime publishedAt;
+    private LocalDateTime publishedAt;
 
-		private Status status;
+    private Status status;
 
-		private boolean proposalAwarded;
-
-
-		public RequestForProposal(String title, String description, LocalDateTime submissionDeadline,
-				List<Requirement> requirements) {
-
-				this.id = EntityIdentifier.generate();
-				this.title = title;
-				this.description = description;
-				this.submissionDeadline = submissionDeadline;
-				this.requirements.addAll(requirements);
-				this.publishedAt = null;
-				this.status = Status.CREATED;
-				this.proposalAwarded = false;
-		}
+    private boolean proposalAwarded;
 
 
-		/**
-		 * Mark the RFP as published, making it available for vendors to submit proposals.
-		 */
-		public void markPublished() {
+    public RequestForProposal(String title, String description, LocalDateTime submissionDeadline,
+      List<Requirement> requirements) {
 
-				if (this.status != Status.CREATED) {
-						throw new IllegalStateException(String.format(
-								"The RFP can only be published if it is in the 'Created' state. " + "Current status: %s", this.status));
-				}
+        this.id = EntityIdentifier.generate();
+        this.title = title;
+        this.description = description;
+        this.submissionDeadline = submissionDeadline;
+        this.requirements.addAll(requirements);
+        this.publishedAt = null;
+        this.status = Status.CREATED;
+        this.proposalAwarded = false;
+    }
 
-				this.status = Status.PUBLISHED;
 
-				this.publishedAt = LocalDateTime.now();
-		}
+    /**
+     * Mark the RFP as published, making it available for vendors to submit proposals.
+     */
+    public void markPublished() {
 
-		public boolean isPublished() {
-				return this.status == Status.PUBLISHED;
-		}
+        if (this.status != Status.CREATED) {
+            throw new IllegalStateException(String.format(
+              "The RFP can only be published if it is in the 'Created' state. " + "Current status: %s", this.status));
+        }
 
-		public boolean isNotPublished() {
-				return !this.isPublished();
-		}
+        this.status = Status.PUBLISHED;
 
-		/**
-		 * Marks the RFP as closed, indicating the process has been completed either after awarding a proposal or by closing
-		 * without awarding.
-		 */
-		public void markClosed(boolean proposalAwarded) {
+        this.publishedAt = LocalDateTime.now();
+    }
 
-				if (isNotPublished()) {
-						throw new IllegalStateException(
-								String.format("The RFP must published first to close it. Current status: %s", this.status));
-				}
+    public boolean isPublished() {
+        return this.status == Status.PUBLISHED;
+    }
 
-				this.status = Status.CLOSED;
-				this.proposalAwarded = proposalAwarded;
-		}
+    public boolean isNotPublished() {
+        return !this.isPublished();
+    }
 
-		@Override
-		public EntityIdentifier getId() {
-				return id;
-		}
+    /**
+     * Marks the RFP as closed, indicating the process has been completed either after awarding a proposal or by closing
+     * without awarding.
+     */
+    public void markClosed(boolean proposalAwarded) {
 
-		public String getTitle() {
-				return title;
-		}
+        if (isNotPublished()) {
+            throw new IllegalStateException(
+              String.format("The RFP must published first to close it. Current status: %s", this.status));
+        }
 
-		public String getDescription() {
-				return description;
-		}
+        this.status = Status.CLOSED;
+        this.proposalAwarded = proposalAwarded;
+    }
 
-		public LocalDateTime getSubmissionDeadline() {
-				return submissionDeadline;
-		}
+    @Override
+    public EntityIdentifier getId() {
+        return id;
+    }
 
-		public List<Requirement> getRequirements() {
-				return requirements;
-		}
+    public String getTitle() {
+        return title;
+    }
 
-		public LocalDateTime getCreatedAt() {
-				return createdAt;
-		}
+    public String getDescription() {
+        return description;
+    }
 
-		public LocalDateTime getLastUpdatedAt() {
-				return lastUpdatedAt;
-		}
+    public LocalDateTime getSubmissionDeadline() {
+        return submissionDeadline;
+    }
 
-		public LocalDateTime getPublishedAt() {
-				return publishedAt;
-		}
+    public List<Requirement> getRequirements() {
+        return requirements;
+    }
 
-		public Status getStatus() {
-				return status;
-		}
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-		public boolean isProposalAwarded() {
-				return proposalAwarded;
-		}
+    public LocalDateTime getLastUpdatedAt() {
+        return lastUpdatedAt;
+    }
 
-		public enum Status {
+    public LocalDateTime getPublishedAt() {
+        return publishedAt;
+    }
 
-				/**
-				 * The RFP has been created and is in a draft or initial state.
-				 */
-				CREATED,
+    public Status getStatus() {
+        return status;
+    }
 
-				/**
-				 * The RFP has been finalized and made public or sent to potential vendors.
-				 */
-				PUBLISHED,
+    public boolean isProposalAwarded() {
+        return proposalAwarded;
+    }
 
-				/**
-				 * The RFP process is completed, either after awarding a proposal or by closing without awarding.
-				 */
-				CLOSED
-		}
+    public enum Status {
+
+        /**
+         * The RFP has been created and is in a draft or initial state.
+         */
+        CREATED,
+
+        /**
+         * The RFP has been finalized and made public or sent to potential vendors.
+         */
+        PUBLISHED,
+
+        /**
+         * The RFP process is completed, either after awarding a proposal or by closing without awarding.
+         */
+        CLOSED
+    }
 }

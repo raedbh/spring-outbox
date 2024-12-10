@@ -25,11 +25,11 @@ import org.springframework.stereotype.Component;
 @Component
 class OrderMessageBodyConverter implements Converter<Order, OrderMessageBody> {
 
-		@Override
-		public OrderMessageBody convert(Order order) {
-				return new OrderMessageBody(order.getId().toString(),
-						order.getCustomerId().toString(),
-						order.getTotalAmount());
-		}
+    @Override
+    public OrderMessageBody convert(Order order) {
+        return new OrderMessageBody(order.getId().toString(),
+          order.getCustomerId().toString(),
+          order.getTotalAmount());
+    }
 }
 

@@ -30,37 +30,37 @@ import org.springframework.lang.Nullable;
 @ConfigurationProperties(prefix = "spring.outbox.rdbms")
 class RdbmsConfigurationProperties {
 
-		private final boolean autoCreate;
+    private final boolean autoCreate;
 
-		@Nullable
-		private final String schema;
-
-
-		/**
-		 * Creates a new {@link RdbmsConfigurationProperties} instance.
-		 *
-		 * @param autoCreate whether to create outbox tables on startup. Defaults to {@code false}.
-		 * @param schema optional schema name for the outbox table.
-		 */
-		@ConstructorBinding
-		RdbmsConfigurationProperties(@DefaultValue("false") boolean autoCreate, @Nullable String schema) {
-				this.autoCreate = autoCreate;
-				this.schema = schema;
-		}
+    @Nullable
+    private final String schema;
 
 
-		/**
-		 * Specifies whether outbox tables should be created automatically.
-		 */
-		boolean isAutoCreate() {
-				return autoCreate;
-		}
+    /**
+     * Creates a new {@link RdbmsConfigurationProperties} instance.
+     *
+     * @param autoCreate whether to create outbox tables on startup. Defaults to {@code false}.
+     * @param schema optional schema name for the outbox table.
+     */
+    @ConstructorBinding
+    RdbmsConfigurationProperties(@DefaultValue("false") boolean autoCreate, @Nullable String schema) {
+        this.autoCreate = autoCreate;
+        this.schema = schema;
+    }
 
-		/**
-		 * The name of the schema where the outbox table resides, or {@code null} if not specified.
-		 */
-		@Nullable
-		String getSchema() {
-				return schema;
-		}
+
+    /**
+     * Specifies whether outbox tables should be created automatically.
+     */
+    boolean isAutoCreate() {
+        return autoCreate;
+    }
+
+    /**
+     * The name of the schema where the outbox table resides, or {@code null} if not specified.
+     */
+    @Nullable
+    String getSchema() {
+        return schema;
+    }
 }

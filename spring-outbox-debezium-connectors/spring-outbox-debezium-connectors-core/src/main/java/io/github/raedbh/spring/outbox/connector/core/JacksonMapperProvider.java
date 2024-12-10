@@ -24,16 +24,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 class JacksonMapperProvider {
 
-		private JacksonMapperProvider() {
-				/* prevent instantiation */
-		}
+    private JacksonMapperProvider() {
+        /* prevent instantiation */
+    }
 
-		public static ObjectMapper getInstance() {
-				return ObjectMapperHolder.INSTANCE;
-		}
+    public static ObjectMapper getInstance() {
+        return ObjectMapperHolder.INSTANCE;
+    }
 
-		private static class ObjectMapperHolder {
+    private static class ObjectMapperHolder {
 
-				private static final ObjectMapper INSTANCE = new ObjectMapper();
-		}
+        private static final ObjectMapper INSTANCE = new ObjectMapper();
+    }
 }

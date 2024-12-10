@@ -27,22 +27,22 @@ import org.springframework.stereotype.Component;
 @Component
 class VendorDataInitializer implements ApplicationRunner {
 
-		private final Vendors vendors;
+    private final Vendors vendors;
 
-		VendorDataInitializer(Vendors vendors) {
-				this.vendors = vendors;
-		}
+    VendorDataInitializer(Vendors vendors) {
+        this.vendors = vendors;
+    }
 
-		@Override
-		public void run(ApplicationArguments args) {
-				if (noVendorsExist()) {
-						vendors.saveAll(Arrays.asList(
-								new Vendor("Tech Solutions"), new Vendor("App Innovators"),
-								new Vendor("Database Experts"), new Vendor("Support Services Inc.")));
-				}
-		}
+    @Override
+    public void run(ApplicationArguments args) {
+        if (noVendorsExist()) {
+            vendors.saveAll(Arrays.asList(
+              new Vendor("Tech Solutions"), new Vendor("App Innovators"),
+              new Vendor("Database Experts"), new Vendor("Support Services Inc.")));
+        }
+    }
 
-		boolean noVendorsExist() {
-				return vendors.count() == 0;
-		}
+    boolean noVendorsExist() {
+        return vendors.count() == 0;
+    }
 }

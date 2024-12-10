@@ -32,24 +32,24 @@ import sample.common.EntityIdentifier;
 @JsonIgnoreProperties(value = "new")
 public class Vendor implements AggregateRoot<Vendor, EntityIdentifier> {
 
-		private final EntityIdentifier id;
+    private final EntityIdentifier id;
 
-		@Column(unique = true)
-		private final String name;
-
-
-		public Vendor(String name) {
-				this.id = EntityIdentifier.generate();
-				this.name = name;
-		}
+    @Column(unique = true)
+    private final String name;
 
 
-		@Override
-		public EntityIdentifier getId() {
-				return id;
-		}
+    public Vendor(String name) {
+        this.id = EntityIdentifier.generate();
+        this.name = name;
+    }
 
-		public String getName() {
-				return name;
-		}
+
+    @Override
+    public EntityIdentifier getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
