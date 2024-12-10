@@ -1,0 +1,58 @@
+services:
+  mysql:
+    image: mysql:8.2
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: s2p
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbit:
+    image: rabbitmq:4.0.3-management-alpine
+    container_name: rabbit
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: secret
+    volumes:
+      - rabbit:/var/lib/rabbitmq
+
+  debezium-connector:
+    build: ../spring-outbox-debezium-connectors-mysql/spring-outbox-debezium-connector-mysql-rabbit
+    container_name: spring-outbox-debezium-connector-mysql-rabbit
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbit:
+        condition: service_started
+    environment:
+      SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME: mysql
+      SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME: s2p
+      SPRING_OUTBOX_CONNECTOR_DATABASE_USER: root
+      SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD: secret
+      SPRING_OUTBOX_CONNECTOR_OFFSETSTORAGE_FILEPATH: /tmp/outbox-offset.dat
+      SPRING_OUTBOX_CONNECTOR_SCHEMAHISTORY_FILEPATH: /tmp/outbox-schema-history.dat
+      SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_PROPOSALAWARDED_ROUTINGKEY: rfp.proposals
+      SPRING_RABBITMQ_HOST: rabbit
+    ports:
+      - '8090:8080'
+
+volumes:
+  mysql:
+    driver: local
+  rabbit:
+    driver: local

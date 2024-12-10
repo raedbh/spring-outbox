@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		<modelVersion>4.0.0</modelVersion>
+		<parent>
+				<groupId>io.github.raedbh</groupId>
+				<artifactId>spring-outbox</artifactId>
+				<version>0.1.0-SNAPSHOT</version>
+				<relativePath>../pom.xml</relativePath>
+		</parent>
+
+		<artifactId>spring-outbox-debezium-connectors</artifactId>
+
+		<packaging>pom</packaging>
+
+		<name>Spring Outbox Debezium Connectors</name>
+
+		<properties>
+				<debezium.version>2.7.1.Final</debezium.version>
+				<camel.version>4.8.0</camel.version>
+		</properties>
+
+		<dependencyManagement>
+				<dependencies>
+						<dependency>
+								<groupId>io.debezium</groupId>
+								<artifactId>debezium-core</artifactId>
+								<version>${debezium.version}</version>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.camel</groupId>
+								<artifactId>camel-bom</artifactId>
+								<version>${camel.version}</version>
+								<type>pom</type>
+								<scope>import</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.camel.springboot</groupId>
+								<artifactId>camel-spring-boot-bom</artifactId>
+								<version>${camel.version}</version>
+								<type>pom</type>
+								<scope>import</scope>
+						</dependency>
+				</dependencies>
+		</dependencyManagement>
+
+		<modules>
+				<module>spring-outbox-debezium-connectors-core</module>
+				<module>spring-outbox-debezium-connectors-rabbit</module>
+				<module>spring-outbox-debezium-connectors-parent</module>
+				<module>spring-outbox-debezium-connector-mysql-rabbit</module>
+				<module>spring-outbox-debezium-connector-postgres-rabbit</module>
+		</modules>
+
+</project>

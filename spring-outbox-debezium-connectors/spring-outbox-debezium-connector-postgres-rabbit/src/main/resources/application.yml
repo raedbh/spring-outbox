@@ -1,0 +1,26 @@
+spring:
+  main:
+    banner-mode: off
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics
+
+camel:
+  component:
+    uri: debezium-postgres:outbox
+    debezium-postgres:
+      database-hostname: ${spring.outbox.connector.database.hostname}
+      database-port: ${spring.outbox.connector.database.port:5432}
+      database-dbname: ${spring.outbox.connector.database.dbname}
+      schema-include-list: ${spring.outbox.connector.database.schema}
+      database-user: ${spring.outbox.connector.database.user}
+      database-password: ${spring.outbox.connector.database.password}
+      table-include-list: ${spring.outbox.connector.database.schema}.outbox
+      offset-storage: ${spring.outbox.connector.offset-storage.class:org.apache.kafka.connect.storage.FileOffsetBackingStore}
+      offset-storage-file-name: ${spring.outbox.connector.offset-storage.file-path}
+      schema-history-internal-file-filename: ${spring.outbox.connector.schema-history.file-path}
+      topic-prefix: outbox
+
