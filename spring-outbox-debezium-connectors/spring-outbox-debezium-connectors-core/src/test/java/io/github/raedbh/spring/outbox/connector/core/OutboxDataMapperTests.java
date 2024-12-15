@@ -71,7 +71,6 @@ class OutboxDataMapperTests {
           .field("id", Schema.STRING_SCHEMA)
           .field("type", Schema.STRING_SCHEMA)
           .field("payload", Schema.BYTES_SCHEMA)
-          .field("related_to", Schema.OPTIONAL_STRING_SCHEMA)
           .field("metadata", Schema.OPTIONAL_STRING_SCHEMA)
           .build();
     }

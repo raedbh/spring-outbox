@@ -94,7 +94,6 @@ class OutboxManagerTests {
         // validate the main event outbox entry
         OutboxEntry mainEntry = savedEntries.get(0);
         assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
-        assertThat(mainEntry.getRelatedTo()).isNull();
         assertThat(mainEntry.getMetadata())
           .containsEntry(EVENT_ENTITY_ID, order.getId().toString())
           .containsEntry(EVENT_ENTITY_TYPE, "Order")
@@ -133,7 +132,6 @@ class OutboxManagerTests {
         // validate the main event outbox entry
         OutboxEntry mainEntry = savedEntries.get(0);
         assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
-        assertThat(mainEntry.getRelatedTo()).isNull();
         assertThat(mainEntry.getMetadata())
           .containsEntry(EVENT_ENTITY_ID, order.getId().toString())
           .containsEntry(EVENT_ENTITY_TYPE, "Order")
@@ -143,12 +141,10 @@ class OutboxManagerTests {
         // validate the 1st command entry - SmsNotification
         OutboxEntry smsEntry = savedEntries.get(1);
         assertThat(smsEntry.getType()).isEqualTo(smsNotification.getName());
-        assertThat(smsEntry.getRelatedTo()).isEqualTo(mainEntry.getId());
 
         // validate the 2nd command entry - EmailNotification
         OutboxEntry emailEntry = savedEntries.get(2);
         assertThat(emailEntry.getType()).isEqualTo(emailNotification.getName());
-        assertThat(emailEntry.getRelatedTo()).isEqualTo(mainEntry.getId());
     }
 
     @Test
@@ -182,7 +178,6 @@ class OutboxManagerTests {
         // validate the main event outbox entry
         OutboxEntry mainEntry = savedEntries.get(0);
         assertThat(mainEntry.getType()).isEqualTo(orderPaid.getName());
-        assertThat(mainEntry.getRelatedTo()).isNull();
         assertThat(mainEntry.getMetadata())
           .containsEntry(EVENT_ENTITY_ID, order.getId().toString())
           .containsEntry(EVENT_ENTITY_TYPE, "Order")

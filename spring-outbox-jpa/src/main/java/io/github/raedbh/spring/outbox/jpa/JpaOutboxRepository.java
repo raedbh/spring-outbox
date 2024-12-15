@@ -38,14 +38,12 @@ class JpaOutboxRepository implements OutboxRepository {
     @Override
     public void save(OutboxEntry entry) {
         try {
-            outboxSchemaAwareExecution.execute(false, false, context -> {
-                var relatedTo = entry.getRelatedTo() == null ? null : entry.getRelatedTo().value();
-                JpaOutboxEntry jpaEntry = new JpaOutboxEntry(entry.getId().value(),
-                  entry.getType(), entry.getPayload(),
-                  relatedTo, entry.getMetadata());
-
-                context.entityManager().persist(jpaEntry);
-            });
+            outboxSchemaAwareExecution.execute(false, false, context -> context
+              .entityManager()
+              .persist(new JpaOutboxEntry(entry.getId().value(),
+                entry.getType(),
+                entry.getPayload(),
+                entry.getMetadata())));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

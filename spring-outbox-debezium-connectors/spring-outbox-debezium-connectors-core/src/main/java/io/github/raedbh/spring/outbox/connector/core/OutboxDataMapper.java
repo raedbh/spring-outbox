@@ -41,16 +41,17 @@ final class OutboxDataMapper {
 
         Objects.requireNonNull(struct, "Struct must not be null");
 
-        String id = idFromStruct(struct, "id");
+        String id = idFromStruct(struct);
         String type = typeFromStruct(struct);
         byte[] payload = payloadFromStruct(struct);
-        String relatedTo = idFromStruct(struct, "related_to");
         Map<String, Object> metadata = metadataFromStruct(struct);
 
-        return new OutboxData(id, type, payload, relatedTo, metadata);
+        return new OutboxData(id, type, payload, metadata);
     }
 
-    private static String idFromStruct(Struct struct, String fieldName) {
+    private static String idFromStruct(Struct struct) {
+        String fieldName = "id";
+
         assertFieldExists(struct, fieldName);
         Object id = struct.get(fieldName);
         if (id == null) {
@@ -62,6 +63,7 @@ final class OutboxDataMapper {
 
     private static String typeFromStruct(Struct struct) {
         String fieldName = "type";
+
         assertFieldExists(struct, fieldName);
         return struct.getString(fieldName);
     }

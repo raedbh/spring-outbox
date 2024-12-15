@@ -107,18 +107,6 @@ class OutboxJpaTests {
 				assertThat(outboxEntries)
 						.extracting(entry -> entry.get("type"))
 						.containsExactlyInAnyOrder("OrderPaid", "EmailNotification");
-
-				Map<String, Object> orderPaidEntry = outboxEntries.stream()
-						.filter(entry -> "OrderPaid".equals(entry.get("type")))
-						.findFirst()
-						.orElseThrow(() -> new AssertionError("OrderPaid entry not found"));
-				assertThat(orderPaidEntry.get("related_to")).isNull();
-
-				Map<String, Object> emailNotificationEntry = outboxEntries.stream()
-						.filter(entry -> "EmailNotification".equals(entry.get("type")))
-						.findFirst()
-						.orElseThrow(() -> new AssertionError("EmailNotification entry not found"));
-				assertThat(emailNotificationEntry).containsEntry("related_to", orderPaidEntry.get("id"));
 		}
 
 		@Nullable

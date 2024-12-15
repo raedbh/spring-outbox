@@ -104,11 +104,7 @@ public class OutboxManager {
             for (CommandOutboxed command : commands) {
 
                 byte[] commandMessagePayload = convertAndSerialize(command);
-
-                OutboxEntry commandOutboxEntry = new OutboxEntry(command.getName(), commandMessagePayload);
-                commandOutboxEntry.setRelatedTo(eventOutboxEntry.getId());
-
-                entries.add(commandOutboxEntry);
+                entries.add(new OutboxEntry(command.getName(), commandMessagePayload));
             }
 
             return entries;

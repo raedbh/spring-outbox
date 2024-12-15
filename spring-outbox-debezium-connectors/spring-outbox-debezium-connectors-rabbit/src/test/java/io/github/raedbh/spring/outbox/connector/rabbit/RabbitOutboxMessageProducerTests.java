@@ -56,7 +56,7 @@ class RabbitOutboxMessageProducerTests {
 		@BeforeEach
 		void setUp() {
 				outboxData = new OutboxData("1a2b3c", "OrderPlaced", "TestPayload".getBytes(),
-						null, Map.of("key1", "value1", "key2", "value2"));
+                  Map.of("key1", "value1", "key2", "value2"));
 		}
 
 		@Test

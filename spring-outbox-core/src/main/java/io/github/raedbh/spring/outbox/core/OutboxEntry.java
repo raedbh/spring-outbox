@@ -35,9 +35,6 @@ public class OutboxEntry {
     private final byte[] payload;
 
     @Nullable
-    private Identifier relatedTo;
-
-    @Nullable
     private Map<String, String> metadata;
 
 
@@ -50,12 +47,9 @@ public class OutboxEntry {
      * @param payload serialized data typically obtained after converting a {@link RootEntity} or
      *                {@link CommandOutboxed} into a suitable format for storage and transmission;
      *                must not be {@code null}.
-     * @param relatedTo if the record represents an event, this is set to {@code null}.
-     *                  For {@link CommandOutboxed}s related to this event, it is set to the outbox id of the event.
      * @param metadata a key-value list contains useful metadata such as the root Entity type, ID, etc.
      */
-    public OutboxEntry(Identifier id, String type, byte[] payload,
-      @Nullable Identifier relatedTo, @Nullable Map<String, String> metadata) {
+    public OutboxEntry(Identifier id, String type, byte[] payload, @Nullable Map<String, String> metadata) {
 
         Assert.notNull(id, "Identifier must not be null");
         Assert.notNull(type, "Type must not be null");
@@ -64,8 +58,6 @@ public class OutboxEntry {
         this.id = id;
         this.type = type;
         this.payload = payload;
-
-        this.relatedTo = relatedTo;
         this.metadata = metadata;
     }
 
@@ -78,7 +70,7 @@ public class OutboxEntry {
      * @param metadata metadata a key-value list contains useful metadata such as the root Entity type, ID, etc.
      */
     public OutboxEntry(String type, byte[] payload, Map<String, String> metadata) {
-        this(new Identifier(UUID.randomUUID()), type, payload, null, metadata);
+        this(new Identifier(UUID.randomUUID()), type, payload, metadata);
     }
 
     /**
@@ -89,7 +81,7 @@ public class OutboxEntry {
      *                into transmission format; must not be {@code null}.
      */
     public OutboxEntry(String type, byte[] payload) {
-        this(new Identifier(UUID.randomUUID()), type, payload, null, null);
+        this(new Identifier(UUID.randomUUID()), type, payload, null);
     }
 
 
@@ -103,15 +95,6 @@ public class OutboxEntry {
 
     public byte[] getPayload() {
         return payload;
-    }
-
-    @Nullable
-    public Identifier getRelatedTo() {
-        return relatedTo;
-    }
-
-    public void setRelatedTo(Identifier relatedTo) {
-        this.relatedTo = relatedTo;
     }
 
     @Nullable

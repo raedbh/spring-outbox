@@ -31,7 +31,6 @@ public final class OutboxData {
     private final String type;
     private final byte[] payload;
 
-    private String relatedTo;
     private Map<String, Object> metadata;
 
 
@@ -41,9 +40,8 @@ public final class OutboxData {
         this.payload = Objects.requireNonNull(payload, "Payload must not be null");
     }
 
-    public OutboxData(String id, String type, byte[] payload, String relatedTo, Map<String, Object> metadata) {
+    public OutboxData(String id, String type, byte[] payload, Map<String, Object> metadata) {
         this(id, type, payload);
-        this.relatedTo = relatedTo;
         this.metadata = metadata;
     }
 
@@ -57,10 +55,6 @@ public final class OutboxData {
 
     public byte[] getPayload() {
         return payload;
-    }
-
-    public String getRelatedTo() {
-        return relatedTo;
     }
 
     public Map<String, Object> getMetadata() {

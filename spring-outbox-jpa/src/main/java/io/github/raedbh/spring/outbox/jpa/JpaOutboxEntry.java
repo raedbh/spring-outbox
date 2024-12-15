@@ -47,19 +47,14 @@ final class JpaOutboxEntry implements Serializable {
     final byte[] payload;
 
     @Nullable
-    @Column(length = 16) final UUID relatedTo;
-
-    @Nullable
     @JdbcTypeCode(SqlTypes.JSON) private final Map<String, String> metadata;
 
 
-    JpaOutboxEntry(UUID id, String type, byte[] payload,
-      @Nullable UUID relatedTo, @Nullable Map<String, String> metadata) {
+    JpaOutboxEntry(UUID id, String type, byte[] payload, @Nullable Map<String, String> metadata) {
 
         this.id = id;
         this.type = type;
         this.payload = payload;
-        this.relatedTo = relatedTo;
         this.metadata = metadata;
     }
 
@@ -67,7 +62,6 @@ final class JpaOutboxEntry implements Serializable {
         this.id = null;
         this.type = null;
         this.payload = null;
-        this.relatedTo = null;
         this.metadata = null;
     }
 }

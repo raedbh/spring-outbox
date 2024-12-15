@@ -91,7 +91,7 @@ public abstract class EventOutboxed<S extends RootEntity> {
     public abstract String getOperation();
 
     /**
-     * Register new {@link CommandOutboxed} related to the current domain event.
+     * Register new {@link CommandOutboxed} for the current domain event.
      *
      * @param command the command to be triggered after the event is published; must not be {@code null}.
      */
@@ -103,7 +103,7 @@ public abstract class EventOutboxed<S extends RootEntity> {
     }
 
     /**
-     * Sets the commands related to this event, replacing any existing command list.
+     * Sets the commands, replacing any existing command list.
      *
      * @param commands the commands to be associated with the event; must not be {@code null}.
      */
