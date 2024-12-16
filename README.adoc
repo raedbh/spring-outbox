@@ -75,7 +75,7 @@ public class Order extends RootEntity {
 
         // business logic here
 
-        // assign the event, which will be triggered on save
+        // assign the event, which will be triggered later
         assignEvent(new OrderPlaced(this, withNotification));
 
         return this;
