@@ -11,11 +11,11 @@ When a customer places an order, the system should:
 2. Notify the customer via email with an order confirmation.
 3. Synchronize the order with Shopify to keep the store updated.
 
-The high-level architecture for this requirement is as follows:
+Here’s an overview of the architecture for this requirement:
 
 image::resources/order_placed_diagram.svg[]
 
-Here’s how you can implement this design with Spring Outbox:
+Following are the steps to implement this design with Spring Outbox:
 
 . **Add Spring Outbox Dependencies**: add the necessary Spring Outbox dependencies to your Spring Boot application. Here’s an example of the required dependencies when using JPA and RabbitMQ as the message broker.
 +
