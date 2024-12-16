@@ -129,11 +129,17 @@ public class EmailNotification implements CommandOutboxed {
 @Service
 public class OrderManagement {
 
+    private final OrderRepository repository;
+
+    OrderManagement(OrderRepository repository){
+        this.repository = repository;
+    }
+
     @Transactional
     Order placeOrder(Order order, EmailNotification emailNotification) {
 
         order.markPaid(emailNotification);
-        return save(order);
+        return repository.save(order);
     }
 }
 ----
