@@ -46,47 +46,47 @@ import static org.mockito.Mockito.verifyNoInteractions;
 @ExtendWith(MockitoExtension.class)
 class StateChangingMethodInterceptorTests {
 
-		@Mock OutboxManager outboxManager;
-		@Mock MethodInvocation invocation;
+    @Mock OutboxManager outboxManager;
+    @Mock MethodInvocation invocation;
 
-		@Test
-		void interceptSaveInvocationForOutboxManagement() throws Throwable {
-				Order order = mock(Order.class);
-				given(order.withNoEventAssigned()).willReturn(false);
+    @Test
+    void interceptSaveInvocationForOutboxManagement() throws Throwable {
+        Order order = mock(Order.class);
+        given(order.withNoEventAssigned()).willReturn(false);
 
-				Method method = OrderRepository.class.getMethod("save", Object.class);
-				given(invocation.getMethod()).willReturn(method);
-				given(invocation.getArguments()).willReturn(new Object[]{order});
+        Method method = OrderRepository.class.getMethod("save", Object.class);
+        given(invocation.getMethod()).willReturn(method);
+        given(invocation.getArguments()).willReturn(new Object[]{order});
 
-				new StateChangingMethodInterceptor(outboxManager).invoke(invocation);
+        new StateChangingMethodInterceptor(outboxManager).invoke(invocation);
 
-				verify(outboxManager).proceedInvocationAndSaveOutboxEntries(eq(order), any());
-		}
+        verify(outboxManager).proceedInvocationAndSaveOutboxEntries(eq(order), any());
+    }
 
-		@Test
-		void skipForNonStateChangingMethodInvocation() throws Throwable {
+    @Test
+    void skipForNonStateChangingMethodInvocation() throws Throwable {
 
-				Method method = OrderRepository.class.getMethod("findById", Object.class);
-				given(invocation.getMethod()).willReturn(method);
+        Method method = OrderRepository.class.getMethod("findById", Object.class);
+        given(invocation.getMethod()).willReturn(method);
 
-				new StateChangingMethodInterceptor(outboxManager).invoke(invocation);
+        new StateChangingMethodInterceptor(outboxManager).invoke(invocation);
 
-				verify(invocation).proceed();
-				verifyNoInteractions(outboxManager);
-		}
+        verify(invocation).proceed();
+        verifyNoInteractions(outboxManager);
+    }
 
-		@Test
-		void skipWhenRootEntityHasNoAssignedEvents() throws Throwable {
+    @Test
+    void skipWhenRootEntityHasNoAssignedEvents() throws Throwable {
 
-				Order order = new Order();
-				Method method = OrderRepository.class.getMethod("save", Object.class);
+        Order order = new Order();
+        Method method = OrderRepository.class.getMethod("save", Object.class);
 
-				given(invocation.getMethod()).willReturn(method);
-				given(invocation.getArguments()).willReturn(new Object[]{order});
+        given(invocation.getMethod()).willReturn(method);
+        given(invocation.getArguments()).willReturn(new Object[]{order});
 
-				new StateChangingMethodInterceptor(outboxManager).invoke(invocation);
+        new StateChangingMethodInterceptor(outboxManager).invoke(invocation);
 
-				verify(invocation).proceed();
-				verifyNoInteractions(outboxManager);
-		}
+        verify(invocation).proceed();
+        verifyNoInteractions(outboxManager);
+    }
 }

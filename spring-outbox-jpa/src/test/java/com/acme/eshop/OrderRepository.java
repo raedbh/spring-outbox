@@ -26,15 +26,15 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface OrderRepository extends CrudRepository<Order, UUID> {
 
-		@Transactional
-		default Order markPaid(Order order, EmailNotification emailNotification) {
-				order.markPaid(emailNotification);
-				return save(order);
-		}
+    @Transactional
+    default Order markPaid(Order order, EmailNotification emailNotification) {
+        order.markPaid(emailNotification);
+        return save(order);
+    }
 
-		@Transactional
-		default Order markPaidThrowsException(Order order, EmailNotification emailNotification) {
-				markPaid(order, emailNotification);
-				throw new RuntimeException("Simulated failure after saving order");
-		}
+    @Transactional
+    default Order markPaidThrowsException(Order order, EmailNotification emailNotification) {
+        markPaid(order, emailNotification);
+        throw new RuntimeException("Simulated failure after saving order");
+    }
 }

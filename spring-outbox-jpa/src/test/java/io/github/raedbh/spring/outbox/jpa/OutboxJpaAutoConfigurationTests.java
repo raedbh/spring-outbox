@@ -37,43 +37,43 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class OutboxJpaAutoConfigurationTests {
 
-		@SpringBootTest(classes = Application.class)
-		static class TestBase {
+    @SpringBootTest(classes = Application.class)
+    static class TestBase {
 
-				@Autowired
-				protected ApplicationContext context;
+        @Autowired
+        protected ApplicationContext context;
 
-		}
+    }
 
-		@Nested
-		class WithDefaults extends TestBase {
+    @Nested
+    class WithDefaults extends TestBase {
 
-				@Test
-				void noSchemaInitializer() {
-						assertThat(context.getBean(OutboxRepository.class)).isNotNull();
-						assertThat(context.getBeansOfType(OutboxTableSchemaInitializer.class)).isEmpty();
-				}
-		}
+        @Test
+        void noSchemaInitializer() {
+            assertThat(context.getBean(OutboxRepository.class)).isNotNull();
+            assertThat(context.getBeansOfType(OutboxTableSchemaInitializer.class)).isEmpty();
+        }
+    }
 
-		@Nested
-		@TestPropertySource(properties = "spring.outbox.rdbms.auto-create=true")
-		class WithAutoCreateSchemaEnabled extends TestBase {
+    @Nested
+    @TestPropertySource(properties = "spring.outbox.rdbms.auto-create=true")
+    class WithAutoCreateSchemaEnabled extends TestBase {
 
-				@Test
-				void createSchemaInitializer() {
-						assertThat(context.getBean(OutboxRepository.class)).isNotNull();
-						assertThat(context.getBean(OutboxTableSchemaInitializer.class)).isNotNull();
-				}
-		}
+        @Test
+        void createSchemaInitializer() {
+            assertThat(context.getBean(OutboxRepository.class)).isNotNull();
+            assertThat(context.getBean(OutboxTableSchemaInitializer.class)).isNotNull();
+        }
+    }
 
-		@Nested
-		@TestPropertySource(properties = "spring.outbox.rdbms.auto-create=false")
-		class WithSchemaDisabled extends TestBase {
+    @Nested
+    @TestPropertySource(properties = "spring.outbox.rdbms.auto-create=false")
+    class WithSchemaDisabled extends TestBase {
 
-				@Test
-				void noSchemaInitializer() {
-						assertThat(context.getBean(OutboxRepository.class)).isNotNull();
-						assertThat(context.getBeansOfType(OutboxTableSchemaInitializer.class)).isEmpty();
-				}
-		}
+        @Test
+        void noSchemaInitializer() {
+            assertThat(context.getBean(OutboxRepository.class)).isNotNull();
+            assertThat(context.getBeansOfType(OutboxTableSchemaInitializer.class)).isEmpty();
+        }
+    }
 }

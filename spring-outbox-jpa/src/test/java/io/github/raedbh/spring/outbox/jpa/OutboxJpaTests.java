@@ -44,78 +44,78 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 1.0
  */
 @SpringBootTest(classes = Application.class,
-		properties = {"spring.outbox.rdbms.auto-create=true", "spring.jpa.hibernate.ddl-auto=create-drop"})
+  properties = {"spring.outbox.rdbms.auto-create=true", "spring.jpa.hibernate.ddl-auto=create-drop"})
 class OutboxJpaTests {
 
-		@Autowired JdbcTemplate jdbcTemplate;
+    @Autowired JdbcTemplate jdbcTemplate;
 
-		@Autowired OrderRepository aRootEntityRepository;
-		@Autowired NonRootEntityRepository nonRootEntityRepository;
+    @Autowired OrderRepository aRootEntityRepository;
+    @Autowired NonRootEntityRepository nonRootEntityRepository;
 
-		@BeforeEach
-		void clearDatabase() {
-				jdbcTemplate.update("DELETE FROM outbox");
-				jdbcTemplate.update("DELETE FROM orders");
-		}
+    @BeforeEach
+    void clearDatabase() {
+        jdbcTemplate.update("DELETE FROM outbox");
+        jdbcTemplate.update("DELETE FROM orders");
+    }
 
-		@Test
-		void noOutboxAdviceRegisteredForNonRootEntity() {
+    @Test
+    void noOutboxAdviceRegisteredForNonRootEntity() {
 
-				Advisor[] advisors = ((Advised) nonRootEntityRepository).getAdvisors();
+        Advisor[] advisors = ((Advised) nonRootEntityRepository).getAdvisors();
 
-				assertThat(advisors)
-						.noneMatch(advisor ->
-								advisor.getAdvice() instanceof OutboxJpaRepositoryFactoryBean.StateChangingMethodInterceptor);
-		}
+        assertThat(advisors)
+          .noneMatch(advisor ->
+            advisor.getAdvice() instanceof OutboxJpaRepositoryFactoryBean.StateChangingMethodInterceptor);
+    }
 
-		@Test
-		void registerOutboxAdviceForRootEntity() {
+    @Test
+    void registerOutboxAdviceForRootEntity() {
 
-				Advisor[] advisors = ((Advised) aRootEntityRepository).getAdvisors();
+        Advisor[] advisors = ((Advised) aRootEntityRepository).getAdvisors();
 
-				assertThat(advisors)
-						.anyMatch(advisor ->
-								advisor.getAdvice() instanceof OutboxJpaRepositoryFactoryBean.StateChangingMethodInterceptor);
-		}
+        assertThat(advisors)
+          .anyMatch(advisor ->
+            advisor.getAdvice() instanceof OutboxJpaRepositoryFactoryBean.StateChangingMethodInterceptor);
+    }
 
-		@Test
-		void noOutboxEntriesWhenSavingNonRootEntity() {
-				nonRootEntityRepository.save(new NonRootEntity(1L));
-				assertThat(outboxCount()).isNotNull().isEqualTo(0);
-		}
+    @Test
+    void noOutboxEntriesWhenSavingNonRootEntity() {
+        nonRootEntityRepository.save(new NonRootEntity(1L));
+        assertThat(outboxCount()).isNotNull().isEqualTo(0);
+    }
 
-		@Test
-		void saveRootEntityWithNoEventAssigned() {
+    @Test
+    void saveRootEntityWithNoEventAssigned() {
 
-				aRootEntityRepository.save(new Order());
+        aRootEntityRepository.save(new Order());
 
-				assertThat(ordersCount()).isNotNull().isEqualTo(1);
-				assertThat(outboxCount()).isNotNull().isEqualTo(0);
-		}
+        assertThat(ordersCount()).isNotNull().isEqualTo(1);
+        assertThat(outboxCount()).isNotNull().isEqualTo(0);
+    }
 
-		@Test
-		void saveRootEntityWithAssignedEventCreatesOutboxEntries() {
+    @Test
+    void saveRootEntityWithAssignedEventCreatesOutboxEntries() {
 
-				Order order = aRootEntityRepository.save(new Order());
-				aRootEntityRepository.markPaid(order, new EmailNotification("cust@test.com", "Order Placed", "Body"));
+        Order order = aRootEntityRepository.save(new Order());
+        aRootEntityRepository.markPaid(order, new EmailNotification("cust@test.com", "Order Placed", "Body"));
 
-				assertThat(ordersCount()).isNotNull().isEqualTo(1);
+        assertThat(ordersCount()).isNotNull().isEqualTo(1);
 
-				assertThat(outboxCount()).isNotNull().isEqualTo(2);
+        assertThat(outboxCount()).isNotNull().isEqualTo(2);
 
-				List<Map<String, Object>> outboxEntries = jdbcTemplate.queryForList("SELECT * FROM outbox");
-				assertThat(outboxEntries)
-						.extracting(entry -> entry.get("type"))
-						.containsExactlyInAnyOrder("OrderPaid", "EmailNotification");
-		}
+        List<Map<String, Object>> outboxEntries = jdbcTemplate.queryForList("SELECT * FROM outbox");
+        assertThat(outboxEntries)
+          .extracting(entry -> entry.get("type"))
+          .containsExactlyInAnyOrder("OrderPaid", "EmailNotification");
+    }
 
-		@Nullable
-		private Integer outboxCount() {
-				return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM outbox", Integer.class);
-		}
+    @Nullable
+    private Integer outboxCount() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM outbox", Integer.class);
+    }
 
-		@Nullable
-		private Integer ordersCount() {
-				return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
-		}
+    @Nullable
+    private Integer ordersCount() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
+    }
 }

@@ -33,58 +33,58 @@ import io.github.raedbh.spring.outbox.core.RootEntity;
 @Table(name = "orders")
 public class Order extends RootEntity {
 
-		@Id private final UUID id;
-		private final BigDecimal totalAmount;
-		private final LocalDateTime orderedAt;
-		private final UUID customerId;
-		private Status status;
+    @Id private final UUID id;
+    private final BigDecimal totalAmount;
+    private final LocalDateTime orderedAt;
+    private final UUID customerId;
+    private Status status;
 
 
-		public Order() {
-				this.id = UUID.randomUUID();
-				this.totalAmount = BigDecimal.TEN; // Default value for the sake of simplicity
-				this.status = Status.PENDING_PAYMENT;
-				this.orderedAt = LocalDateTime.now();
-				this.customerId = UUID.randomUUID(); // Simplified; should be passed explicitly in a real scenario
-		}
+    public Order() {
+        this.id = UUID.randomUUID();
+        this.totalAmount = BigDecimal.TEN; // Default value for the sake of simplicity
+        this.status = Status.PENDING_PAYMENT;
+        this.orderedAt = LocalDateTime.now();
+        this.customerId = UUID.randomUUID(); // Simplified; should be passed explicitly in a real scenario
+    }
 
-		public Order markPaid(EmailNotification withNotification) {
-				if (isPaid()) {
-						throw new IllegalStateException("Order #" + id + " is already paid!");
-				}
-				this.status = Status.PAID;
+    public Order markPaid(EmailNotification withNotification) {
+        if (isPaid()) {
+            throw new IllegalStateException("Order #" + id + " is already paid!");
+        }
+        this.status = Status.PAID;
 
-				assignEvent(new OrderPaid(this, withNotification));
+        assignEvent(new OrderPaid(this, withNotification));
 
-				return this;
-		}
+        return this;
+    }
 
 
-		public boolean isPaid() {
-				return this.status.equals(Status.PAID);
-		}
+    public boolean isPaid() {
+        return this.status.equals(Status.PAID);
+    }
 
-		@Override
-		public UUID getId() {
-				return id;
-		}
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
-		public BigDecimal getTotalAmount() {
-				return totalAmount;
-		}
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
 
-		public LocalDateTime getOrderedAt() {
-				return orderedAt;
-		}
+    public LocalDateTime getOrderedAt() {
+        return orderedAt;
+    }
 
-		public UUID getCustomerId() {
-				return customerId;
-		}
+    public UUID getCustomerId() {
+        return customerId;
+    }
 
-		public enum Status {
+    public enum Status {
 
-				PENDING_PAYMENT,
+        PENDING_PAYMENT,
 
-				PAID
-		}
+        PAID
+    }
 }

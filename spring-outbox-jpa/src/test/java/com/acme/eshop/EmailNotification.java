@@ -23,14 +23,14 @@ import io.github.raedbh.spring.outbox.core.CommandOutboxed;
  */
 public class EmailNotification implements CommandOutboxed {
 
-		public String to;
-		public String subject;
-		public String body;
+    public String to;
+    public String subject;
+    public String body;
 
 
-		public EmailNotification(String to, String subject, String body) {
-				this.to = to;
-				this.subject = subject;
-				this.body = body;
-		}
+    public EmailNotification(String to, String subject, String body) {
+        this.to = to;
+        this.subject = subject;
+        this.body = body;
+    }
 }

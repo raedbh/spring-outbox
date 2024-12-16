@@ -23,12 +23,12 @@ import java.io.Serializable;
  */
 public class OrderMessageBody implements Serializable {
 
-		public String orderId;
+    public String orderId;
 
-		public OrderMessageBody() {
-		}
+    public OrderMessageBody() {
+    }
 
-		public OrderMessageBody(String orderId) {
-				this.orderId = orderId;
-		}
+    public OrderMessageBody(String orderId) {
+        this.orderId = orderId;
+    }
 }

@@ -25,13 +25,13 @@ import jakarta.persistence.Id;
 @Entity
 public class NonRootEntity {
 
-		@Id
-		Long id;
+    @Id
+    Long id;
 
-		public NonRootEntity() {
-		}
+    public NonRootEntity() {
+    }
 
-		public NonRootEntity(Long id) {
-				this.id = id;
-		}
+    public NonRootEntity(Long id) {
+        this.id = id;
+    }
 }
