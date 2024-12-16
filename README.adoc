@@ -114,6 +114,7 @@ class OrderPlaced extends EventOutboxed<Order> {
 [source, java]
 ----
 public class EmailNotification implements CommandOutboxed {
+
     private String to;
     private String subject;
     private String body;
@@ -130,6 +131,7 @@ public class OrderManagement {
 
     @Transactional
     Order placeOrder(Order order, EmailNotification emailNotification) {
+
         order.markPaid(emailNotification);
         return save(order);
     }
