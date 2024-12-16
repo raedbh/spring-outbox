@@ -17,7 +17,7 @@ image::resources/order_placed_diagram.svg[]
 
 Following are the steps to implement this design with Spring Outbox:
 
-. **Add Spring Outbox Dependencies**: add the necessary Spring Outbox dependencies to the Spring Boot E-commerce application. Here’s an example of the required dependencies when using JPA and RabbitMQ as the message broker.
+. **Add Spring Outbox Dependencies**: add the necessary Spring Outbox dependencies to the E-commerce Spring Boot application. Here’s an example of the required dependencies when using JPA and RabbitMQ as the message broker.
 +
 [source, xml]
 ----
@@ -52,10 +52,10 @@ Following are the steps to implement this design with Spring Outbox:
 ----
 @SpringBootApplication
 @EnableJpaRepositories(repositoryFactoryBeanClass = OutboxJpaRepositoryFactoryBean.class)
-public class Application {
+public class EcommerceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(EcommerceApplication.class, args);
     }
 }
 ----
