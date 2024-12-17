@@ -19,7 +19,7 @@ image::resources/order_placed_diagram.svg[]
 Following are the steps to implement this design with Spring Outbox:
 
 . **Add dependencies** +
-Include the following dependency in your E-commerce Spring Boot application along with Spring starters such as `spring-boot-starter-data-jpa` and `spring-boot-starter-web`:
+Include the following dependency in your E-commerce Spring Boot application along with necessary Spring starters such as `spring-boot-starter-data-jpa` and `spring-boot-starter-web`:
 +
 [source, xml]
 ----
