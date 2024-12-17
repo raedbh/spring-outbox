@@ -3,7 +3,8 @@
 Spring Outbox is an implementation of the transactional outbox pattern that helps Spring developers implement an efficient event-driven architecture with minimal hassle.
 
 == Spring Outbox in action
-=== Example of business requirement
+
+=== Business requirement example
 Let's consider the following business requirement:
 
 When a customer places an order, the system should:
