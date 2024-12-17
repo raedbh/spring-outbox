@@ -49,7 +49,7 @@ public class EcommerceApplication {
     }
 }
 ----
-. **Create the order `RootEntity`** +
+. **Create the `RootEntity`** +
 +
 [source, java]
 ----
