@@ -70,7 +70,7 @@ public class Order extends RootEntity {
 }
 ----
 
-. **Define the event**: +
+. **Define the event** +
 Create the `OrderPlaced` event class extending `EventOutboxed`:
 +
 [source, java]
@@ -88,7 +88,7 @@ class OrderPlaced extends EventOutboxed<Order> {
 }
 ----
 
-. **Define the command**: +
+. **Define the command** +
 Create the `EmailNotification` command class implementing `CommandOutboxed`.
 +
 [source, java]
@@ -135,7 +135,7 @@ public class Order extends RootEntity {
 
 ----
 
-. **Add the Application Service**: +
+. **Add the Application Service** +
 Implement the `OrderManagement` service for managing orders.
 +
 [source, java]
