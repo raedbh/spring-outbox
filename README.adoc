@@ -47,7 +47,7 @@ public class EcommerceApplication {
     }
 }
 ----
-. **Create the `Order RootEntity`** +
+. **Define the Root Entity** +
 +
 [source, java]
 ----
@@ -68,7 +68,7 @@ public class Order extends RootEntity {
 }
 ----
 
-. **Define the event** +
+. **Define the Event** +
 +
 [source, java]
 ----
@@ -85,7 +85,7 @@ class OrderPlaced extends EventOutboxed<Order> {
 }
 ----
 
-. **Define the command** +
+. **Define the Command** +
 +
 [source, java]
 ----
