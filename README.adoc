@@ -4,7 +4,6 @@ Spring Outbox is an implementation of the transactional outbox pattern that help
 
 == Spring Outbox in action
 
-=== Business requirement example
 Let's consider the following business requirement:
 
 When a customer places an order, the system should:
@@ -13,12 +12,10 @@ When a customer places an order, the system should:
 2. Notify the customer via email with an order confirmation.
 3. Synchronize the order with Shopify to keep the store updated.
 
-=== Architecture overview
 Here’s an overview of the architecture for this requirement:
 
 image::resources/order_placed_diagram.svg[]
 
-=== Implementation with Spring Outbox
 Following are the steps to implement this design with Spring Outbox:
 
 . **Add dependencies** +
