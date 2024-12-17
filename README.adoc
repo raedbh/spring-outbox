@@ -49,7 +49,7 @@ public class EcommerceApplication {
     }
 }
 ----
-. **Create the `RootEntity` `Order`** +
+. **Create the order `RootEntity`** +
 +
 [source, java]
 ----
@@ -102,8 +102,8 @@ public class EmailNotification implements CommandOutboxed {
 }
 ----
 
-. **Implement the business logic**
-+ Add a `markPaid` method to the `Order` entity:
+. **Implement the business logic** +
+Add a `markPaid` method to the `Order` entity:
 +
 [source, java]
 ----
