@@ -3,6 +3,7 @@
 Spring Outbox is an implementation of the transactional outbox pattern that helps Spring developers implement an efficient event-driven architecture with minimal hassle.
 
 == Spring Outbox in action
+=== Example of business requirement
 Let's consider the following business requirement:
 
 When a customer places an order, the system should:
@@ -11,42 +12,31 @@ When a customer places an order, the system should:
 2. Notify the customer via email with an order confirmation.
 3. Synchronize the order with Shopify to keep the store updated.
 
+=== Architecture overview
 Here’s an overview of the architecture for this requirement:
 
 image::resources/order_placed_diagram.svg[]
 
+=== Implementation with Spring Outbox
 Following are the steps to implement this design with Spring Outbox:
 
-. **Add Spring Outbox Dependencies**: add the necessary Spring Outbox dependencies to our _E-commerce_ Spring Boot application. Here’s an example of the required dependencies when using JPA and RabbitMQ as the message broker:
+. **Add dependencies** +
+Include the following dependency in your E-commerce Spring Boot application along with necessary Spring starters such as `spring-boot-starter-data-jpa` and `spring-boot-starter-web`:
 +
 [source, xml]
 ----
-
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>io.github.raedbh</groupId>
-            <artifactId>spring-outbox-bom</artifactId>
-            <version>0.1.0</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
 
 <dependencies>
     <dependency>
         <groupId>io.github.raedbh</groupId>
         <artifactId>spring-outbox-jpa</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>io.github.raedbh</groupId>
-        <artifactId>spring-outbox-rabbit</artifactId>
+        <version>0.1.0</version>
     </dependency>
 </dependencies>
 ----
 
- . **Enable Spring Outbox for JPA **: add `@EnableJpaRepositories` with `OutboxJpaRepositoryFactoryBean` as `repositoryFactoryBeanClass`:
+ . **Enable Spring Outbox for JPA ** +
+Annotate the main application class with `@EnableJpaRepositories`, specifying `OutboxJpaRepositoryFactoryBean` as the `repositoryFactoryBeanClass`:
 +
 [source, java]
 ----
@@ -59,7 +49,8 @@ public class EcommerceApplication {
     }
 }
 ----
-. **Define the `Order` Entity as a `RootEntity`**:
+. **Define the Root Entity and Assign Events** +
+Make the `Order` a `RootEntity` and assign the event inside the `markPaid` method.
 +
 [source, java]
 ----
@@ -69,19 +60,19 @@ public class Order extends RootEntity {
 
     private @Id UUID id;
     private BigDecimal totalAmount;
-    // other fields...
+    // Other fields...
 
     Order markPaid(EmailNotification withNotification) {
 
-        // business logic here
+        // Business logic here.
 
-        // assign the event, which will be triggered later
+        // Assign the event, which will be triggered later.
         assignEvent(new OrderPlaced(this, withNotification));
 
         return this;
     }
 
-    // other methods...
+    // Other methods...
 
     @Override
     public UUID getId() {
@@ -92,7 +83,8 @@ public class Order extends RootEntity {
 }
 ----
 
-. **Define the `OrderPlaced` event**:
+. **Define the event**: +
+Create the `OrderPlaced` event class extending `EventOutboxed`:
 +
 [source, java]
 ----
@@ -109,7 +101,8 @@ class OrderPlaced extends EventOutboxed<Order> {
 }
 ----
 
-. **Define the `EmailNotification` command**:
+. **Define the command**: +
+Create the `EmailNotification` command class implementing `CommandOutboxed`.
 +
 [source, java]
 ----
@@ -122,7 +115,8 @@ public class EmailNotification implements CommandOutboxed {
 }
 ----
 
-. **Application Service** : the application service for placing an order will look like this:
+. **Add the Application Service**: +
+Implement the `OrderManagement` service for managing orders.
 +
 [source, java]
 ----
@@ -139,13 +133,14 @@ public class OrderManagement {
     Order placeOrder(Order order, EmailNotification emailNotification) {
 
         order.markPaid(emailNotification);
+
         return repository.save(order);
     }
 }
 ----
 When the `placeOrder` method is called, Spring Outbox triggers the assigned event, producing new entries (for event and command) in the outbox table.
 
-. **Configure and run Debezium connector** :the debezium connector detects new entries in outbox table and transmits them to message broker (RabbitMQ in our example)
+. **Configure and run Debezium connector** :the debezium connector detects new entries in outbox table and transmits them to message broker, RabbitMQ in our example.
 // java -jar here
 
 . **Both of ShopifySn.....**
