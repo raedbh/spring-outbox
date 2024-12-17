@@ -49,8 +49,8 @@ public class EcommerceApplication {
     }
 }
 ----
-. **Define the Root Entity and Assign Events** +
-Make the `Order` a `RootEntity` and assign the event inside the `markPaid` method.
+. **Define the Root Entity** +
+Create the `Order` as `RootEntity`.
 +
 [source, java]
 ----
@@ -60,26 +60,14 @@ public class Order extends RootEntity {
 
     private @Id UUID id;
     private BigDecimal totalAmount;
-    // Other fields...
-
-    Order markPaid(EmailNotification withNotification) {
-
-        // Business logic here.
-
-        // Assign the event, which will be triggered later.
-        assignEvent(new OrderPlaced(this, withNotification));
-
-        return this;
-    }
-
-    // Other methods...
+    // Other fields
 
     @Override
     public UUID getId() {
         return id;
     }
 
-    // other getters / setters...
+    // Other getters / setters
 }
 ----
 
@@ -113,6 +101,39 @@ public class EmailNotification implements CommandOutboxed {
     private String body;
     // ...
 }
+----
+
+. **Implement the business logic in the Root Entity**
++ Add a `markPaid` method to the `Order` entity implementing order payment logic and assign the corresponding event:
++
+[source, java]
+----
+@Entity
+@Table(name = "orders")
+public class Order extends RootEntity {
+
+    private @Id UUID id;
+    private BigDecimal totalAmount;
+    // Other fields
+
+    Order markPaid(EmailNotification withNotification) {
+
+        // Business logic here
+
+        // Assign the event, which will be triggered later
+        assignEvent(new OrderPlaced(this, withNotification));
+
+        return this;
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    // Other getters / setters
+}
+
 ----
 
 . **Add the Application Service**: +
