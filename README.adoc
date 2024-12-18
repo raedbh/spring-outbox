@@ -8,7 +8,7 @@ Let's consider the following business requirement:
 
 When a customer places an order, the system should:
 
-1. Record the order details and confirm the payment status.
+1. Save the order details, marking it as paid.
 2. Notify the customer via email with an order confirmation.
 3. Synchronize the order with Shopify to keep the store updated.
 
