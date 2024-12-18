@@ -24,13 +24,11 @@ Include the following dependency in your E-commerce Spring Boot application alon
 [source, xml]
 ----
 
-<dependencies>
-    <dependency>
-        <groupId>io.github.raedbh</groupId>
-        <artifactId>spring-outbox-jpa</artifactId>
-        <version>0.1.0</version>
-    </dependency>
-</dependencies>
+<dependency>
+    <groupId>io.github.raedbh</groupId>
+    <artifactId>spring-outbox-jpa</artifactId>
+    <version>0.1.0</version>
+</dependency>
 ----
 
  . **Enable Spring Outbox for JPA ** +
