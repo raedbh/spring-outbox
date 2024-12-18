@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-		<modelVersion>4.0.0</modelVersion>
-		<parent>
-				<groupId>io.github.raedbh</groupId>
-				<artifactId>spring-outbox-debezium-connectors-parent</artifactId>
-				<version>0.2.0-SNAPSHOT</version>
-				<relativePath>../spring-outbox-debezium-connectors-parent</relativePath>
-		</parent>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.raedbh</groupId>
+        <artifactId>spring-outbox-debezium-connectors-parent</artifactId>
+        <version>0.2.0-SNAPSHOT</version>
+        <relativePath>../spring-outbox-debezium-connectors-parent</relativePath>
+    </parent>
 
-		<artifactId>spring-outbox-debezium-connector-postgres-rabbit</artifactId>
+    <artifactId>spring-outbox-debezium-connector-postgres-rabbit</artifactId>
 
-		<name>Spring Outbox Debezium Connector  — Postgres Rabbit</name>
+    <name>Spring Outbox Debezium Connector  — Postgres Rabbit</name>
 
-		<dependencies>
-
-				<dependency>
-						<groupId>io.github.raedbh</groupId>
-						<artifactId>spring-outbox-debezium-connectors-rabbit</artifactId>
-						<version>${project.version}</version>
-				</dependency>
-
-				<dependency>
-						<groupId>org.apache.camel.springboot</groupId>
-						<artifactId>camel-debezium-postgres-starter</artifactId>
-				</dependency>
-		</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>io.github.raedbh</groupId>
+            <artifactId>spring-outbox-debezium-connectors-rabbit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-debezium-postgres-starter</artifactId>
+        </dependency>
+    </dependencies>
 </project>

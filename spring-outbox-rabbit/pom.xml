@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-		<modelVersion>4.0.0</modelVersion>
-		<parent>
-				<groupId>io.github.raedbh</groupId>
-				<artifactId>spring-outbox</artifactId>
-				<version>0.2.0-SNAPSHOT</version>
-				<relativePath>../pom.xml</relativePath>
-		</parent>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.raedbh</groupId>
+        <artifactId>spring-outbox</artifactId>
+        <version>0.2.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-		<artifactId>spring-outbox-rabbit</artifactId>
+    <artifactId>spring-outbox-rabbit</artifactId>
 
-		<name>Spring Outbox Rabbit</name>
+    <name>Spring Outbox Rabbit</name>
 
-		<dependencies>
-				<dependency>
-						<groupId>io.github.raedbh</groupId>
-						<artifactId>spring-outbox-core</artifactId>
-						<version>${project.version}</version>
-				</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>io.github.raedbh</groupId>
+            <artifactId>spring-outbox-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-				<dependency>
-						<groupId>org.springframework.amqp</groupId>
-						<artifactId>spring-rabbit</artifactId>
-						<optional>true</optional>
-				</dependency>
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+            <optional>true</optional>
+        </dependency>
 
-				<dependency>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-autoconfigure</artifactId>
-						<optional>true</optional>
-				</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <optional>true</optional>
+        </dependency>
 
-				<dependency>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-starter-test</artifactId>
-						<scope>test</scope>
-				</dependency>
-		</dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
