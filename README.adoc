@@ -167,7 +167,7 @@ When the `placeOrder` method is called, Spring Outbox triggers the assigned even
 // TODO
 
 . *Run Debezium connector* +
-The debezium connector detects new entries in outbox table and transmits them to message broker, RabbitMQ in our example. +
+The debezium connector detects new entries in outbox table and transmits them to RabbitMQ. +
 Download and execute the JAR https://repo1.maven.org/maven2/io/github/raedbh/spring-outbox-debezium-connector-mysql-rabbit/0.1.0/spring-outbox-debezium-connector-mysql-rabbit-0.1.0.jar[spring-outbox-debezium-connector-mysql-rabbit-0.1.0.jar]:
 +
 [source, shell]
