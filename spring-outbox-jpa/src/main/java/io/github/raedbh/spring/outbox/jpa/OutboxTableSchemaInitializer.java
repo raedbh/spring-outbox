@@ -48,7 +48,8 @@ class OutboxTableSchemaInitializer implements InitializingBean {
         this.resourceLoader = resourceLoader;
         this.transactionTemplate = transactionTemplate;
         this.outboxSchemaAwareExecution = outboxSchemaAwareExecution;
-        this.dropExistentOutboxTable = "create-drop".equals(hibernateProperties.getDdlAuto());
+        this.dropExistentOutboxTable = "create".equals(hibernateProperties.getDdlAuto()) ||
+          "create-drop".equals(hibernateProperties.getDdlAuto());
     }
 
 
