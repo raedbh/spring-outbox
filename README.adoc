@@ -18,7 +18,9 @@ image::resources/order_placed_diagram.svg[]
 
 Following are the steps to implement this design with Spring Outbox:
 
-. **Add dependencies** +
+NOTE: Spring Outbox supports multiple databases and brokers. In this example, we use MySQL and RabbitMQ.
+
+. *Add dependencies* +
 Include the following dependency in your E-commerce Spring Boot application along with necessary Spring starters such as `spring-boot-starter-data-jpa` and `spring-boot-starter-web`:
 +
 [source, xml]
@@ -31,7 +33,7 @@ Include the following dependency in your E-commerce Spring Boot application alon
 </dependency>
 ----
 
- . **Enable Spring Outbox for JPA ** +
+ . *Enable Spring Outbox for JPA* +
 Annotate the main application class with `@EnableJpaRepositories`, specifying `OutboxJpaRepositoryFactoryBean` as the `repositoryFactoryBeanClass`:
 +
 [source, java]
@@ -54,7 +56,7 @@ Set the following property in your `application.properties` (or `application.yml
 spring.outbox.rdbms.auto-create=true
 ----
 
-. **Define the Root Entity** +
+. *Define the Root Entity* +
 +
 [source, java]
 ----
@@ -75,7 +77,7 @@ public class Order extends RootEntity {
 }
 ----
 
-. **Define the Event** +
+. *Define the Event* +
 +
 [source, java]
 ----
@@ -92,7 +94,7 @@ class OrderPlaced extends EventOutboxed<Order> {
 }
 ----
 
-. **Define the Command** +
+. *Define the Command* +
 +
 [source, java]
 ----
@@ -105,7 +107,7 @@ public class EmailNotification implements CommandOutboxed {
 }
 ----
 
-. **Implement the order payment logic** +
+. *Implement the order payment logic* +
 +
 [source, java]
 ----
@@ -137,7 +139,7 @@ public class Order extends RootEntity {
 
 ----
 
-. **Implement the application service** +
+. *Implement the application service* +
 +
 [source, java]
 ----
@@ -161,10 +163,30 @@ public class OrderManagement {
 ----
 When the `placeOrder` method is called, Spring Outbox triggers the assigned event, producing new entries (for event and command) in the outbox table.
 
-. **Configure and run Debezium connector** :the debezium connector detects new entries in outbox table and transmits them to message broker, RabbitMQ in our example.
-// java -jar here
+. *Create Rabbit Queues* +
+// TODO
 
-. **Both of ShopifySn.....**
+. *Run Debezium connector* +
+The debezium connector detects new entries in outbox table and transmits them to message broker, RabbitMQ in our example. +
+Download and execute the JAR https://repo1.maven.org/maven2/io/github/raedbh/spring-outbox-debezium-connector-mysql-rabbit/0.1.0/spring-outbox-debezium-connector-mysql-rabbit-0.1.0.jar[spring-outbox-debezium-connector-mysql-rabbit-0.1.0.jar]:
++
+[source, shell]
+----
+java -jar spring-outbox-debezium-connector-mysql-rabbit-0.1.0.jar \
+  --spring.outbox.connector.database.hostname=mysql \
+  --spring.outbox.connector.database.dbname=data \
+  --spring.outbox.connector.database.user=root \
+  --spring.outbox.connector.database.password=secret \
+  --spring.outbox.connector.offsetstorage.filepath=/tmp/outbox-offset.dat \
+  --spring.outbox.connector.schemahistory.filepath=/tmp/outbox-schema-history.dat \
+  --spring.outbox.connector.rabbit.messages.orderplaced.routingkey=shopify.orders \
+  --spring.rabbitmq.host=rabbit \
+  --spring.rabbitmq.username=guest \
+  --spring.rabbitmq.password=guest
+----
+_Replace the property values with your specific configurations._
+
+. **Email Service & Shopify Synchroniser**
 
 // TODO explain conversion
 
