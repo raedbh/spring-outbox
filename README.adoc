@@ -45,6 +45,15 @@ public class EcommerceApplication {
     }
 }
 ----
+
+. *Configure automatic outbox table creation* +
+Set the following property in your `application.properties` (or `application.yml`) file to automatically create the outbox table on application startup:
++
+[source, properties]
+----
+spring.outbox.rdbms.auto-create=true
+----
+
 . **Define the Root Entity** +
 +
 [source, java]
