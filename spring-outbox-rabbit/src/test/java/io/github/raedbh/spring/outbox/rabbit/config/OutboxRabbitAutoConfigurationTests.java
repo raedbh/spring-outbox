@@ -31,16 +31,16 @@ import static org.mockito.Mockito.mock;
  */
 class OutboxRabbitAutoConfigurationTests {
 
-		@Test
-		void registerOutboxMethodArgumentResolver() {
+    @Test
+    void registerOutboxMethodArgumentResolver() {
 
-				OutboxRabbitAutoConfiguration configuration = new OutboxRabbitAutoConfiguration(mock(Deserializer.class));
-				RabbitListenerEndpointRegistrar registrar = new RabbitListenerEndpointRegistrar();
+        OutboxRabbitAutoConfiguration configuration = new OutboxRabbitAutoConfiguration(mock(Deserializer.class));
+        RabbitListenerEndpointRegistrar registrar = new RabbitListenerEndpointRegistrar();
 
-				configuration.configureRabbitListeners(registrar);
+        configuration.configureRabbitListeners(registrar);
 
-				assertThat(registrar.getCustomMethodArgumentResolvers())
-						.hasSize(1)
-						.allSatisfy(resolver -> assertThat(resolver).isInstanceOf(OutboxMethodArgumentResolver.class));
-		}
+        assertThat(registrar.getCustomMethodArgumentResolvers())
+          .hasSize(1)
+          .allSatisfy(resolver -> assertThat(resolver).isInstanceOf(OutboxMethodArgumentResolver.class));
+    }
 }
