@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import io.github.raedbh.spring.outbox.core.MessageWith;
+import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
 
 /**
  * Listens for payment events and synchronizes order details with Shopify.
@@ -43,7 +43,7 @@ class ShopifyIntegration {
     }
 
     @RabbitListener(queues = "shopify.orders")
-    void onOrderPaid(@MessageWith(operation = "payment") OrderMessageBody messageBody) {
+    void onOrderPaid(@OutboxMessageBody(operation = "payment") OrderMessageBody messageBody) {
         shopifyOrderSynchronizer.syncOrder(messageBody);
     }
 

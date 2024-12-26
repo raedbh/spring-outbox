@@ -16,6 +16,7 @@
 
 package io.github.raedbh.spring.outbox.rabbit.config;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import org.springframework.core.MethodParameter;
@@ -24,7 +25,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 
-import io.github.raedbh.spring.outbox.core.MessageWith;
+import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
 
 /**
  * @author Raed Ben Hamouda
@@ -40,19 +41,32 @@ public class OutboxMethodArgumentResolver implements HandlerMethodArgumentResolv
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        MessageWith annotation = parameter.getParameterAnnotation(MessageWith.class);
-        return Serializable.class.isAssignableFrom(parameter.getParameterType()) &&
-          annotation != null && annotation.operation() != null;
+        OutboxMessageBody annotation = parameter.getParameterAnnotation(OutboxMessageBody.class);
+        return annotation != null && Serializable.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Nullable
     @Override
     public Object resolveArgument(MethodParameter parameter, Message<?> message) throws Exception {
-        MessageWith annotation = parameter.getParameterAnnotation(MessageWith.class);
-        String operationHeader = message.getHeaders().get(OPERATION_HEADER, String.class);
-        if (annotation != null && annotation.operation().equals(operationHeader)) {
-            return deserializer.deserializeFromByteArray((byte[]) message.getPayload());
+        OutboxMessageBody annotation = parameter.getParameterAnnotation(OutboxMessageBody.class);
+        if (annotation == null) {
+            throw new IllegalStateException(
+              "Parameter is not annotated with @OutboxMessageBody. This should not happen!");
         }
+
+        String operationFromAnnotation = annotation.operation();
+        String operationFromHeader = message.getHeaders().get(OPERATION_HEADER, String.class);
+        if (operationFromAnnotation.isEmpty() || operationFromAnnotation.equals(operationFromHeader)) {
+            return deserializePayload(message.getPayload());
+        }
+
         return null;
+    }
+
+    private Serializable deserializePayload(Object payload) throws IOException {
+        if (!(payload instanceof byte[])) {
+            throw new IllegalArgumentException("Payload must be of type byte[] for deserialization.");
+        }
+        return deserializer.deserializeFromByteArray((byte[]) payload);
     }
 }

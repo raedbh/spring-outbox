@@ -24,7 +24,8 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Specifies that the message to be processed must match a specific operation.
+ * Identifies a method parameter as the body of an outbox message, primarily intended
+ * for use within message listeners.
  *
  * @author Raed Ben Hamouda
  * @since 1.0
@@ -32,7 +33,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface MessageWith {
+public @interface OutboxMessageBody {
 
-    String operation();
+    /**
+     * Specifies that the message to be processed match a specific operation.
+     * Defaults to no filtering.
+     */
+    String operation() default "";
 }
