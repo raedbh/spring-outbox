@@ -18,6 +18,7 @@ package io.github.raedbh.spring.outbox.rabbit.config;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.core.serializer.Deserializer;
@@ -28,6 +29,12 @@ import org.springframework.messaging.handler.invocation.HandlerMethodArgumentRes
 import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
 
 /**
+ * Resolves method arguments annotated with {@link OutboxMessageBody} by deserializing
+ * the message payload into the specified parameter type.
+ *
+ * <p>Note: the parameter type, or its nested type if the parameter is {@link Optional},
+ * must implement {@link Serializable}.</p>
+ *
  * @author Raed Ben Hamouda
  * @since 1.0
  */
@@ -41,8 +48,7 @@ public class OutboxMethodArgumentResolver implements HandlerMethodArgumentResolv
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        OutboxMessageBody annotation = parameter.getParameterAnnotation(OutboxMessageBody.class);
-        return annotation != null && Serializable.class.isAssignableFrom(parameter.getParameterType());
+        return parameter.hasParameterAnnotation(OutboxMessageBody.class);
     }
 
     @Nullable
@@ -54,19 +60,33 @@ public class OutboxMethodArgumentResolver implements HandlerMethodArgumentResolv
               "Parameter is not annotated with @OutboxMessageBody. This should not happen!");
         }
 
+        Class<?> targetClass = parameter.nestedIfOptional().getNestedParameterType();
+        if (!Serializable.class.isAssignableFrom(targetClass)) {
+            throw new IllegalStateException(
+              "The parameter type '" + targetClass.getName() + "' must implement Serializable.");
+        }
+
         String operationFromAnnotation = annotation.operation();
         String operationFromHeader = message.getHeaders().get(OPERATION_HEADER, String.class);
-        if (operationFromAnnotation.isEmpty() || operationFromAnnotation.equals(operationFromHeader)) {
-            return deserializePayload(message.getPayload());
-        }
+        boolean isOptionalTargetClass = (parameter.getParameterType() == Optional.class);
 
-        return null;
+        if (operationFromAnnotation.isEmpty() || operationFromAnnotation.equals(operationFromHeader)) {
+            Serializable payload = deserializePayload(message.getPayload());
+            return (isOptionalTargetClass ? Optional.ofNullable(payload) : payload);
+        }
+        return (isOptionalTargetClass ? Optional.empty() : null);
     }
 
+    @Nullable
     private Serializable deserializePayload(Object payload) throws IOException {
-        if (!(payload instanceof byte[])) {
+
+        if (!(payload instanceof byte[] bytes)) {
             throw new IllegalArgumentException("Payload must be of type byte[] for deserialization.");
         }
-        return deserializer.deserializeFromByteArray((byte[]) payload);
+
+        if (bytes.length == 0) {
+            return null;
+        }
+        return deserializer.deserializeFromByteArray(bytes);
     }
 }

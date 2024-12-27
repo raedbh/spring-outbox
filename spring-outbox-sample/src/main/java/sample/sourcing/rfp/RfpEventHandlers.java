@@ -16,6 +16,8 @@
 
 package sample.sourcing.rfp;
 
+import java.util.Optional;
+
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -38,11 +40,9 @@ class RfpEventHandlers {
         }
 
         @RabbitListener(queues = "rfp.proposals")
-        void onProposalAwarded(@OutboxMessageBody(operation = "award") ProposalMessageBody proposalMessageBody) {
-            if (proposalMessageBody == null) {
-                return;
-            }
-            rfpManagement.close(EntityIdentifier.fromString(proposalMessageBody.rfpId));
+        void onProposalAwarded(@OutboxMessageBody(operation = "award") Optional<ProposalMessageBody> messageBody) {
+            messageBody.ifPresent(body ->
+              rfpManagement.close(EntityIdentifier.fromString(body.rfpId)));
         }
     }
 }

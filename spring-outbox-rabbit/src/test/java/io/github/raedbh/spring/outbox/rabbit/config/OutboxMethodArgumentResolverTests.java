@@ -18,6 +18,7 @@ package io.github.raedbh.spring.outbox.rabbit.config;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,67 +56,111 @@ class OutboxMethodArgumentResolverTests {
     @Test
     void supportParameter() throws NoSuchMethodException {
 
-        MethodParameter paramNotAnnotated = new MethodParameter(
-          TestHandler.class.getMethod("handleWithoutAnnotation", String.class), 0);
+        assertThat(resolver.supportsParameter(paramAnnotated(true, false))).isTrue();
+        assertThat(resolver.supportsParameter(paramAnnotated(false, false))).isTrue();
 
-        assertThat(resolver.supportsParameter(paramAnnotated(true))).isTrue();
-        assertThat(resolver.supportsParameter(paramAnnotated(false))).isTrue();
+        assertThat(resolver.supportsParameter(paramAnnotated(true, true))).isTrue();
+        assertThat(resolver.supportsParameter(paramAnnotated(false, true))).isTrue();
+
+        MethodParameter paramNotAnnotated = new MethodParameter(
+          TestHandler.class.getMethod("notAnOutboxMessageHandler", String.class), 0);
         assertThat(resolver.supportsParameter(paramNotAnnotated)).isFalse();
     }
 
     @Test
-    void resolvesArgumentWhenOperationMatches() throws Exception {
+    void resolveArgumentWhenOperationMatches() throws Exception {
 
         Message<byte[]> message = MessageBuilder
           .withPayload(new OutboxDefaultSerializer().serializeToByteArray("The Payload"))
           .setHeader(OPERATION_HEADER, TEST_OPERATION)
           .build();
 
-        Object result = resolver.resolveArgument(paramAnnotated(true), message);
+        Object result = resolver.resolveArgument(paramAnnotated(true, false), message);
 
         assertThat(result).isEqualTo("The Payload");
     }
 
     @Test
-    void returnsNullWhenOperationDoesNotMatch() throws Exception {
+    void returnNullWhenOperationDoesNotMatch() throws Exception {
 
         Message<byte[]> message = MessageBuilder.withPayload(new byte[]{1, 2, 3})
           .setHeader(OPERATION_HEADER, "WRONG_OPERATION")
           .build();
 
-        Object result = resolver.resolveArgument(paramAnnotated(true), message);
+        Object result = resolver.resolveArgument(paramAnnotated(true, false), message);
 
         assertThat(result).isNull();
     }
 
     @Test
-    void resolvesArgumentWhenNoOperationDefined() throws Exception {
+    void resolveArgumentWhenNoOperationDefined() throws Exception {
 
         Message<byte[]> message = MessageBuilder
           .withPayload(new OutboxDefaultSerializer().serializeToByteArray("The Payload"))
           .build();
 
-        Object result = resolver.resolveArgument(paramAnnotated(false), message);
+        Object result = resolver.resolveArgument(paramAnnotated(false, false), message);
 
         assertThat(result).isEqualTo("The Payload");
     }
 
-    private MethodParameter paramAnnotated(boolean withOperationFilter) throws NoSuchMethodException {
+    @Test
+    void resolveArgumentToNullWhenPayloadIsEmpty() throws Exception {
+        Message<byte[]> message = MessageBuilder.withPayload(new byte[0]).build();
+
+        Object result = resolver.resolveArgument(paramAnnotated(false, false), message);
+
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void resolveArgumentToOptional() throws Exception {
+        Message<byte[]> message = MessageBuilder
+          .withPayload(new OutboxDefaultSerializer().serializeToByteArray("The Payload"))
+          .build();
+
+        Object result = resolver.resolveArgument(paramAnnotated(false, true), message);
+
+        assertThat(result).isEqualTo(Optional.of("The Payload"));
+    }
+
+    @Test
+    void resolveArgumentToOptionalEmpty() throws Exception {
+        Message<byte[]> message = MessageBuilder.withPayload(new byte[0]).build();
+
+        Object result = resolver.resolveArgument(paramAnnotated(false, true), message);
+
+        assertThat(result).isEqualTo(Optional.empty());
+    }
+
+    private MethodParameter paramAnnotated(boolean withOperationFilter, boolean paramIsOptional)
+      throws NoSuchMethodException {
+
+        Class<?> type = (paramIsOptional ? Optional.class : SerializableEntity.class);
 
         String methodHandlerName = (withOperationFilter ?
-          "handleWithAnnotationAndOperation" : "handleWithAnnotationNoOperation");
-        Method methodHandler = TestHandler.class.getMethod(methodHandlerName, Serializable.class);
+          "annotated" + type.getSimpleName() + "ParamWithOperationDefinedHandler" :
+          "annotated" + type.getSimpleName() + "ParamWithoutOperationDefinedHandler");
+        Method methodHandler = TestHandler.class.getMethod(methodHandlerName, type);
 
         return new MethodParameter(methodHandler, 0);
     }
 
     static class TestHandler {
 
-        public void handleWithAnnotationAndOperation(
-          @OutboxMessageBody(operation = TEST_OPERATION) Serializable entity) {}
+        public void annotatedSerializableEntityParamWithOperationDefinedHandler(
+          @OutboxMessageBody(operation = TEST_OPERATION) SerializableEntity entity) {}
 
-        public void handleWithAnnotationNoOperation(@OutboxMessageBody Serializable entity) {}
+        public void annotatedSerializableEntityParamWithoutOperationDefinedHandler(@OutboxMessageBody SerializableEntity entity) {}
 
-        public void handleWithoutAnnotation(String message) {}
+        public void annotatedOptionalParamWithOperationDefinedHandler(
+          @OutboxMessageBody(operation = TEST_OPERATION) Optional<SerializableEntity> entity) {}
+
+        public void annotatedOptionalParamWithoutOperationDefinedHandler(
+          @OutboxMessageBody Optional<SerializableEntity> entity) {}
+
+        public void notAnOutboxMessageHandler(String message) {}
     }
+
+    static class SerializableEntity implements Serializable {}
 }
