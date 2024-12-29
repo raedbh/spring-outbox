@@ -1,0 +1,12 @@
+:toc:
+
+= Spring Outbox
+
+Spring Outbox is an implementation of the transactional outbox pattern that helps Spring developers implement an efficient event-driven architecture for microservices and monolithic applications. +
+Here is Spring Outbox key considerations:
+
+- When a domain event occurs, it generates one or more messages.
+- Each outbox entry represents either an event or a command.
+- An operation, part of an event, represents the action performed on the root entity (e.g., create, update, award) and helps consumers determine if deserialization is needed.
+- Decouple the outbox message producer and consumer to enable scalability and independent evolution.
+- Keep the Debezium connector simple by focusing on reading outbox entries and producing messages.
