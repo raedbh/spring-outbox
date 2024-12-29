@@ -38,7 +38,7 @@ Include the following dependency in your E-commerce Spring Boot application alon
 <dependency>
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-jpa</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ----
 
@@ -175,13 +175,13 @@ When the `placeOrder` method is called, Spring Outbox triggers the assigned even
 . *Run the Debezium connector* +
 The debezium connector detects new entries in outbox table and transmits them to RabbitMQ.
 Follow these steps to set it up:
-- Download the connector from Maven Central: https://repo1.maven.org/maven2/io/github/raedbh/spring-outbox-debezium-connector-mysql-rabbit/0.1.0/spring-outbox-debezium-connector-mysql-rabbit-0.1.0.jar[spring-outbox-debezium-connector-mysql-rabbit-0.1.0.jar]
+- Download the connector from Maven Central: https://repo1.maven.org/maven2/io/github/raedbh/spring-outbox-debezium-connector-mysql-rabbit/0.2.0/spring-outbox-debezium-connector-mysql-rabbit-0.2.0.jar[spring-outbox-debezium-connector-mysql-rabbit-0.2.0.jar]
 - Create the queues `shopify.orders` and `emails` in RabbitMQ.
 - Replace the property values with your specific configurations then execute the following command to run the connector:
 +
 [source,shell]
 ----
-java -jar spring-outbox-debezium-connector-mysql-rabbit-0.1.0.jar \
+java -jar spring-outbox-debezium-connector-mysql-rabbit-0.2.0.jar \
     --spring.outbox.connector.database.hostname=<db_host> \
     --spring.outbox.connector.database.dbname=<db> \
     --spring.outbox.connector.database.user=<db_user> \
@@ -219,7 +219,7 @@ Here's how to set this up:
 <dependency>
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-rabbit</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ----
 - Implement a message handler to handle and process incoming messages in the Shopify Synchronizer:
