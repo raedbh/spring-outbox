@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.core.RabbitOperations;
 import org.springframework.core.env.Environment;
 
 import io.github.raedbh.spring.outbox.connector.core.OutboxData;
@@ -36,20 +36,20 @@ public class RabbitOutboxMessageProducer implements OutboxMessageProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitOutboxMessageProducer.class);
 
-    private final RabbitTemplate rabbitTemplate;
-    private final RabbitConfigProvider configProvider;
+    private final RabbitOperations rabbitOperations;
+    private final RabbitProducerConfigProvider configProvider;
 
 
-    public RabbitOutboxMessageProducer(RabbitTemplate rabbitTemplate, Environment environment) {
-        this.rabbitTemplate = rabbitTemplate;
-        this.configProvider = new RabbitConfigProvider(environment);
+    public RabbitOutboxMessageProducer(RabbitOperations rabbitOperations, Environment environment) {
+        this.rabbitOperations = rabbitOperations;
+        this.configProvider = new RabbitProducerConfigProvider(environment);
     }
 
 
     @Override
     public void produceMessage(OutboxData outboxData) throws Exception {
 
-        RabbitConfig config = configProvider.rabbitConfig(outboxData.getType());
+        RabbitProducerConfig config = configProvider.getConfig(outboxData.getType());
         if (config.routingKey() == null) {
             LOGGER.warn("No key found for {}", outboxData.getType());
             LOGGER.info("To use a specific routing key, make sure the config follows: "
@@ -67,7 +67,7 @@ public class RabbitOutboxMessageProducer implements OutboxMessageProducer {
         }
         Message message = new Message(outboxData.getPayload(), messageProperties);
 
-        rabbitTemplate.send(config.exchange(), config.routingKey(), message);
+        rabbitOperations.send(config.exchange(), config.routingKey(), message);
         LOGGER.info("Message sent to exchange '{}' with routing key '{}'.", config.exchange(), config.routingKey());
     }
 

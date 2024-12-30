@@ -28,7 +28,7 @@ import org.springframework.lang.Nullable;
  * @author Raed Ben Hamouda
  * @since 1.0
  */
-class RabbitConfigProvider {
+class RabbitProducerConfigProvider {
 
     private static final String CONFIG_PREFIX = "spring.outbox.connector.rabbit.messages";
 
@@ -36,7 +36,7 @@ class RabbitConfigProvider {
     private final Environment environment;
 
 
-    RabbitConfigProvider(Environment environment) {
+    RabbitProducerConfigProvider(Environment environment) {
         this.environment = environment;
         this.configCache = new HashMap<>();
     }
@@ -46,18 +46,18 @@ class RabbitConfigProvider {
         return input.replaceAll("([a-z])([A-Z])", "$1-$2").toLowerCase();
     }
 
-    RabbitConfig rabbitConfig(String outboxType) {
+    RabbitProducerConfig getConfig(String outboxType) {
         String typeKey = toKebabCase(outboxType);
 
         String routingKey = getConfigValue(typeKey, "routing-key");
         String exchange = getConfigValue(typeKey, "exchange");
 
-        return new RabbitConfig(routingKey, exchange);
+        return new RabbitProducerConfig(routingKey, exchange);
     }
 
     @Nullable
     private String getConfigValue(String typeKey, String configName) {
-        String propertyKey = "%s.%s.%s".formatted(RabbitConfigProvider.CONFIG_PREFIX, typeKey, configName);
+        String propertyKey = "%s.%s.%s".formatted(RabbitProducerConfigProvider.CONFIG_PREFIX, typeKey, configName);
         return configCache.computeIfAbsent(propertyKey, environment::getProperty);
     }
 }

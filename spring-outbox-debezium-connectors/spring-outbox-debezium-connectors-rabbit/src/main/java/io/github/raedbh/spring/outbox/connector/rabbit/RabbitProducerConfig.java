@@ -22,4 +22,4 @@ import org.springframework.lang.Nullable;
  * @author Raed Ben Hamouda
  * @since 1.0
  */
-record RabbitConfig(@Nullable String routingKey, @Nullable String exchange) {}
+record RabbitProducerConfig(@Nullable String routingKey, @Nullable String exchange) {}

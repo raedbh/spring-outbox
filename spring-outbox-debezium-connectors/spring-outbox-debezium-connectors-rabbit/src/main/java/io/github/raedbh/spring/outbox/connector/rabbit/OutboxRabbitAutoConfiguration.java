@@ -16,11 +16,13 @@
 
 package io.github.raedbh.spring.outbox.connector.rabbit;
 
+import org.springframework.amqp.rabbit.core.RabbitOperations;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -33,11 +35,12 @@ import io.github.raedbh.spring.outbox.connector.core.OutboxMessageProducer;
  */
 @AutoConfiguration
 @AutoConfigureAfter(RabbitAutoConfiguration.class)
+@ConditionalOnClass(RabbitTemplate.class)
 public class OutboxRabbitAutoConfiguration {
 
     @Bean
-    OutboxMessageProducer outboxMessageProducer(RabbitTemplate rabbitTemplate, Environment environment) {
-        return new RabbitOutboxMessageProducer(rabbitTemplate, environment);
+    OutboxMessageProducer outboxMessageProducer(RabbitOperations rabbitOperations, Environment environment) {
+        return new RabbitOutboxMessageProducer(rabbitOperations, environment);
     }
 
     @Bean

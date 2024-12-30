@@ -46,64 +46,64 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class RabbitOutboxMessageProducerTests {
 
-		@Mock RabbitTemplate rabbitTemplate;
-		@Mock Environment env;
+    @Mock RabbitTemplate rabbitTemplate;
+    @Mock Environment env;
 
-		@InjectMocks RabbitOutboxMessageProducer producer;
+    @InjectMocks RabbitOutboxMessageProducer producer;
 
-		OutboxData outboxData;
+    OutboxData outboxData;
 
-		@BeforeEach
-		void setUp() {
-				outboxData = new OutboxData("1a2b3c", "OrderPlaced", "TestPayload".getBytes(),
-                  Map.of("key1", "value1", "key2", "value2"));
-		}
+    @BeforeEach
+    void setUp() {
+        outboxData = new OutboxData("1a2b3c", "OrderPlaced", "TestPayload".getBytes(),
+          Map.of("key1", "value1", "key2", "value2"));
+    }
 
-		@Test
-		void messageProduced() throws Exception {
+    @Test
+    void messageProduced() throws Exception {
 
-				given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
-				given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
+        given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
+        given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
 
-				producer.produceMessage(outboxData);
+        producer.produceMessage(outboxData);
 
-				verify(rabbitTemplate).send(eq("ex"), eq("rk"), any(Message.class));
-		}
+        verify(rabbitTemplate).send(eq("ex"), eq("rk"), any(Message.class));
+    }
 
-		@Test
-		void produceMessageDespiteMissingExchange() throws Exception {
+    @Test
+    void produceMessageDespiteMissingExchange() throws Exception {
 
-				given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn(null);
-				given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
+        given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn(null);
+        given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
 
-				producer.produceMessage(outboxData);
+        producer.produceMessage(outboxData);
 
-				verify(rabbitTemplate).send(eq(null), eq("rk"), any(Message.class));
-		}
+        verify(rabbitTemplate).send(eq(null), eq("rk"), any(Message.class));
+    }
 
-		@Test
-		void produceMessageDespiteMissingRoutingKey() throws Exception {
+    @Test
+    void produceMessageDespiteMissingRoutingKey() throws Exception {
 
-				given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
-				given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn(null);
+        given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
+        given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn(null);
 
-				producer.produceMessage(outboxData);
+        producer.produceMessage(outboxData);
 
-				verify(rabbitTemplate).send(eq("ex"), eq(null), any(Message.class));
-		}
+        verify(rabbitTemplate).send(eq("ex"), eq(null), any(Message.class));
+    }
 
-		@Test
-		void messageSentWithMetadataAsHeaders() throws Exception {
+    @Test
+    void messageSentWithMetadataAsHeaders() throws Exception {
 
-				given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
-				given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
+        given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
+        given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
 
-				producer.produceMessage(outboxData); // contains metadata
+        producer.produceMessage(outboxData); // contains metadata
 
-				ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
-				verify(rabbitTemplate).send(eq("ex"), eq("rk"), messageCaptor.capture());
+        ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
+        verify(rabbitTemplate).send(eq("ex"), eq("rk"), messageCaptor.capture());
 
-				Message capturedMessage = messageCaptor.getValue();
-				assertThat(capturedMessage.getMessageProperties().getHeaders()).isEqualTo(outboxData.getMetadata());
-		}
+        Message capturedMessage = messageCaptor.getValue();
+        assertThat(capturedMessage.getMessageProperties().getHeaders()).isEqualTo(outboxData.getMetadata());
+    }
 }
