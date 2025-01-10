@@ -31,7 +31,7 @@ services:
       - rabbit:/var/lib/rabbitmq
 
   debezium-connector:
-    build: ../spring-outbox-debezium-connectors-mysql/spring-outbox-debezium-connector-mysql-rabbit
+    build: ../spring-outbox-debezium-connectors/spring-outbox-debezium-connector-mysql-rabbit
     container_name: spring-outbox-debezium-connector-mysql-rabbit
     restart: unless-stopped
     depends_on:
