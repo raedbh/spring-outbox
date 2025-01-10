@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,11 @@ import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.core.serializer.Deserializer;
 
+import io.github.raedbh.spring.outbox.core.OutboxMethodArgumentResolver;
+
 /**
+ * Auto-configuration for consuming outbox messages from RabbitMQ.
+ *
  * @author Raed Ben Hamouda
  * @since 1.0
  */

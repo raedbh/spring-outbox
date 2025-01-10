@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package io.github.raedbh.spring.outbox.connector.core;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * The data model for transmitting outbox data, representing either an event or a command.
@@ -35,15 +34,30 @@ public final class OutboxData {
 
 
     public OutboxData(String id, String type, byte[] payload) {
-        this.id = Objects.requireNonNull(id, "Id must not be null");
-        this.type = Objects.requireNonNull(type, "Type must not be null");
-        this.payload = Objects.requireNonNull(payload, "Payload must not be null");
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null");
+        }
+        if (type == null || type.isBlank()) {
+            throw new IllegalArgumentException("type must not be null or empty");
+        }
+        if (payload == null || payload.length == 0) {
+            throw new IllegalArgumentException("payload must not be null or empty");
+        }
+
+        this.id = id;
+        this.type = type;
+        this.payload = payload;
     }
 
     public OutboxData(String id, String type, byte[] payload, Map<String, Object> metadata) {
         this(id, type, payload);
+
+        if (metadata == null) {
+            throw new IllegalArgumentException("metadata must not be empty");
+        }
         this.metadata = metadata;
     }
+
 
     public String getId() {
         return id;

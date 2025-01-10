@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 /**
- * Configuration for Spring Outbox RabbitMQ integration.
+ * Configuration for consuming outbox messages from RabbitMQ.
  */
 @org.springframework.lang.NonNullApi
 @org.springframework.lang.NonNullFields

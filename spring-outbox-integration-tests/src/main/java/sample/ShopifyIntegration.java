@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,13 @@
 
 package sample;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Profile;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
@@ -36,24 +40,45 @@ class ShopifyIntegration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShopifyIntegration.class);
 
-    final ShopifyOrderSynchronizer shopifyOrderSynchronizer;
+    @Component
+    @Profile("rabbit")
+    static class RabbitOrderPaidListener {
 
-    ShopifyIntegration(ShopifyOrderSynchronizer shopifyOrderSynchronizer) {
-        this.shopifyOrderSynchronizer = shopifyOrderSynchronizer;
+        private final ShopifyOrderSynchronizer shopifyOrderSynchronizer;
+
+        RabbitOrderPaidListener(ShopifyOrderSynchronizer shopifyOrderSynchronizer) {
+            this.shopifyOrderSynchronizer = shopifyOrderSynchronizer;
+        }
+
+        @RabbitListener(queues = "shopify.orders")
+        void onOrderPaid(@OutboxMessageBody(operation = "payment") Optional<OrderMessageBody> messageBody) {
+            messageBody.ifPresent(shopifyOrderSynchronizer::syncOrder);
+        }
     }
 
-    @RabbitListener(queues = "shopify.orders")
-    void onOrderPaid(@OutboxMessageBody(operation = "payment") OrderMessageBody messageBody) {
-        shopifyOrderSynchronizer.syncOrder(messageBody);
+    @Component
+    @Profile("kafka")
+    static class KafkaOrderPaidListener {
+
+        private final ShopifyOrderSynchronizer shopifyOrderSynchronizer;
+
+        KafkaOrderPaidListener(ShopifyOrderSynchronizer shopifyOrderSynchronizer) {
+            this.shopifyOrderSynchronizer = shopifyOrderSynchronizer;
+        }
+
+        @KafkaListener(groupId = "order-paid-consumer", topics = "orders", containerFactory = "outboxContainerFactory")
+        void onOrderPaid(@OutboxMessageBody(operation = "payment") Optional<OrderMessageBody> messageBody) {
+            messageBody.ifPresent(shopifyOrderSynchronizer::syncOrder);
+        }
     }
 
     @Component
     static class ShopifyOrderSynchronizer {
 
         public void syncOrder(OrderMessageBody messageBody) {
-			if (messageBody == null) {
-				return;
-			}
+            if (messageBody == null) {
+                return;
+            }
 
             LOGGER.info("Synchronizing order #{} with Shopify", messageBody.orderId);
             // transform and load to Shopify

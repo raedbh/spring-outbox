@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.core.serializer.Deserializer;
 
+import io.github.raedbh.spring.outbox.core.OutboxMethodArgumentResolver;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 

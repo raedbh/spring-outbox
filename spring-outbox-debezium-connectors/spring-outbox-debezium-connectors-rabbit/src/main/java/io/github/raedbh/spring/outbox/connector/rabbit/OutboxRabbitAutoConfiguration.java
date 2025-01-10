@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
-import io.github.raedbh.spring.outbox.connector.core.DebeziumRabbitRouteBuilder;
+import io.github.raedbh.spring.outbox.connector.core.DebeziumOutboxRouteBuilder;
 import io.github.raedbh.spring.outbox.connector.core.OutboxMessageProducer;
 
 /**
@@ -44,9 +44,9 @@ public class OutboxRabbitAutoConfiguration {
     }
 
     @Bean
-    DebeziumRabbitRouteBuilder debeziumRabbitRouteBuilder(OutboxMessageProducer outboxMessageProducer,
+    DebeziumOutboxRouteBuilder debeziumRabbitRouteBuilder(OutboxMessageProducer outboxMessageProducer,
       @Value("${camel.component.uri}") String camelComponentUri) {
 
-        return new DebeziumRabbitRouteBuilder(outboxMessageProducer, camelComponentUri);
+        return new DebeziumOutboxRouteBuilder(outboxMessageProducer, camelComponentUri);
     }
 }

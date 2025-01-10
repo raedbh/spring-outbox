@@ -15,22 +15,15 @@
     <name>Spring Outbox Debezium Connector  — MySQL Rabbit</name>
 
     <dependencies>
-
+        <dependency>
+            <groupId>io.github.raedbh</groupId>
+            <artifactId>spring-outbox-debezium-connectors-mysql</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.github.raedbh</groupId>
             <artifactId>spring-outbox-debezium-connectors-rabbit</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-debezium-mysql-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

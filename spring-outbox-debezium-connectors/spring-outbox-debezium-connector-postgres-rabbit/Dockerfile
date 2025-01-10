@@ -1,7 +1,7 @@
 FROM bellsoft/liberica-openjre-debian:17-cds AS builder
 WORKDIR /builder
 
-COPY target/spring-outbox-debezium-connector-postgres-rabbit-*.jar application.jar
+COPY target/spring-outbox-debezium-connector-*.jar application.jar
 
 RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
 

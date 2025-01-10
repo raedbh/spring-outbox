@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package io.github.raedbh.spring.outbox.connector.core;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.kafka.connect.data.Struct;
 
@@ -31,7 +30,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
  * @author Raed Ben Hamouda
  * @since 1.0
  */
-final class OutboxDataMapper {
+public final class OutboxDataMapper {
 
     private OutboxDataMapper() {
         /* prevent instantiation */
@@ -39,7 +38,9 @@ final class OutboxDataMapper {
 
     public static OutboxData toOutboxData(Struct struct) {
 
-        Objects.requireNonNull(struct, "Struct must not be null");
+        if (struct == null) {
+            throw new IllegalArgumentException("Struct must not be null");
+        }
 
         String id = idFromStruct(struct);
         String type = typeFromStruct(struct);

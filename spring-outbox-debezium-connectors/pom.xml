@@ -48,8 +48,13 @@
     <modules>
         <module>spring-outbox-debezium-connectors-core</module>
         <module>spring-outbox-debezium-connectors-rabbit</module>
+        <module>spring-outbox-debezium-connectors-kafka</module>
         <module>spring-outbox-debezium-connectors-parent</module>
+        <module>spring-outbox-debezium-connectors-mysql</module>
+        <module>spring-outbox-debezium-connectors-postgres</module>
         <module>spring-outbox-debezium-connector-mysql-rabbit</module>
+        <module>spring-outbox-debezium-connector-mysql-kafka</module>
         <module>spring-outbox-debezium-connector-postgres-rabbit</module>
+        <module>spring-outbox-debezium-connector-postgres-kafka</module>
     </modules>
 </project>

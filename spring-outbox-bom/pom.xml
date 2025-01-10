@@ -39,6 +39,11 @@
                 <artifactId>spring-outbox-rabbit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.github.raedbh</groupId>
+                <artifactId>spring-outbox-kafka</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

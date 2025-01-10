@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package sample;
 
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 /**
  * @author Raed Ben Hamouda
@@ -43,11 +43,12 @@ public class TestUtils {
     }
 
     /**
-     * Constants for environment-variable names used in container setup for integration tests.
+     * Constants for environment variables used in container setup for integration tests.
      */
     static class EnvVars {
 
         static final String SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME = "SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME";
+
         static final String SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME = "SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME";
         static final String SPRING_OUTBOX_CONNECTOR_DATABASE_SCHEMA = "SPRING_OUTBOX_CONNECTOR_DATABASE_SCHEMA";
         static final String SPRING_OUTBOX_CONNECTOR_DATABASE_USER = "SPRING_OUTBOX_CONNECTOR_DATABASE_USER";
@@ -58,5 +59,27 @@ public class TestUtils {
         static final String SPRING_RABBITMQ_HOST = "SPRING_RABBITMQ_HOST";
         static final String SPRING_RABBITMQ_USERNAME = "SPRING_RABBITMQ_USERNAME";
         static final String SPRING_RABBITMQ_PASSWORD = "SPRING_RABBITMQ_PASSWORD";
+        static final String SPRING_OUTBOX_CONNECTOR_KAFKA_MESSAGES_ORDERPAID_TOPIC = "SPRING_OUTBOX_CONNECTOR_KAFKA_MESSAGES_ORDERPAID_TOPIC";
+        static final String SPRING_OUTBOX_CONNECTOR_SNAPSHOTMODE = "SPRING_OUTBOX_CONNECTOR_SNAPSHOTMODE";
+        static final String SPRING_KAFKA_BOOTSTRAPSERVERS = "SPRING_KAFKA_BOOTSTRAPSERVERS";
+
+        static final Map<String, String> POSTGRES_CONNECTION_PARAMS = Map.of(
+          SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME, "postgres",
+          SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME, "data",
+          SPRING_OUTBOX_CONNECTOR_DATABASE_SCHEMA, "common",
+          SPRING_OUTBOX_CONNECTOR_DATABASE_USER, "root",
+          SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD, "secret");
+
+        static final Map<String, String> MYSQL_CONNECTION_PARAMS = Map.of(
+          SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME, "mysql",
+          SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME, "data",
+          SPRING_OUTBOX_CONNECTOR_DATABASE_USER, "root",
+          SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD, "secret");
+
+        static final Map<String, String> RABBIT_CONNECTION_PARAMS = Map.of(
+          SPRING_RABBITMQ_HOST, "rabbit",
+          SPRING_RABBITMQ_USERNAME, "guest",
+          SPRING_RABBITMQ_PASSWORD, "guest");
+
     }
 }

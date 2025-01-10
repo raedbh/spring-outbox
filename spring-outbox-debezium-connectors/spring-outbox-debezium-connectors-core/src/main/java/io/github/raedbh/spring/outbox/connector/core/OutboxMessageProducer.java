@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
 package io.github.raedbh.spring.outbox.connector.core;
 
 /**
+ * Defines a producer for sending outbox messages to a message broker.
+ *
  * @author Raed Ben Hamouda
  * @since 1.0
  */
 public interface OutboxMessageProducer {
 
-    void produceMessage(OutboxData outboxData) throws Exception;
+    void produceMessage(OutboxData outboxData);
 }
