@@ -17,7 +17,7 @@
     <name>Spring Outbox Debezium Connectors</name>
 
     <properties>
-        <debezium.version>2.7.1.Final</debezium.version>
+        <debezium.version>2.7.4.Final</debezium.version>
         <camel.version>4.8.0</camel.version>
     </properties>
 
