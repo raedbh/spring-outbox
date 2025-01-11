@@ -19,7 +19,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mapstruct.version>1.6.2</mapstruct.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <jmolecules.version>2023.1.6</jmolecules.version>
         <bytebuddy.version>1.15.11</bytebuddy.version>
     </properties>
