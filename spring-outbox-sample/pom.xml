@@ -12,7 +12,7 @@
 
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-sample</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.3.0</version>
 
     <name>Spring Outbox Sample</name>
     <description>A Source to Pay (S2P) sample using Spring Outbox</description>
