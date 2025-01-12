@@ -153,6 +153,7 @@
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central-sonatype</publishingServerId>
+                            <deploymentName>Spring Outbox v${project.version}</deploymentName>
                         </configuration>
                     </plugin>
                 </plugins>
