@@ -173,26 +173,28 @@ public class OrderManagement {
 When the `placeOrder` method is called, Spring Outbox triggers the assigned event, producing new entries (for event and command) in the outbox table.
 
 . *Run the Debezium connector* +
-The debezium connector detects new entries in outbox table and transmits them to RabbitMQ.
+The Debezium connector detects new entries in outbox table and transmits them to RabbitMQ.
 Follow these steps to set it up:
-- Download the connector from Maven Central: https://repo1.maven.org/maven2/io/github/raedbh/spring-outbox-debezium-connector-mysql-rabbit/0.2.0/spring-outbox-debezium-connector-mysql-rabbit-0.2.0.jar[spring-outbox-debezium-connector-mysql-rabbit-0.2.0.jar]
 - Create the queues `shopify.orders` and `emails` in RabbitMQ.
-- Replace the property values with your specific configurations then execute the following command to run the connector:
+- Replace the placeholders in the following `docker run` command with your specific configurations and run it to start the connector:
 +
 [source,shell]
 ----
-java -jar spring-outbox-debezium-connector-mysql-rabbit-0.2.0.jar \
-    --spring.outbox.connector.database.hostname=<db_host> \
-    --spring.outbox.connector.database.dbname=<db> \
-    --spring.outbox.connector.database.user=<db_user> \
-    --spring.outbox.connector.database.password=<db_password> \
-    --spring.outbox.connector.offset-storage.filepath=<outbox_offset_storage_file> \
-    --spring.outbox.connector.schema-history.filepath=<outbox_schema_history_file> \
-    --spring.outbox.connector.rabbit.messages.order-placed.routing-key=shopify.orders \
-    --spring.outbox.connector.rabbit.messages.email-notification.routing-key=emails \
-    --spring.rabbitmq.host=<rabbit_host> \
-    --spring.rabbitmq.username=<rabbit_user> \
-    --spring.rabbitmq.password=<rabbit_password>
+docker run -d \
+  -e SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME=<db_host> \
+  -e SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME=<db> \
+  -e SPRING_OUTBOX_CONNECTOR_DATABASE_USER=<db_user> \
+  -e SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD=<db_password> \
+  -e SPRING_OUTBOX_CONNECTOR_OFFSET_STORAGE_FILEPATH=<outbox_offset_storage_file> \
+  -e SPRING_OUTBOX_CONNECTOR_SCHEMA_HISTORY_FILEPATH=<outbox_schema_history_file> \
+  -e SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDER_PLACED_ROUTING_KEY=shopify.orders \
+  -e SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_EMAIL_NOTIFICATION_ROUTING_KEY=emails \
+  -e SPRING_RABBITMQ_HOST=<rabbit_host> \
+  -e SPRING_RABBITMQ_USERNAME=<rabbit_user> \
+  -e SPRING_RABBITMQ_PASSWORD=<rabbit_password> \
+  --net host \
+  --name spring-outbox-debezium-connector \
+  raed/spring-outbox-debezium-connector-mysql-rabbit:0.4.0-SNAPSHOT
 ----
 +
 NOTE: `<db_user>` requires at least one of the `SUPER` or `REPLICATION CLIENT` privileges to allow the connector to read from the MySQL binary log.
