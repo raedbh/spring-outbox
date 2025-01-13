@@ -57,7 +57,7 @@ class MysqlKafkaTest extends AbstractIntegrationTest {
             return new GenericContainer<>(connectorImage)
               .withNetwork(network)
               .withEnv(EnvVars.MYSQL_CONNECTION_PARAMS)
-              .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_SNAPSHOTMODE, "never")
+              .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_SNAPSHOTMODE, "initial") // GH-28
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_OFFSETSTORAGE_FILEPATH, "/tmp/outbox-offset.dat")
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_SCHEMAHISTORY_FILEPATH, "/tmp/outbox-schema-history.dat")
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_KAFKA_MESSAGES_ORDERPAID_TOPIC, "orders")

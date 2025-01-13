@@ -73,7 +73,7 @@ class TestConfigurations {
         @Bean
         @ServiceConnection
         default MySQLContainer<?> mysqlContainer(Network network) {
-            return new MySQLContainer<>("mysql:8.2")
+            return new MySQLContainer<>("mysql:8.3")
               .withNetwork(network)
               .withNetworkAliases("mysql")
               .withDatabaseName("data")
