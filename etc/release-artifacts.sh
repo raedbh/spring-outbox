@@ -11,6 +11,6 @@ if [ -z "$MODULES" ]; then
   exit 1
 fi
 
-./mvnw -Prelease deploy -s settings.xml  -pl "$MODULES" -am -DskipTests
+./mvnw -Prelease deploy -s etc/settings.xml  -pl "$MODULES" -am -DskipTests
 
 exit $?
