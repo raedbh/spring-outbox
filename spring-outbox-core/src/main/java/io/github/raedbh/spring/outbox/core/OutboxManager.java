@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.serializer.Serializer;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_ENTITY_ID;
@@ -51,7 +48,6 @@ public class OutboxManager {
     private final OutboxRepository outboxRepository;
     private final Serializer<Serializable> outboxSerializer;
     private final TransactionTemplate transactionTemplate;
-    private final PlatformTransactionManager transactionManager;
     private final SerializableTargetConverterRegistry converterRegistry;
 
 
@@ -61,14 +57,15 @@ public class OutboxManager {
         this.outboxRepository = outboxRepository;
         this.outboxSerializer = outboxSerializer;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
-        this.transactionManager = transactionManager;
         this.converterRegistry = converterRegistry;
     }
 
 
     @Nullable
     public Object proceedInvocationAndSaveOutboxEntries(RootEntity rootEntity, Supplier<Object> proceed) {
+
         List<OutboxEntry> entries = outboxEntriesFor(rootEntity);
+
         return transactionTemplate.execute(status -> {
 
             Object result = proceed.get();
@@ -82,38 +79,31 @@ public class OutboxManager {
     }
 
     private List<OutboxEntry> outboxEntriesFor(RootEntity rootEntity) {
-        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_NOT_SUPPORTED);
-
-        TransactionStatus status = transactionManager.getTransaction(def); // suspend current transaction
 
         List<OutboxEntry> entries = new ArrayList<>();
 
-        try {
-            LOGGER.info("Building outbox entries for {}", rootEntity.getClass());
+        LOGGER.info("Building outbox entries for {}", rootEntity.getClass());
 
-            OutboxEntry eventOutboxEntry = outboxEntryFor(rootEntity);
-            entries.add(eventOutboxEntry);
+        OutboxEntry eventOutboxEntry = outboxEntryFor(rootEntity);
+        entries.add(eventOutboxEntry);
 
-            List<CommandOutboxed> commands = rootEntity.event().getCommands();
+        List<CommandOutboxed> commands = rootEntity.event().getCommands();
 
-            if (commands.isEmpty()) {
-                return entries;
-            }
-
-            for (CommandOutboxed command : commands) {
-
-                byte[] commandMessagePayload = convertAndSerialize(command);
-                entries.add(new OutboxEntry(command.getName(), commandMessagePayload));
-            }
-
+        if (commands.isEmpty()) {
             return entries;
-        } finally {
-            transactionManager.commit(status);
         }
+
+        for (CommandOutboxed command : commands) {
+
+            byte[] commandMessagePayload = convertAndSerialize(command);
+            entries.add(new OutboxEntry(command.getName(), commandMessagePayload));
+        }
+
+        return entries;
     }
 
     private OutboxEntry outboxEntryFor(RootEntity rootEntity) {
+
         EventOutboxed<? extends RootEntity> event = rootEntity.event();
         byte[] outboxPayload = convertAndSerialize(rootEntity);
 
@@ -127,8 +117,11 @@ public class OutboxManager {
     }
 
     private byte[] convertAndSerialize(Object object) {
-        var target = converterRegistry.getConverter(object.getClass()).<Object>map(objectSerializableConverter ->
-          objectSerializableConverter.convert(object)).orElse(object);
+
+        var target = converterRegistry.getConverter(object.getClass())
+          .<Object>map(objectSerializableConverter -> objectSerializableConverter.convert(object))
+          .orElse(object);
+
         try {
             return outboxSerializer.serializeToByteArray((Serializable) target);
         } catch (IOException e) {
