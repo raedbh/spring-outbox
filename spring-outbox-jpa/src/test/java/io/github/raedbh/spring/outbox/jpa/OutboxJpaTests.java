@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ import com.acme.eshop.NonRootEntityRepository;
 import com.acme.eshop.Order;
 import com.acme.eshop.OrderRepository;
 
+import io.github.raedbh.spring.outbox.core.StateChangingMethodInterceptor;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -65,7 +67,7 @@ class OutboxJpaTests {
 
         assertThat(advisors)
           .noneMatch(advisor ->
-            advisor.getAdvice() instanceof OutboxJpaRepositoryFactoryBean.StateChangingMethodInterceptor);
+            advisor.getAdvice() instanceof StateChangingMethodInterceptor);
     }
 
     @Test
@@ -75,7 +77,7 @@ class OutboxJpaTests {
 
         assertThat(advisors)
           .anyMatch(advisor ->
-            advisor.getAdvice() instanceof OutboxJpaRepositoryFactoryBean.StateChangingMethodInterceptor);
+            advisor.getAdvice() instanceof StateChangingMethodInterceptor);
     }
 
     @Test

@@ -18,7 +18,6 @@ package io.github.raedbh.spring.outbox.connector.rabbit;
 
 import org.springframework.amqp.rabbit.core.RabbitOperations;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
@@ -26,8 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
-import io.github.raedbh.spring.outbox.connector.core.DebeziumOutboxRouteBuilder;
-import io.github.raedbh.spring.outbox.connector.core.OutboxMessageProducer;
+import io.github.raedbh.spring.outbox.connector.OutboxMessageProducer;
 
 /**
  * @author Raed Ben Hamouda
@@ -41,12 +39,5 @@ public class OutboxRabbitAutoConfiguration {
     @Bean
     OutboxMessageProducer outboxMessageProducer(RabbitOperations rabbitOperations, Environment environment) {
         return new RabbitOutboxMessageProducer(rabbitOperations, environment);
-    }
-
-    @Bean
-    DebeziumOutboxRouteBuilder debeziumRabbitRouteBuilder(OutboxMessageProducer outboxMessageProducer,
-      @Value("${camel.component.uri}") String camelComponentUri) {
-
-        return new DebeziumOutboxRouteBuilder(outboxMessageProducer, camelComponentUri);
     }
 }

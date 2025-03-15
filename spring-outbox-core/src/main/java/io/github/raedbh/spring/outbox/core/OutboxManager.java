@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.serializer.Serializer;
 import org.springframework.lang.Nullable;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_ENTITY_ID;
@@ -52,11 +51,11 @@ public class OutboxManager {
 
 
     public OutboxManager(OutboxRepository outboxRepository, Serializer<Serializable> outboxSerializer,
-      PlatformTransactionManager transactionManager, SerializableTargetConverterRegistry converterRegistry) {
+      TransactionTemplate transactionTemplate, SerializableTargetConverterRegistry converterRegistry) {
 
         this.outboxRepository = outboxRepository;
         this.outboxSerializer = outboxSerializer;
-        this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.transactionTemplate = transactionTemplate;
         this.converterRegistry = converterRegistry;
     }
 

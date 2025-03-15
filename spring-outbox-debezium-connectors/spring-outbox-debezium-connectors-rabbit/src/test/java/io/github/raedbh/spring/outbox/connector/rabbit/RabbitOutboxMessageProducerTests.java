@@ -29,7 +29,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.core.env.Environment;
 
-import io.github.raedbh.spring.outbox.connector.core.OutboxData;
+import io.github.raedbh.spring.outbox.connector.OutboxData;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

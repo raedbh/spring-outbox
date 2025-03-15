@@ -18,6 +18,7 @@ package io.github.raedbh.spring.outbox.core;
 
 import java.io.Serializable;
 
+import org.springframework.data.annotation.Transient;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
@@ -32,6 +33,7 @@ import org.springframework.util.Assert;
 public abstract class RootEntity implements Identifiable, Serializable {
 
     @Nullable
+    @Transient
     transient private EventOutboxed<? extends RootEntity> event;
 
     public abstract Object getId();

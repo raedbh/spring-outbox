@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaOperations;
 
-import io.github.raedbh.spring.outbox.connector.core.OutboxData;
-import io.github.raedbh.spring.outbox.connector.core.OutboxMessageProducer;
+import io.github.raedbh.spring.outbox.connector.OutboxData;
+import io.github.raedbh.spring.outbox.connector.OutboxMessageProducer;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 

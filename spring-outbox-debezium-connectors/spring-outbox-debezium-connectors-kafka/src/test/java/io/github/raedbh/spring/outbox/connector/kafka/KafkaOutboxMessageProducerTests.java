@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 
-import io.github.raedbh.spring.outbox.connector.core.OutboxData;
+import io.github.raedbh.spring.outbox.connector.OutboxData;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -162,13 +163,20 @@ class KafkaOutboxMessageProducerTests {
     }
 
     private void givenSuccessfulKafkaTemplateSend() {
-        // Mocking Kafka template
-        CompletableFuture<SendResult<String, byte[]>> future = new CompletableFuture<>();
+
+        RecordMetadata metadata = new RecordMetadata(
+          new TopicPartition("topic", 0),
+          123L,
+          0,
+          System.currentTimeMillis(),
+          10,
+          20
+        );
+
         SendResult<String, byte[]> sendResult = mock(SendResult.class);
-        RecordMetadata metadata = mock(RecordMetadata.class);
         given(sendResult.getRecordMetadata()).willReturn(metadata);
-        given(metadata.offset()).willReturn(123L);
-        given(metadata.partition()).willReturn(0);
+
+        CompletableFuture<SendResult<String, byte[]>> future = new CompletableFuture<>();
 
         // Simulate successful send
         future.complete(sendResult);

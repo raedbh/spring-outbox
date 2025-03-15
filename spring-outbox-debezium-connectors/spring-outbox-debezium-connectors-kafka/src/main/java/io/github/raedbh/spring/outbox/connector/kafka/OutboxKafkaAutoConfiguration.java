@@ -16,7 +16,6 @@
 
 package io.github.raedbh.spring.outbox.connector.kafka;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,8 +25,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.core.KafkaTemplate;
 
-import io.github.raedbh.spring.outbox.connector.core.DebeziumOutboxRouteBuilder;
-import io.github.raedbh.spring.outbox.connector.core.OutboxMessageProducer;
+import io.github.raedbh.spring.outbox.connector.OutboxMessageProducer;
 
 /**
  * @author Raed Ben Hamouda
@@ -41,12 +39,5 @@ public class OutboxKafkaAutoConfiguration {
     @Bean
     OutboxMessageProducer outboxMessageProducer(KafkaOperations<String, byte[]> kafkaOperations, Environment env) {
         return new KafkaOutboxMessageProducer(kafkaOperations, env);
-    }
-
-    @Bean
-    DebeziumOutboxRouteBuilder debeziumKafkaRouteBuilder(OutboxMessageProducer outboxMessageProducer,
-      @Value("${camel.component.uri}") String camelComponentUri) {
-
-        return new DebeziumOutboxRouteBuilder(outboxMessageProducer, camelComponentUri);
     }
 }

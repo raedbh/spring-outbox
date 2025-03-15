@@ -23,8 +23,8 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitOperations;
 import org.springframework.core.env.Environment;
 
-import io.github.raedbh.spring.outbox.connector.core.OutboxData;
-import io.github.raedbh.spring.outbox.connector.core.OutboxMessageProducer;
+import io.github.raedbh.spring.outbox.connector.OutboxData;
+import io.github.raedbh.spring.outbox.connector.OutboxMessageProducer;
 
 /**
  * An {@link OutboxMessageProducer} for sending outbox messages to RabbitMQ.

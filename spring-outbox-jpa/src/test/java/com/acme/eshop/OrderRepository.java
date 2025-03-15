@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,5 @@ public interface OrderRepository extends CrudRepository<Order, UUID> {
     default Order markPaid(Order order, EmailNotification emailNotification) {
         order.markPaid(emailNotification);
         return save(order);
-    }
-
-    @Transactional
-    default Order markPaidThrowsException(Order order, EmailNotification emailNotification) {
-        markPaid(order, emailNotification);
-        throw new RuntimeException("Simulated failure after saving order");
     }
 }

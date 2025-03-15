@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.raedbh</groupId>
-            <artifactId>spring-outbox-debezium-connectors-core</artifactId>
+            <artifactId>spring-outbox-debezium-connectors-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -28,6 +28,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

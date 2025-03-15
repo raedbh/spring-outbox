@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,10 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.serializer.Deserializer;
 import org.springframework.core.serializer.Serializer;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * Auto-configures ore Outbox components, including default (de)serializers for message payloads.
+ * Auto-configures core Outbox components, including default (de)serializers for message payloads.
  *
  * @author Raed Ben Hamouda
  * @since 1.0
@@ -54,8 +55,14 @@ public class OutboxCoreConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    TransactionTemplate transactionTemplate(PlatformTransactionManager txManager) {
+        return new TransactionTemplate(txManager);
+    }
+
+    @Bean
     OutboxManager outboxManager(OutboxRepository outboxRepository, Serializer<Serializable> outboxSerializer,
-      PlatformTransactionManager transactionManager, SerializableTargetConverterRegistry converterRegistry) {
-        return new OutboxManager(outboxRepository, outboxSerializer, transactionManager, converterRegistry);
+      TransactionTemplate transactionTemplate, SerializableTargetConverterRegistry converterRegistry) {
+        return new OutboxManager(outboxRepository, outboxSerializer, transactionTemplate, converterRegistry);
     }
 }

@@ -16,12 +16,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-debezium-postgres-starter</artifactId>
+            <groupId>io.github.raedbh</groupId>
+            <artifactId>spring-outbox-debezium-connectors-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
+            <groupId>io.debezium</groupId>
+            <artifactId>debezium-connector-postgres</artifactId>
         </dependency>
     </dependencies>
 

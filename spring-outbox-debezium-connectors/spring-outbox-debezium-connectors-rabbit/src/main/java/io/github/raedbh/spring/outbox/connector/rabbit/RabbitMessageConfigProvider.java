@@ -18,8 +18,8 @@ package io.github.raedbh.spring.outbox.connector.rabbit;
 
 import org.springframework.core.env.Environment;
 
-import io.github.raedbh.spring.outbox.connector.core.AbstractMessageConfigProvider;
-import io.github.raedbh.spring.outbox.connector.core.OutboxMessageConfigKeyResolver;
+import io.github.raedbh.spring.outbox.connector.AbstractMessageConfigProvider;
+import io.github.raedbh.spring.outbox.connector.OutboxMessageConfigKeyResolver;
 
 /**
  * Provides configuration for RabbitMQ integration based on outbox type.

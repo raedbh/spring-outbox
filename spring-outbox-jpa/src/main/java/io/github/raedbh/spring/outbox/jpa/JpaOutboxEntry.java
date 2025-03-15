@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.hibernate.type.SqlTypes;
 import org.springframework.lang.Nullable;
 
 /**
- * Represents a persistent outbox entry.
+ * A JPA entity representing an outbox entry, designed for persistence in a relational database.
  *
  * @author Raed Ben Hamouda
  * @since 1.0
@@ -51,7 +51,6 @@ final class JpaOutboxEntry implements Serializable {
 
 
     JpaOutboxEntry(UUID id, String type, byte[] payload, @Nullable Map<String, String> metadata) {
-
         this.id = id;
         this.type = type;
         this.payload = payload;

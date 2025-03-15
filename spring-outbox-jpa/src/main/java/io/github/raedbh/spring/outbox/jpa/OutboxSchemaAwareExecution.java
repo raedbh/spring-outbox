@@ -75,6 +75,13 @@ class OutboxSchemaAwareExecution implements InitializingBean {
             return;
         }
 
+        if (dropExistentOutboxTable) {
+            entityManager.createNativeQuery("DROP TABLE IF EXISTS outbox;").executeUpdate();
+            if (schemaSpecified) {
+                entityManager.createNativeQuery("DROP TABLE IF EXISTS " + schema + ".outbox;").executeUpdate();
+            }
+        }
+
         Connection connection = null;
         String initialSchema = null;
         try {
@@ -87,10 +94,6 @@ class OutboxSchemaAwareExecution implements InitializingBean {
                       .executeUpdate();
                 }
                 entityManager.createNativeQuery(generateSetSchemaStatement(rdbms, schema)).executeUpdate();
-            }
-
-            if (dropExistentOutboxTable) {
-                entityManager.createNativeQuery("DROP TABLE IF EXISTS outbox;").executeUpdate();
             }
 
             callback.execute(new OutboxSchemaAwareContext(entityManager, dataSource, rdbms));

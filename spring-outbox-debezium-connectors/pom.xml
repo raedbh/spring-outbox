@@ -18,43 +18,40 @@
 
     <properties>
         <debezium.version>2.7.4.Final</debezium.version>
-        <camel.version>4.8.0</camel.version>
+        <kafka.connect.version>3.9.0</kafka.connect.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.debezium</groupId>
-                <artifactId>debezium-core</artifactId>
+                <artifactId>debezium-bom</artifactId>
                 <version>${debezium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bom</artifactId>
-                <version>${camel.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-spring-boot-bom</artifactId>
-                <version>${camel.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>connect-api</artifactId>
+                <version>${kafka.connect.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
+        <module>spring-outbox-debezium-connectors-api</module>
         <module>spring-outbox-debezium-connectors-core</module>
         <module>spring-outbox-debezium-connectors-rabbit</module>
         <module>spring-outbox-debezium-connectors-kafka</module>
         <module>spring-outbox-debezium-connectors-parent</module>
         <module>spring-outbox-debezium-connectors-mysql</module>
         <module>spring-outbox-debezium-connectors-postgres</module>
+        <module>spring-outbox-debezium-connectors-mongo</module>
         <module>spring-outbox-debezium-connector-mysql-rabbit</module>
         <module>spring-outbox-debezium-connector-mysql-kafka</module>
         <module>spring-outbox-debezium-connector-postgres-rabbit</module>
         <module>spring-outbox-debezium-connector-postgres-kafka</module>
+        <module>spring-outbox-debezium-connector-mongo-rabbit</module>
+        <module>spring-outbox-debezium-connector-mongo-kafka</module>
     </modules>
 </project>

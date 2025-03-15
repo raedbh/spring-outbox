@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.acme.eshop.EmailNotification;
 import com.acme.eshop.Order;
@@ -67,7 +68,8 @@ class OutboxManagerTests {
 
     @BeforeEach
     void setUp() {
-        outboxManager = new OutboxManager(outboxRepository, outboxSerializer, transactionManager, converterRegistry);
+        outboxManager = new OutboxManager(outboxRepository, outboxSerializer,
+          new TransactionTemplate(transactionManager), converterRegistry);
     }
 
     @Test
