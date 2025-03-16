@@ -7,18 +7,3 @@ management:
     web:
       exposure:
         include: health, metrics
-
-camel:
-  component:
-    uri: debezium-mongodb:outbox?additionalProperties.errors.log.include.messages=true
-    debezium-mongodb:
-      mongodb-connection-string: ${spring.outbox.connector.database.connection-string}
-      database-include-list: ${spring.outbox.connector.database.dbname}
-      mongodb-user: ${spring.outbox.connector.database.user}
-      mongodb-password: ${spring.outbox.connector.database.password}
-      collection-include-list: ${spring.outbox.connector.database.dbname}.outbox
-      offset-storage: ${spring.outbox.connector.offset-storage.class:org.apache.kafka.connect.storage.FileOffsetBackingStore}
-      offset-storage-file-name: ${spring.outbox.connector.offset-storage.file-path}
-      schema-history-internal-file-filename: ${spring.outbox.connector.schema-history.file-path}
-      topic-prefix: outbox
-      snapshot-mode: ${spring.outbox.connector.snapshot-mode:initial}
