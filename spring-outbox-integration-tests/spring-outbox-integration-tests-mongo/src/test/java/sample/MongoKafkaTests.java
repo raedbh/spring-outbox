@@ -50,21 +50,15 @@ class MongoKafkaTests extends AbstractIntegrationTests {
         GenericContainer<?> connectorContainer(Network network, MongoDBContainer mongoContainer,
           KafkaContainer kafkaContainer) {
 
-            mongoContainer.start();
-
             Path dockerfilePath = resolveDockerfilePath("spring-outbox-debezium-connector-mongo-kafka");
             ImageFromDockerfile connectorImage = new ImageFromDockerfile()
               .withDockerfile(dockerfilePath);
 
-            String replicaSetUrl = "mongodb://mongo:27017/?replicaSet=rs0&retryWrites=false";
-
             return new GenericContainer<>(connectorImage)
               .withNetwork(network)
-              .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_DATABASE_URL, replicaSetUrl)
+              .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_DATABASE_URL, MongoTestConfigurations.replicaSetUrl)
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME, "test")
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_SNAPSHOTMODE, "always")
-              .withEnv("SPRING_DATA_MONGODB_URI", replicaSetUrl)
-
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_KAFKA_MESSAGES_ORDERPAID_TOPIC, "orders")
               .withEnv(EnvVars.SPRING_KAFKA_BOOTSTRAPSERVERS, "kafka:9093")
               .dependsOn(mongoContainer, kafkaContainer)

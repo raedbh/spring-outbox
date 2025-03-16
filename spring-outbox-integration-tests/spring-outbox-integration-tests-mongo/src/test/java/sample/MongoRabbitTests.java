@@ -59,8 +59,6 @@ class MongoRabbitTests extends AbstractIntegrationTests {
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_DATABASE_URL, MongoTestConfigurations.replicaSetUrl)
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME, "test")
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_SNAPSHOTMODE, "always")
-              .withEnv("SPRING_DATA_MONGODB_URI", MongoTestConfigurations.replicaSetUrl)
-              // rabbit conf:
               .withEnv(EnvVars.SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDERPAID_ROUTINGKEY, "shopify.orders")
               .withEnv(EnvVars.RABBIT_CONNECTION_PARAMS)
               .dependsOn(mongoContainer, rabbitContainer)
