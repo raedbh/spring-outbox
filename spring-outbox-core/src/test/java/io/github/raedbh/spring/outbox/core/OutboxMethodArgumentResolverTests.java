@@ -40,12 +40,11 @@ class OutboxMethodArgumentResolverTests {
     private static final String OPERATION_HEADER = "operation";
     private static final String TEST_OPERATION = "TEST_OPERATION";
 
-    private Deserializer<Serializable> deserializer;
     private OutboxMethodArgumentResolver resolver;
 
     @BeforeEach
     void setUp() {
-        deserializer = new OutboxDefaultDeserializer();
+        Deserializer<Serializable> deserializer = new OutboxDefaultDeserializer();
         resolver = new OutboxMethodArgumentResolver(deserializer);
     }
 

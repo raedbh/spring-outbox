@@ -32,16 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class OutboxKafkaAutoConfigurationTests {
 
-    // TODO
-//    @Test
-//    void autoConfigure() {
-//        new ApplicationContextRunner()
-//          .withConfiguration(AutoConfigurations.of(OutboxKafkaAutoConfiguration.class))
-//          .withPropertyValues("camel.component.uri=direct:camel")
-//          .withBean(KafkaTemplate.class, () -> Mockito.mock(KafkaTemplate.class)).run(context -> {
-//
-//              assertThat(context).hasSingleBean(KafkaOutboxMessageProducer.class);
-//              assertThat(context).hasSingleBean(Configuration.class);
-//          });
-//    }
+    @Test
+    void autoConfigure() {
+        new ApplicationContextRunner()
+          .withConfiguration(AutoConfigurations.of(OutboxKafkaAutoConfiguration.class))
+          .withBean(KafkaTemplate.class, () -> Mockito.mock(KafkaTemplate.class))
+          .run(context -> assertThat(context).hasSingleBean(KafkaOutboxMessageProducer.class));
+    }
 }

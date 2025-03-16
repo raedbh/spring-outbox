@@ -64,7 +64,7 @@ public class OutboxDebeziumEngine {
         this.messageProducer = messageProducer;
     }
 
-    private void onRecordChanged(RecordChangeEvent<SourceRecord> changeEvent) {
+    void onRecordChanged(RecordChangeEvent<SourceRecord> changeEvent) {
 
         SourceRecord changeEventRecord = changeEvent.record();
 
@@ -99,6 +99,10 @@ public class OutboxDebeziumEngine {
     }
 
     private Operation extractOperation(Struct struct) {
+
+        if (struct.schema() == null) {
+            return null;
+        }
 
         if (struct.schema().field(FieldName.OPERATION) == null) {
             return null;

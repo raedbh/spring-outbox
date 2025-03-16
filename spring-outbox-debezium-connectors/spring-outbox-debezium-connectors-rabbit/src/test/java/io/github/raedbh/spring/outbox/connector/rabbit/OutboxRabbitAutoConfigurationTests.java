@@ -32,16 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class OutboxRabbitAutoConfigurationTests {
 
-    // TODO
-//    @Test
-//    void autoConfigure() {
-//        new ApplicationContextRunner()
-//          .withConfiguration(AutoConfigurations.of(OutboxRabbitAutoConfiguration.class))
-//          .withPropertyValues("camel.component.uri=direct:camel")
-//          .withBean(RabbitTemplate.class, () -> Mockito.mock(RabbitTemplate.class)).run(context -> {
-//
-//              assertThat(context).hasSingleBean(RabbitOutboxMessageProducer.class);
-//              assertThat(context).hasSingleBean(DebeziumOutboxRouteBuilder.class);
-//          });
-//    }
+    @Test
+    void autoConfigure() {
+        new ApplicationContextRunner()
+          .withConfiguration(AutoConfigurations.of(OutboxRabbitAutoConfiguration.class))
+          .withBean(RabbitTemplate.class, () -> Mockito.mock(RabbitTemplate.class))
+          .run(context -> assertThat(context).hasSingleBean(RabbitOutboxMessageProducer.class));
+    }
 }
