@@ -41,7 +41,7 @@ import sample.RelationalTestConfigurations.PostgresConfiguration;
  * @since 1.0
  */
 @ActiveProfiles("rabbit")
-@TestPropertySource(properties = "spring.outbox.rdbms.schema=common")
+@TestPropertySource(properties = "spring.outbox.relational.schema=common")
 class PostgresRabbitTests extends AbstractIntegrationTests {
 
     @TestConfiguration

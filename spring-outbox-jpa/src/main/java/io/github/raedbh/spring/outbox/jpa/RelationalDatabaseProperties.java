@@ -22,13 +22,13 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.lang.Nullable;
 
 /**
- * Configuration properties for the relational database (RDBMS) based outbox.
+ * Configuration properties for the relational databases (RDBMS) based outbox.
  *
  * @author Raed Ben Hamouda
  * @since 1.0
  */
-@ConfigurationProperties(prefix = "spring.outbox.rdbms")
-class RdbmsConfigurationProperties {
+@ConfigurationProperties(prefix = "spring.outbox.relational")
+class RelationalDatabaseProperties {
 
     private final boolean autoCreate;
 
@@ -37,13 +37,13 @@ class RdbmsConfigurationProperties {
 
 
     /**
-     * Creates a new {@link RdbmsConfigurationProperties} instance.
+     * Creates a new {@link RelationalDatabaseProperties} instance.
      *
      * @param autoCreate whether to create outbox tables on startup. Defaults to {@code false}.
      * @param schema optional schema name for the outbox table.
      */
     @ConstructorBinding
-    RdbmsConfigurationProperties(@DefaultValue("false") boolean autoCreate, @Nullable String schema) {
+    RelationalDatabaseProperties(@DefaultValue("false") boolean autoCreate, @Nullable String schema) {
         this.autoCreate = autoCreate;
         this.schema = schema;
     }

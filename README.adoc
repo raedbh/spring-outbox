@@ -62,7 +62,7 @@ Set the following property in your `application.properties` (or `application.yml
 +
 [source,properties]
 ----
-spring.outbox.rdbms.auto-create=true
+spring.outbox.relational.auto-create=true
 ----
 
 . *Define the Root Entity*

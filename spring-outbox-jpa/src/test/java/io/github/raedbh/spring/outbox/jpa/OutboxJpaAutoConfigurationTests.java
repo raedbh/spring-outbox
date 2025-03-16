@@ -56,7 +56,7 @@ class OutboxJpaAutoConfigurationTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "spring.outbox.rdbms.auto-create=true")
+    @TestPropertySource(properties = "spring.outbox.relational.auto-create=true")
     class WithAutoCreateSchemaEnabled extends TestBase {
 
         @Test
@@ -67,7 +67,7 @@ class OutboxJpaAutoConfigurationTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "spring.outbox.rdbms.auto-create=false")
+    @TestPropertySource(properties = "spring.outbox.relational.auto-create=false")
     class WithSchemaDisabled extends TestBase {
 
         @Test

@@ -46,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 1.0
  */
 @SpringBootTest(classes = Application.class,
-  properties = {"spring.outbox.rdbms.auto-create=true", "spring.jpa.hibernate.ddl-auto=create-drop"})
+  properties = {"spring.outbox.relational.auto-create=true", "spring.jpa.hibernate.ddl-auto=create-drop"})
 class OutboxJpaTests {
 
     @Autowired JdbcTemplate jdbcTemplate;

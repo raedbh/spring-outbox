@@ -45,7 +45,7 @@ import io.github.raedbh.spring.outbox.core.OutboxRepository;
  */
 @AutoConfiguration(before = HibernateJpaAutoConfiguration.class)
 @Import(OutboxCoreConfiguration.class)
-@EnableConfigurationProperties(RdbmsConfigurationProperties.class)
+@EnableConfigurationProperties(RelationalDatabaseProperties.class)
 public class OutboxJpaAutoConfiguration {
 
     @Bean
@@ -66,7 +66,7 @@ public class OutboxJpaAutoConfiguration {
 
     @Bean
     OutboxSchemaAwareExecution outboxSchemaAwareExecution(EntityManager entityManager,
-      RdbmsConfigurationProperties rdbmsConfigProperties) {
+      RelationalDatabaseProperties rdbmsConfigProperties) {
         return new OutboxSchemaAwareExecution(entityManager, rdbmsConfigProperties.getSchema());
     }
 
@@ -76,7 +76,7 @@ public class OutboxJpaAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring.outbox.rdbms", name = "auto-create", havingValue = "true")
+    @ConditionalOnProperty(prefix = "spring.outbox.relational", name = "auto-create", havingValue = "true")
     OutboxTableSchemaInitializer outboxTableSchemaInitializer(ResourceLoader resourceLoader,
       TransactionTemplate transactionTemplate,
       OutboxSchemaAwareExecution outboxSchemaAwareExecution,
