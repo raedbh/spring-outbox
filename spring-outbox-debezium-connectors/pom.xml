@@ -17,7 +17,7 @@
     <name>Spring Outbox Debezium Connectors</name>
 
     <properties>
-        <debezium.version>2.7.4.Final</debezium.version>
+        <debezium.version>3.0.8.Final</debezium.version>
         <kafka.connect.version>3.9.0</kafka.connect.version>
     </properties>
 

@@ -19,7 +19,7 @@
     <name>Spring Outbox Debezium Connectors — Parent</name>
 
     <properties>
-        <mysql.version>8.3.0</mysql.version>
+        <mysql.version>9.1.0</mysql.version>
         <postgresql.version>42.6.1</postgresql.version>
         <mongodb.version>4.11.0</mongodb.version>
     </properties>
