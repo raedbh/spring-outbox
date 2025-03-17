@@ -26,6 +26,8 @@ import java.util.Map;
  */
 public final class OutboxData {
 
+    public static final String OUTBOX_ID = "outbox_id";
+
     private final String id;
     private final String type;
     private final byte[] payload;

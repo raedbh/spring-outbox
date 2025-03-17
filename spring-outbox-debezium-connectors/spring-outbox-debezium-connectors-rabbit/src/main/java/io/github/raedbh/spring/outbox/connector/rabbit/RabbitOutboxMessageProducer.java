@@ -16,6 +16,9 @@
 
 package io.github.raedbh.spring.outbox.connector.rabbit;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -61,8 +64,12 @@ public class RabbitOutboxMessageProducer implements OutboxMessageProducer {
             LOGGER.warn("No exchange found for {}", outboxData.getType());
         }
 
+        Map<String, Object> metadata = new HashMap<>(outboxData.getMetadata());
+        metadata.put(OutboxData.OUTBOX_ID, outboxData.getId());
+
         MessageProperties messageProperties = new MessageProperties();
-        messageProperties.setHeaders(outboxData.getMetadata());
+        messageProperties.setHeaders(metadata);
+
         Message message = new Message(outboxData.getPayload(), messageProperties);
 
         rabbitOperations.send(config.exchange(), config.routingKey(), message);

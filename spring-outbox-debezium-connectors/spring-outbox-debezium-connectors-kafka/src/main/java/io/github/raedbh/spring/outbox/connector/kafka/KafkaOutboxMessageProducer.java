@@ -16,6 +16,9 @@
 
 package io.github.raedbh.spring.outbox.connector.kafka;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +70,10 @@ public class KafkaOutboxMessageProducer implements OutboxMessageProducer {
           config.key(),
           outboxData.getPayload());
 
-        outboxData
-          .getMetadata()
+        Map<String, Object> metadata = new HashMap<>(outboxData.getMetadata());
+        metadata.put(OutboxData.OUTBOX_ID, outboxData.getId());
+
+        metadata
           .forEach((key, value) -> {
               if (value != null) {
                   producerRecord.headers().add(key, value.toString().getBytes(UTF_8));

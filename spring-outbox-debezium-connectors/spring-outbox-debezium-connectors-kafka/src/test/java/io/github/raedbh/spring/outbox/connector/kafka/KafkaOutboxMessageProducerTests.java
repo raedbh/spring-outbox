@@ -152,9 +152,10 @@ class KafkaOutboxMessageProducerTests {
 
         ProducerRecord<String, byte[]> capturedRecord = recordCaptor.getValue();
 
-        assertThat(capturedRecord.headers().toArray()).hasSize(outboxData.getMetadata().size());
-        outboxData
-          .getMetadata()
+        assertThat(capturedRecord.headers().toArray()).hasSize(3);
+        Map.of("key1", "value1",
+            "key2", "value2",
+            "outbox_id", "1a2b3c")
           .forEach((key, value) -> {
               Header header = capturedRecord.headers().lastHeader(key);
               assertThat(header).isNotNull();

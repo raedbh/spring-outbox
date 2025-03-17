@@ -146,8 +146,7 @@ public final class OutboxDataMapper {
             return Collections.emptyMap();
         }
         try {
-            return JacksonMapperProvider.getInstance().readValue(metadata, new TypeReference<>() {
-            });
+            return JacksonMapperProvider.getInstance().readValue(metadata, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

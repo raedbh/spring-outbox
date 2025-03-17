@@ -60,7 +60,7 @@ class RabbitOutboxMessageProducerTests {
     }
 
     @Test
-    void messageProduced() throws Exception {
+    void messageProduced() {
 
         given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
         given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
@@ -71,7 +71,7 @@ class RabbitOutboxMessageProducerTests {
     }
 
     @Test
-    void produceMessageDespiteMissingExchange() throws Exception {
+    void produceMessageDespiteMissingExchange() {
 
         given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn(null);
         given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
@@ -82,7 +82,7 @@ class RabbitOutboxMessageProducerTests {
     }
 
     @Test
-    void produceMessageDespiteMissingRoutingKey() throws Exception {
+    void produceMessageDespiteMissingRoutingKey() {
 
         given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
         given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn(null);
@@ -93,7 +93,7 @@ class RabbitOutboxMessageProducerTests {
     }
 
     @Test
-    void messageSentWithMetadataAsHeaders() throws Exception {
+    void messageSentWithMetadataAsHeaders() {
 
         given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.exchange")).willReturn("ex");
         given(env.getProperty("spring.outbox.connector.rabbit.messages.order-placed.routing-key")).willReturn("rk");
@@ -103,7 +103,10 @@ class RabbitOutboxMessageProducerTests {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
         verify(rabbitTemplate).send(eq("ex"), eq("rk"), messageCaptor.capture());
 
-        Message capturedMessage = messageCaptor.getValue();
-        assertThat(capturedMessage.getMessageProperties().getHeaders()).isEqualTo(outboxData.getMetadata());
+        assertThat(messageCaptor.getValue().getMessageProperties().getHeaders())
+          .isEqualTo(Map.of(
+            "key1", "value1",
+            "key2", "value2",
+            "outbox_id", "1a2b3c"));
     }
 }
