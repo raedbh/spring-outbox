@@ -70,12 +70,13 @@ public class OutboxDebeziumEngine {
 
         Struct struct = (Struct) changeEventRecord.value();
         if (struct == null) {
-            throw new IllegalArgumentException("Struct cannot be null for the change event.");
+            LOGGER.error("Struct cannot be null for the change event, skipping...");
+            return;
         }
 
         Operation operation = extractOperation(struct);
         if (operation == null) {
-            LOGGER.warn("Operation field not found in struct: {}, skipping...", struct);
+            LOGGER.error("Operation field not found in struct: {}, skipping...", struct);
             return;
         }
 
@@ -85,11 +86,24 @@ public class OutboxDebeziumEngine {
 
             Object recordData = struct.get(FieldName.AFTER);
             if (recordData == null) {
-                LOGGER.warn("Missing 'after' field for operation: {}, skipping...", operation);
+                LOGGER.error("Missing 'after' field for operation: {}, skipping...", operation);
                 return;
             }
 
-            OutboxData outboxData = OutboxDataMapper.toOutboxData(recordData);
+            OutboxData outboxData;
+            try {
+
+                outboxData = OutboxDataMapper.toOutboxData(recordData);
+
+                if (outboxData == null) {
+                    LOGGER.error("outboxData must not be null, skipping...");
+                    return;
+                }
+            } catch (Exception e) {
+                LOGGER.error("Failed to map record data to outboxData, skipping...", e);
+                return;
+            }
+
             messageProducer.produceMessage(outboxData);
 
         } else {

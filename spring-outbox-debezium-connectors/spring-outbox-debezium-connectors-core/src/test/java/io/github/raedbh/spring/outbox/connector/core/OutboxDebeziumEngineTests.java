@@ -37,7 +37,7 @@ import io.debezium.engine.RecordChangeEvent;
 import io.github.raedbh.spring.outbox.connector.OutboxData;
 import io.github.raedbh.spring.outbox.connector.OutboxMessageProducer;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -64,18 +64,16 @@ class OutboxDebeziumEngineTests {
 
     @Test
     void noMessageProducedForDelete() {
-        RecordChangeEvent<SourceRecord> event = () -> sourceRecord(Operation.DELETE);
+        outboxDebeziumEngine.onRecordChanged(() -> sourceRecord(Operation.DELETE));
         verify(messageProducer, times(0)).produceMessage(any());
     }
 
     @Test
-    void rejectNullStruct() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-          .isThrownBy(() -> {
-              SourceRecord sourceRecord = new SourceRecord(null, null, "dummy", null, null, null);
-              outboxDebeziumEngine.onRecordChanged(() -> sourceRecord);
-          })
-          .withMessageContaining("Struct");
+    void skipSilentlyForNullStruct() {
+        assertThatCode(() -> {
+            SourceRecord sourceRecord = new SourceRecord(null, null, "dummy", null, null, null);
+            outboxDebeziumEngine.onRecordChanged(() -> sourceRecord);
+        }).doesNotThrowAnyException();
     }
 
     @Test
