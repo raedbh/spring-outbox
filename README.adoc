@@ -38,7 +38,7 @@ Include the following dependency in your E-commerce Spring Boot application alon
 <dependency>
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-jpa</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ----
 
@@ -194,7 +194,7 @@ docker run -d \
   -e SPRING_RABBITMQ_PASSWORD=<rabbit_password> \
   --net host \
   --name spring-outbox-debezium-connector \
-  raed/spring-outbox-debezium-connector-mysql-rabbit:0.4.0
+  raed/spring-outbox-debezium-connector-mysql-rabbit:0..0
 ----
 +
 NOTE: `<db_user>` requires at least one of the `SUPER` or `REPLICATION CLIENT` privileges to allow the connector to read from the MySQL binary log.
@@ -221,7 +221,7 @@ Here's how to set this up:
 <dependency>
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-rabbit</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ----
 - Implement a message handler to handle and process incoming messages in the Shopify Synchronizer:
