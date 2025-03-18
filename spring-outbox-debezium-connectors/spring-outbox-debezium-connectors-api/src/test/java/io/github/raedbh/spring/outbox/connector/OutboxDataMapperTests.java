@@ -16,9 +16,14 @@
 
 package io.github.raedbh.spring.outbox.connector;
 
+import java.util.AbstractMap.SimpleEntry;
+
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
+import org.bson.BsonBinary;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.singletonMap;
@@ -35,7 +40,7 @@ class OutboxDataMapperTests {
     private OutboxData outboxData;
 
     @Test
-    void toOutboxDataToOutboxData() {
+    void fromStruct() throws Exception {
 
         Struct struct = struct();
         struct.put("metadata", "{\"key\": \"value\"}");
@@ -48,7 +53,7 @@ class OutboxDataMapperTests {
     }
 
     @Test
-    void preventNPEWhenMetadataIsNull() {
+    void preventNPEWhenMetadataIsNull() throws Exception {
 
         Struct struct = struct();
         struct.put("metadata", null);
@@ -57,6 +62,28 @@ class OutboxDataMapperTests {
 
         assertThat(outboxData.getMetadata()).isEmpty();
     }
+
+    @Test
+    void fromBson() throws Exception {
+        BsonDocument bsonDocument = new BsonDocument();
+        bsonDocument.put("_id", new org.bson.BsonObjectId(new org.bson.types.ObjectId("652f1a7b4b3f4e1f8c9a8b7c")));
+        bsonDocument.put("type", new BsonString("Type"));
+        bsonDocument.put("payload", new BsonBinary("The Payload".getBytes()));
+        bsonDocument.put("metadata", new BsonDocument("key", new BsonString("value")));
+
+        outboxData = OutboxDataMapper.toOutboxData(bsonDocument);
+
+        assertThat(outboxData.getId()).isEqualTo("652f1a7b4b3f4e1f8c9a8b7c");
+        assertThat(outboxData.getType()).isEqualTo("Type");
+        assertThat(outboxData.getPayload()).isEqualTo("The Payload".getBytes());
+        assertThat(outboxData.getMetadata()).containsExactly(new SimpleEntry<>("key", "value"));
+    }
+
+    @Test
+    void returnNullWhenRecordDataIsNull() throws Exception {
+        assertThat(OutboxDataMapper.toOutboxData(null)).isNull();
+    }
+
 
     private Struct struct() {
         var struct = new Struct(schema());

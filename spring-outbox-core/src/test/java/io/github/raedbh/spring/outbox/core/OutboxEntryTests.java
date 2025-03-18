@@ -17,7 +17,6 @@
 package io.github.raedbh.spring.outbox.core;
 
 import java.util.Map;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
@@ -32,25 +31,16 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class OutboxEntryTests {
 
     @Test
-    void rejectNullId() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-          .isThrownBy(() -> new OutboxEntry(null, "SmsNotification", new byte[]{}, Map.of()))
-          .withMessageContaining("Identifier");
-    }
-
-    @Test
     void rejectNullType() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-          .isThrownBy(() -> new OutboxEntry(new OutboxEntry.Identifier(UUID.randomUUID()),
-            null, new byte[]{}, Map.of()))
+          .isThrownBy(() -> new OutboxEntry(null, new byte[]{}, Map.of()))
           .withMessageContaining("Type");
     }
 
     @Test
     void rejectNullPayload() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-          .isThrownBy(() -> new OutboxEntry(new OutboxEntry.Identifier(UUID.randomUUID()),
-            "SmsNotification", null, Map.of()))
+          .isThrownBy(() -> new OutboxEntry("SmsNotification", null, Map.of()))
           .withMessageContaining("Payload");
     }
 }

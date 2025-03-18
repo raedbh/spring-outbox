@@ -16,17 +16,14 @@
 
 package io.github.raedbh.spring.outbox.connector;
 
-import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.connect.data.Struct;
-import org.bson.BsonBinary;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
@@ -39,9 +36,9 @@ public final class OutboxDataMapper {
 
     private OutboxDataMapper() {}
 
-    public static OutboxData toOutboxData(Object recordData) {
+    public static OutboxData toOutboxData(Object recordData) throws Exception {
         if (recordData == null) {
-            throw new IllegalArgumentException("Struct must not be null");
+            return null;
         }
 
         OutboxData outboxData;
@@ -56,10 +53,7 @@ public final class OutboxDataMapper {
         return outboxData;
     }
 
-    private static OutboxData fromStruct(Struct recordData) {
-        if (recordData == null) {
-            throw new IllegalArgumentException("Struct must not be null");
-        }
+    private static OutboxData fromStruct(Struct recordData) throws Exception {
 
         String id = idFromStruct(recordData);
         String type = typeFromStruct(recordData);
@@ -69,10 +63,7 @@ public final class OutboxDataMapper {
         return new OutboxData(id, type, payload, metadata);
     }
 
-    public static OutboxData fromBson(BsonDocument recordData) {
-        if (recordData == null) {
-            throw new IllegalArgumentException("BsonDocument must not be null");
-        }
+    private static OutboxData fromBson(BsonDocument recordData) {
 
         String id = idFromBsonDocument(recordData);
         String type = typeFromBsonDocument(recordData);
@@ -82,7 +73,7 @@ public final class OutboxDataMapper {
         return new OutboxData(id, type, payload, metadata);
     }
 
-    private static String idFromStruct(Struct struct) {
+    private static String idFromStruct(Struct struct) throws Exception {
         String fieldName = "id";
 
         assertFieldExists(struct, fieldName);
@@ -96,14 +87,13 @@ public final class OutboxDataMapper {
 
     private static String idFromBsonDocument(BsonDocument bsonDocument) {
         BsonValue idValue = bsonDocument.get("_id");
-        if (idValue == null || !idValue.isBinary()) {
+        if (idValue == null || !idValue.isObjectId()) {
             return null;
         }
-        BsonBinary idBinary = idValue.asBinary();
-        return Base64.getEncoder().encodeToString(idBinary.getData());
+        return idValue.asObjectId().getValue().toString();
     }
 
-    private static String typeFromStruct(Struct struct) {
+    private static String typeFromStruct(Struct struct) throws Exception {
         String fieldName = "type";
 
         assertFieldExists(struct, fieldName);
@@ -118,7 +108,7 @@ public final class OutboxDataMapper {
         return typeValue.asString().getValue();
     }
 
-    private static byte[] payloadFromStruct(Struct struct) {
+    private static byte[] payloadFromStruct(Struct struct) throws Exception {
         String fieldName = "payload";
         assertFieldExists(struct, fieldName);
         return struct.getBytes(fieldName);
@@ -132,24 +122,21 @@ public final class OutboxDataMapper {
         return payloadValue.asBinary().getData();
     }
 
-    private static void assertFieldExists(Struct struct, String fieldName) {
+    private static void assertFieldExists(Struct struct, String fieldName) throws Exception {
         if (struct.schema().field(fieldName) == null) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' does not exist in the struct.");
+            throw new Exception("Field '" + fieldName + "' does not exist in the struct.");
         }
     }
 
-    private static Map<String, Object> metadataFromStruct(Struct struct) {
+    private static Map<String, Object> metadataFromStruct(Struct struct) throws Exception {
         assertFieldExists(struct, "metadata");
 
         String metadata = struct.getString("metadata");
         if (metadata == null) {
             return Collections.emptyMap();
         }
-        try {
-            return JacksonMapperProvider.getInstance().readValue(metadata, new TypeReference<>() {});
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return JacksonMapperProvider.getInstance().readValue(metadata, new TypeReference<>() {});
+
     }
 
     private static Map<String, Object> metadataFromBsonDocument(BsonDocument bsonDocument) {

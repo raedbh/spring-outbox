@@ -17,6 +17,7 @@
 package io.github.raedbh.spring.outbox.jpa;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 import io.github.raedbh.spring.outbox.core.OutboxEntry;
 import io.github.raedbh.spring.outbox.core.OutboxRepository;
@@ -40,7 +41,8 @@ class JpaOutboxRepository implements OutboxRepository {
         try {
             outboxSchemaAwareExecution.execute(false, false, context -> context
               .entityManager()
-              .persist(new JpaOutboxEntry(entry.getId().value(),
+              .persist(new JpaOutboxEntry(
+                UUID.randomUUID(),
                 entry.getType(),
                 entry.getPayload(),
                 entry.getMetadata())));

@@ -16,23 +16,25 @@
 
 package io.github.raedbh.spring.outbox.mongo;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import io.github.raedbh.spring.outbox.core.OutboxEntry;
 import io.github.raedbh.spring.outbox.core.OutboxRepository;
 
-public class OutboxMongoRepository implements OutboxRepository {
+public class MongoOutboxRepository implements OutboxRepository {
 
     private final MongoTemplate mongoTemplate;
 
-    public OutboxMongoRepository(MongoTemplate mongoTemplate) {
+    public MongoOutboxRepository(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
     @Override
     public void save(OutboxEntry entry) {
 
-        MongoOutboxEntry mongoOutboxEntry = new MongoOutboxEntry(entry.getId().value(),
+        MongoOutboxEntry mongoOutboxEntry = new MongoOutboxEntry(
+          ObjectId.get(),
           entry.getType(),
           entry.getPayload(),
           entry.getMetadata());

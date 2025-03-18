@@ -18,8 +18,8 @@ package io.github.raedbh.spring.outbox.mongo;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.UUID;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
@@ -33,8 +33,7 @@ import org.springframework.lang.Nullable;
 @Document(collection = "outbox")
 final class MongoOutboxEntry implements Serializable {
 
-    @Id final UUID id;
-
+    @Id final ObjectId id;
     final String type;
     final byte[] payload;
 
@@ -42,7 +41,7 @@ final class MongoOutboxEntry implements Serializable {
     private final Map<String, String> metadata;
 
 
-    MongoOutboxEntry(UUID id, String type, byte[] payload, @Nullable Map<String, String> metadata) {
+    MongoOutboxEntry(ObjectId id, String type, byte[] payload, @Nullable Map<String, String> metadata) {
         this.id = id;
         this.type = type;
         this.payload = payload;

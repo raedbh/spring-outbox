@@ -45,6 +45,6 @@ public class OutboxMongoAutoConfiguration {
 
     @Bean
     OutboxRepository outboxRepository(MongoTemplate mongoTemplate) {
-        return new OutboxMongoRepository(mongoTemplate);
+        return new MongoOutboxRepository(mongoTemplate);
     }
 }
