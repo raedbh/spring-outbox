@@ -209,7 +209,6 @@ When the `placeOrder` method is invoked (typically from a `Controller`), Spring 
 [NOTE]
 ====
 The `EmailNotification` parameter is instantiated in the `Controller` after retrieving the necessary details (e.g., customer email) from the request parameters or body.
-This ensures that the notification is tailored to the specific order being placed.
 ====
 
 . *Run the Debezium connector* +
