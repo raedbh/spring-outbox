@@ -47,6 +47,12 @@ Annotate the main application class with `@EnableJpaRepositories`, specifying `O
 +
 [source,java]
 ----
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import io.github.raedbh.spring.outbox.jpa.OutboxJpaRepositoryFactoryBean;
+
 @SpringBootApplication
 @EnableJpaRepositories(repositoryFactoryBeanClass = OutboxJpaRepositoryFactoryBean.class)
 public class EcommerceApplication {
@@ -69,6 +75,16 @@ spring.outbox.relational.auto-create=true
 +
 [source,java]
 ----
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+import org.springframework.data.annotation.Id;
+
+import io.github.raedbh.spring.outbox.core.RootEntity;
+
 @Entity
 @Table(name = "orders")
 public class Order extends RootEntity {
@@ -90,7 +106,10 @@ public class Order extends RootEntity {
 +
 [source,java]
 ----
-class OrderPlaced extends EventOutboxed<Order> {
+import io.github.raedbh.spring.outbox.core.CommandOutboxed;
+import io.github.raedbh.spring.outbox.core.EventOutboxed;
+
+public class OrderPlaced extends EventOutboxed<Order> {
 
     protected OrderPlaced(Order source, CommandOutboxed cmd) {
         super(source, cmd);
@@ -107,6 +126,8 @@ class OrderPlaced extends EventOutboxed<Order> {
 +
 [source,java]
 ----
+import io.github.raedbh.spring.outbox.core.CommandOutboxed;
+
 public class EmailNotification implements CommandOutboxed {
 
     private String to;
@@ -120,6 +141,16 @@ public class EmailNotification implements CommandOutboxed {
 +
 [source,java]
 ----
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+import org.springframework.data.annotation.Id;
+
+import io.github.raedbh.spring.outbox.core.RootEntity;
+
 @Entity
 @Table(name = "orders")
 public class Order extends RootEntity {
@@ -152,6 +183,9 @@ public class Order extends RootEntity {
 +
 [source,java]
 ----
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 public class OrderManagement {
 
@@ -170,7 +204,13 @@ public class OrderManagement {
     }
 }
 ----
-When the `placeOrder` method is called, Spring Outbox triggers the assigned event, producing new entries (for event and command) in the outbox table.
+When the `placeOrder` method is invoked (typically from a `Controller`), Spring Outbox triggers the assigned event, producing new entries (for event and command) in the outbox table.
+
+[NOTE]
+====
+The `EmailNotification` parameter is instantiated in the `Controller` after retrieving the necessary details (e.g., customer email) from the request parameters or body.
+This ensures that the notification is tailored to the specific order being placed.
+====
 
 . *Run the Debezium connector* +
 The Debezium connector detects new entries in outbox table and transmits them to RabbitMQ.
@@ -226,6 +266,12 @@ Here's how to set this up:
 +
 [source,java]
 ----
+import java.util.Optional;
+
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
 
 @Component
 class OrderPlacedHandler {
@@ -243,6 +289,13 @@ class OrderPlacedHandler {
 +
 [source,java]
 ----
+import java.util.Optional;
+
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
+
 @Component
 class EmailNotificationHandler {
 
