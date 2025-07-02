@@ -19,6 +19,7 @@
     <properties>
         <debezium.version>3.0.8.Final</debezium.version>
         <kafka.connect.version>3.9.0</kafka.connect.version>
+        <mongodb.driver.version>4.11.0</mongodb.driver.version>
     </properties>
 
     <dependencyManagement>
@@ -34,6 +35,32 @@
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>connect-api</artifactId>
                 <version>${kafka.connect.version}</version>
+            </dependency>
+
+            <!--
+             NOTE: Spring Boot 3.5.0+ uses MongoDB BOM (driver v5+ only).
+             Normally we'd override via the mongodb.version property,
+             but since the BOM starts at v5, we have to declare dependencies explicitly:
+            -->
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-sync</artifactId>
+                <version>${mongodb.driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-core</artifactId>
+                <version>${mongodb.driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>bson</artifactId>
+                <version>${mongodb.driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>bson-record-codec</artifactId>
+                <version>${mongodb.driver.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

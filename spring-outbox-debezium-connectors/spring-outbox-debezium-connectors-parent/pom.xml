@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.3</version>
+        <version>3.5.3</version>
         <relativePath/>
     </parent>
 
@@ -21,17 +21,35 @@
     <properties>
         <mysql.version>9.1.0</mysql.version>
         <postgresql.version>42.6.1</postgresql.version>
-        <mongodb.version>4.11.0</mongodb.version>
+        <mongodb.driver.version>4.11.0</mongodb.driver.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!--
+             NOTE: Spring Boot 3.5.0+ uses MongoDB BOM (driver v5+ only).
+             Normally we'd override via the mongodb.version property,
+             but since the BOM starts at v5, we have to declare dependencies explicitly:
+            -->
             <dependency>
-                <groupId>io.github.raedbh</groupId>
-                <artifactId>spring-outbox-debezium-connectors</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-sync</artifactId>
+                <version>${mongodb.driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-core</artifactId>
+                <version>${mongodb.driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>bson</artifactId>
+                <version>${mongodb.driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>bson-record-codec</artifactId>
+                <version>${mongodb.driver.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
