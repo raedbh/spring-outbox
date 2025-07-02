@@ -18,7 +18,7 @@
 
     <properties>
         <debezium.version>3.0.8.Final</debezium.version>
-        <kafka.connect.version>3.9.0</kafka.connect.version>
+        <kafka.connect.version>3.9.1</kafka.connect.version>
         <mongodb.driver.version>4.11.0</mongodb.driver.version>
     </properties>
 
