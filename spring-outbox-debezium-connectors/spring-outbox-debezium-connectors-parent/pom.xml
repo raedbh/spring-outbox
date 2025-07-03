@@ -21,15 +21,15 @@
     <properties>
         <mysql.version>9.1.0</mysql.version>
         <postgresql.version>42.6.1</postgresql.version>
-        <mongodb.driver.version>4.11.0</mongodb.driver.version>
+        <mongodb.driver.version>5.2.0</mongodb.driver.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <!--
-             NOTE: Spring Boot 3.5.0+ uses MongoDB BOM (driver v5+ only).
+             NOTE: Spring Boot 3.5.0+ uses MongoDB BOM.
              Normally we'd override via the mongodb.version property,
-             but since the BOM starts at v5, we have to declare dependencies explicitly:
+             but since the BOM starts at v5.4.0, we have to declare dependencies explicitly:
             -->
             <dependency>
                 <groupId>org.mongodb</groupId>
