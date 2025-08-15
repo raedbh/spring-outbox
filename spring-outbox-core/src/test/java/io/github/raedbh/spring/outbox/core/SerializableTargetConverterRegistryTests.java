@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,23 @@ class SerializableTargetConverterRegistryTests {
           .hasMessageContaining("Multiple converters found");
     }
 
+    @Test
+    void detectConverterInterfaceInComplexInheritanceHierarchy() {
+        // test for MapStruct-like generated classes with complex inheritance
+        SerializableTargetConverterRegistry registryWithComplexConverter =
+          new SerializableTargetConverterRegistry(Set.of(new ComplexInheritanceConverter()));
+
+        Optional<Converter<Object, Serializable>> converter = registryWithComplexConverter.getConverter(Source.class);
+
+        assertThat(converter).isPresent();
+
+        Source source = new Source("test");
+        Serializable result = converter.get().convert(source);
+
+        assertThat(result).isInstanceOf(SerializableTarget.class);
+        assertThat(((SerializableTarget) result).value()).isEqualTo("converted-test");
+    }
+
     static class OrderToMessageBodyConverter implements Converter<Order, OrderMessageBody> {
 
         @Override
@@ -116,4 +133,23 @@ class SerializableTargetConverterRegistryTests {
     }
 
     static class Target implements Serializable {}
+
+    // test classes for complex inheritance hierarchy scenario (like MapStruct)
+    record Source(String value) {}
+
+    record SerializableTarget(String value) implements Serializable {}
+
+    // simulates MapStruct-generated converter with complex inheritance
+    abstract static class AbstractConverter {
+        // abstract base class that doesn't implement Converter
+    }
+
+    static class ComplexInheritanceConverter extends AbstractConverter implements
+      Converter<Source, SerializableTarget> {
+
+        @Override
+        public SerializableTarget convert(Source source) {
+            return new SerializableTarget("converted-" + source.value());
+        }
+    }
 }

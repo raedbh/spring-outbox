@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2025 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package io.github.raedbh.spring.outbox.core;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,8 +24,8 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.util.ClassUtils;
 
 /**
  * Registry for converters with {@link Serializable} target.
@@ -51,17 +49,16 @@ public class SerializableTargetConverterRegistry {
     @SuppressWarnings("unchecked")
     public SerializableTargetConverterRegistry(Set<Converter<?, ?>> converters) {
         for (Converter<?, ?> converter : converters) {
-            for (Type type : converter.getClass().getGenericInterfaces()) {
-
-                if (type instanceof ParameterizedType paramType &&
-                  paramType.getRawType() == Converter.class &&
-                  paramType.getActualTypeArguments().length == 2) {
-
-                    Type[] typeArgs = paramType.getActualTypeArguments();
-
-                    if (ClassUtils.isAssignable(Serializable.class, typeArgs[1].getClass())) {
-                        Class<?> sourceType = (Class<?>) typeArgs[0];
-
+            ResolvableType converterType = ResolvableType.forClass(converter.getClass()).as(Converter.class);
+            
+            if (converterType != ResolvableType.NONE && converterType.hasGenerics()) {
+                ResolvableType[] generics = converterType.getGenerics();
+                
+                if (generics.length == 2) {
+                    Class<?> sourceType = generics[0].toClass();
+                    Class<?> targetType = generics[1].toClass();
+                    
+                    if (Serializable.class.isAssignableFrom(targetType)) {
                         if (serializableTargetConverters.putIfAbsent(sourceType,
                           (Converter<Object, Serializable>) converter) != null) {
                             throw new IllegalStateException(
