@@ -38,7 +38,7 @@ Include the following dependency in your E-commerce Spring Boot application alon
 <dependency>
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-jpa</artifactId>
-    <version>0.5.0</version>
+    <version>0.7.0</version>
 </dependency>
 ----
 
@@ -224,14 +224,14 @@ docker run -d \
   -e SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME=<db> \
   -e SPRING_OUTBOX_CONNECTOR_DATABASE_USER=<db_user> \
   -e SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD=<db_password> \
-  -e SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDER_PLACED_ROUTING_KEY=shopify.orders \
-  -e SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_EMAIL_NOTIFICATION_ROUTING_KEY=emails \
+  -e SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDERPLACED_ROUTINGKEY=shopify.orders \
+  -e SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_EMAILNOTIFICATION_ROUTINGKEY=emails \
   -e SPRING_RABBITMQ_HOST=<rabbit_host> \
   -e SPRING_RABBITMQ_USERNAME=<rabbit_user> \
   -e SPRING_RABBITMQ_PASSWORD=<rabbit_password> \
   --net host \
   --name spring-outbox-debezium-connector \
-  raed/spring-outbox-debezium-connector-mysql-rabbit:0..0
+  raed/spring-outbox-debezium-connector-mysql-rabbit:0.7.0
 ----
 +
 NOTE: `<db_user>` requires at least one of the `SUPER` or `REPLICATION CLIENT` privileges to allow the connector to read from the MySQL binary log.
@@ -258,7 +258,7 @@ Here's how to set this up:
 <dependency>
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-rabbit</artifactId>
-    <version>0.5.0</version>
+    <version>0.7.0</version>
 </dependency>
 ----
 - Implement a message handler to handle and process incoming messages in the Shopify Synchronizer:
@@ -270,7 +270,7 @@ import java.util.Optional;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
+import io.github.raedbh.spring.outbox.messaging.OutboxMessageBody;
 
 @Component
 class OrderPlacedHandler {
@@ -293,7 +293,7 @@ import java.util.Optional;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
+import io.github.raedbh.spring.outbox.messaging.OutboxMessageBody;
 
 @Component
 class EmailNotificationHandler {
@@ -308,7 +308,7 @@ class EmailNotificationHandler {
 ----
 
 That's all you need to get started with Spring Outbox in microservices context.
-For a complete example of monolith application, check out the link:spring-outbox-sample[spring-outbox-sample].
+For a complete example with multi-module architecture, check out the link:spring-outbox-sample[spring-outbox-sample].
 
 == Contribution
 

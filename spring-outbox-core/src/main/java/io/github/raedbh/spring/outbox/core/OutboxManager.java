@@ -29,10 +29,10 @@ import org.springframework.core.serializer.Serializer;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_ENTITY_ID;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_ENTITY_TYPE;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_OCCURRED_AT;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.OPERATION;
+import static io.github.raedbh.spring.outbox.core.OutboxHeaders.EVENT_ENTITY_ID;
+import static io.github.raedbh.spring.outbox.core.OutboxHeaders.EVENT_ENTITY_TYPE;
+import static io.github.raedbh.spring.outbox.core.OutboxHeaders.EVENT_OCCURRED_AT;
+import static io.github.raedbh.spring.outbox.core.OutboxHeaders.OPERATION;
 
 /**
  * Manages outbox entries for domain events and post-event publication commands.

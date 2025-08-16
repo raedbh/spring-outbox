@@ -30,10 +30,10 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.DefaultKafkaHeaderMapper;
 import org.springframework.kafka.support.converter.MessagingMessageConverter;
 
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_ENTITY_ID;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_ENTITY_TYPE;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_OCCURRED_AT;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.OPERATION;
+import static io.github.raedbh.spring.outbox.messaging.OutboxHeaders.EVENT_ENTITY_ID;
+import static io.github.raedbh.spring.outbox.messaging.OutboxHeaders.EVENT_ENTITY_TYPE;
+import static io.github.raedbh.spring.outbox.messaging.OutboxHeaders.EVENT_OCCURRED_AT;
+import static io.github.raedbh.spring.outbox.messaging.OutboxHeaders.OPERATION;
 
 /**
  * Auto-configuration for consuming outbox messages from Kafka.

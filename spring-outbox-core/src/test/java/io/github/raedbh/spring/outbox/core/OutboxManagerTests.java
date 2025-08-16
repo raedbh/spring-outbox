@@ -37,10 +37,10 @@ import com.acme.eshop.OrderMessageBody;
 import com.acme.eshop.OrderPaid;
 import com.acme.eshop.SmsNotification;
 
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_ENTITY_ID;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_ENTITY_TYPE;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.EVENT_OCCURRED_AT;
-import static io.github.raedbh.spring.outbox.core.PredefinedMetadataKeys.OPERATION;
+import static io.github.raedbh.spring.outbox.core.OutboxHeaders.EVENT_ENTITY_ID;
+import static io.github.raedbh.spring.outbox.core.OutboxHeaders.EVENT_ENTITY_TYPE;
+import static io.github.raedbh.spring.outbox.core.OutboxHeaders.EVENT_OCCURRED_AT;
+import static io.github.raedbh.spring.outbox.core.OutboxHeaders.OPERATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.argThat;

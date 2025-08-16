@@ -50,14 +50,14 @@ public class SerializableTargetConverterRegistry {
     public SerializableTargetConverterRegistry(Set<Converter<?, ?>> converters) {
         for (Converter<?, ?> converter : converters) {
             ResolvableType converterType = ResolvableType.forClass(converter.getClass()).as(Converter.class);
-            
+
             if (converterType != ResolvableType.NONE && converterType.hasGenerics()) {
                 ResolvableType[] generics = converterType.getGenerics();
-                
+
                 if (generics.length == 2) {
                     Class<?> sourceType = generics[0].toClass();
                     Class<?> targetType = generics[1].toClass();
-                    
+
                     if (Serializable.class.isAssignableFrom(targetType)) {
                         if (serializableTargetConverters.putIfAbsent(sourceType,
                           (Converter<Object, Serializable>) converter) != null) {

@@ -23,13 +23,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.core.serializer.Deserializer;
 import org.springframework.core.serializer.Serializer;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * Auto-configures core Outbox components, including default (de)serializers for message payloads.
+ * Auto-configures core Outbox components.
  *
  * @author Raed Ben Hamouda
  * @since 1.0
@@ -46,12 +45,6 @@ public class OutboxCoreConfiguration {
     @ConditionalOnMissingBean
     Serializer<Serializable> outboxSerializer() {
         return new OutboxDefaultSerializer();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    Deserializer<Serializable> outboxDeserializer() {
-        return new OutboxDefaultDeserializer();
     }
 
     @Bean

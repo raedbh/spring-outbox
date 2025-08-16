@@ -23,7 +23,7 @@ import org.springframework.core.serializer.Deserializer;
 import org.springframework.kafka.annotation.KafkaListenerConfigurer;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistrar;
 
-import io.github.raedbh.spring.outbox.core.OutboxMethodArgumentResolver;
+import io.github.raedbh.spring.outbox.messaging.OutboxMethodArgumentResolver;
 
 /**
  * @author Raed Ben Hamouda

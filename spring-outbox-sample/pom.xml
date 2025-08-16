@@ -13,9 +13,15 @@
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-sample</artifactId>
     <version>0.7.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <name>Spring Outbox Sample</name>
     <description>A Source to Pay (S2P) sample using Spring Outbox</description>
+
+    <modules>
+        <module>email-service</module>
+        <module>s2p-app</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,148 +46,22 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>io.github.raedbh</groupId>
+                <artifactId>email-message-contracts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-
-        <!-- Spring Outbox -->
-        <dependency>
-            <groupId>io.github.raedbh</groupId>
-            <artifactId>spring-outbox-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.raedbh</groupId>
-            <artifactId>spring-outbox-rabbit</artifactId>
-        </dependency>
-
-        <!-- Spring Boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-docker-compose</artifactId>
-        </dependency>
-
-        <!-- jMolecules -->
-        <dependency>
-            <groupId>org.jmolecules.integrations</groupId>
-            <artifactId>jmolecules-starter-ddd</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jmolecules.integrations</groupId>
-            <artifactId>jmolecules-spring</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jmolecules.integrations</groupId>
-            <artifactId>jmolecules-jpa</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jmolecules.integrations</groupId>
-            <artifactId>jmolecules-jackson</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jmolecules.integrations</groupId>
-            <artifactId>jmolecules-bytebuddy-nodep</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Other -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.javamoney.moneta</groupId>
-            <artifactId>moneta-core</artifactId>
-            <version>1.4.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zalando</groupId>
-            <artifactId>jackson-datatype-money</artifactId>
-            <version>1.3.0</version>
-        </dependency>
-
-        <!-- Test -->
-        <dependency>
-            <groupId>org.jmolecules.integrations</groupId>
-            <artifactId>jmolecules-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
                 <configuration>
                     <release>17</release>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-configuration-processor</artifactId>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy-maven-plugin</artifactId>
-                <version>${bytebuddy.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>transform-extended</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <classPathDiscovery>true</classPathDiscovery>
                 </configuration>
             </plugin>
         </plugins>

@@ -23,7 +23,7 @@ import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.core.serializer.Deserializer;
 
-import io.github.raedbh.spring.outbox.core.OutboxMethodArgumentResolver;
+import io.github.raedbh.spring.outbox.messaging.OutboxMethodArgumentResolver;
 
 /**
  * Auto-configuration for consuming outbox messages from RabbitMQ.

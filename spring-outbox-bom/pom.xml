@@ -36,6 +36,11 @@
             </dependency>
             <dependency>
                 <groupId>io.github.raedbh</groupId>
+                <artifactId>spring-outbox-messaging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.raedbh</groupId>
                 <artifactId>spring-outbox-rabbit</artifactId>
                 <version>${project.version}</version>
             </dependency>

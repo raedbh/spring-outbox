@@ -59,15 +59,16 @@
     </scm>
 
     <modules>
+        <module>spring-outbox-bom</module>
         <module>spring-outbox-core</module>
         <module>spring-outbox-jpa</module>
         <module>spring-outbox-mongo</module>
         <module>spring-outbox-debezium-connectors</module>
+        <module>spring-outbox-messaging</module>
         <module>spring-outbox-rabbit</module>
         <module>spring-outbox-kafka</module>
-        <module>spring-outbox-bom</module>
-        <module>spring-outbox-sample</module>
         <module>spring-outbox-integration-tests</module>
+        <module>spring-outbox-sample</module>
     </modules>
 
     <dependencyManagement>

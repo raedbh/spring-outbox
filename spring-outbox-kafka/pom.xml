@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.raedbh</groupId>
-            <artifactId>spring-outbox-core</artifactId>
+            <artifactId>spring-outbox-messaging</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

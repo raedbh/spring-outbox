@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import io.github.raedbh.spring.outbox.core.OutboxMessageBody;
+import io.github.raedbh.spring.outbox.messaging.OutboxMessageBody;
 
 /**
  * Listens for payment events and synchronizes order details with Shopify.
