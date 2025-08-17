@@ -18,6 +18,8 @@ package sample.sourcing.rfp;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,7 @@ class RfpEventHandlers {
     @Component
     static class ProposalAwardHandler {
 
+        private static final Logger LOGGER = LoggerFactory.getLogger(ProposalAwardHandler.class);
         private final RfpManagement rfpManagement;
 
         ProposalAwardHandler(RfpManagement rfpManagement) {
@@ -41,8 +44,15 @@ class RfpEventHandlers {
 
         @RabbitListener(queues = "rfp.proposals")
         void onProposalAwarded(@OutboxMessageBody(operation = "award") Optional<ProposalMessageBody> messageBody) {
-            messageBody.ifPresent(body ->
-              rfpManagement.close(EntityIdentifier.fromString(body.rfpId)));
+            messageBody.ifPresent(body -> {
+
+                LOGGER.info("Received proposal awarded event for RFP: {} from Proposal: {}",
+                  body.rfpId, body.id);
+
+                rfpManagement.close(EntityIdentifier.fromString(body.rfpId));
+
+                LOGGER.info("Closed RFP: {}", body.rfpId);
+            });
         }
 
     }
