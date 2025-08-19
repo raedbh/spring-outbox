@@ -92,7 +92,7 @@ public class OrderPlaced extends EventOutboxed<Order> {
 
 That's almost what you need to have outbox entries stored into the database. The remaining part involves using Debezium to capture changes and Spring Outbox messaging modules for downstream components to consume the messages.
 
-For a complete sample implementation guide, see our https://dev.to/raedobh/outbox-pattern-with-spring-boot-and-debezium-1od7[blog post].
+For a complete implementation example, see the S2P application link:spring-outbox-sample[sample].
 
 == Contribution
 
