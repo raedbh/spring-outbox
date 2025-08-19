@@ -31,6 +31,12 @@ Spring Outbox provides a simple way to implement the transactional outbox patter
 +
 [source,java]
 ----
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import io.github.raedbh.spring.outbox.jpa.OutboxJpaRepositoryFactoryBean;
+
 @SpringBootApplication
 @EnableJpaRepositories(repositoryFactoryBeanClass = OutboxJpaRepositoryFactoryBean.class)
 public class Application {
@@ -44,8 +50,15 @@ public class Application {
 +
 [source,java]
 ----
+import java.util.UUID;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+import io.github.raedbh.spring.outbox.core.RootEntity;
+
 @Entity
-public class Order extends RootEntity implements AggregateRoot<Order, UUID> {
+public class Order extends RootEntity {
     
     private @Id UUID id;
     // other fields...
@@ -62,6 +75,8 @@ public class Order extends RootEntity implements AggregateRoot<Order, UUID> {
 +
 [source,java]
 ----
+import io.github.raedbh.spring.outbox.core.EventOutboxed;
+
 public class OrderPlaced extends EventOutboxed<Order> {
     
     public OrderPlaced(Order source) {
