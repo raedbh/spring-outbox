@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import sample.common.EntityIdentifier;
+import sample.email.EmailNotification.Contact;
 import sample.sourcing.proposal.Proposal;
-import sample.sourcing.proposal.Proposal.VendorContact;
 import sample.sourcing.proposal.Proposals;
 import sample.sourcing.rfp.RequestForProposal;
 import sample.sourcing.rfp.RfpRepository;
@@ -95,7 +95,7 @@ public class ProposalController {
         Vendor vendor = vendors.findById(proposal.getVendor().getId())
           .orElseThrow(() -> new IllegalArgumentException("Vendor not found"));
 
-        VendorContact vendorContact = new VendorContact(vendor.getName(), vendor.getEmail());
+        Contact vendorContact = new Contact(vendor.getName(), vendor.getEmail());
         proposals.award(EntityIdentifier.fromString(proposalId), vendorContact);
         return ResponseEntity.ok().build();
     }

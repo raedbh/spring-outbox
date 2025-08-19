@@ -23,8 +23,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import sample.common.EntityIdentifier;
+import sample.email.EmailNotification.Contact;
 import sample.sourcing.rfp.RequestForProposal;
-import sample.sourcing.proposal.Proposal.VendorContact;
 
 /**
  * @author Raed Ben Hamouda
@@ -45,7 +45,7 @@ public interface Proposals extends CrudRepository<Proposal, EntityIdentifier> {
      * @param vendorContact the contact information of the vendor whose proposal is being awarded.
      */
     @Transactional
-    default void award(EntityIdentifier proposalId, VendorContact vendorContact) {
+    default void award(EntityIdentifier proposalId, Contact vendorContact) {
         Proposal awardedProposal = proposalById(proposalId);
         List<Proposal> allProposals = findByRfpOrderBySubmittedAt(awardedProposal.getRfp());
         allProposals.forEach(proposal -> {

@@ -35,6 +35,7 @@ import io.github.raedbh.spring.outbox.core.RootEntity;
 import sample.common.Currencies;
 import sample.common.EntityIdentifier;
 import sample.email.EmailNotification;
+import sample.email.EmailNotification.Contact;
 import sample.sourcing.rfp.RequestForProposal;
 import sample.vendor.Vendor;
 
@@ -98,7 +99,7 @@ public class Proposal extends RootEntity implements AggregateRoot<Proposal, Enti
      *
      * @param vendorContact the contact information of the vendor to notify about the award
      */
-    public Proposal markAwarded(VendorContact vendorContact) {
+    public Proposal markAwarded(Contact vendorContact) {
         Assert.state(this.status == Status.UNDER_REVIEW,
           "Cannot award a proposal that is not under review! Current status: " + this.status);
         this.status = Status.AWARDED;
@@ -204,8 +205,4 @@ public class Proposal extends RootEntity implements AggregateRoot<Proposal, Enti
         REJECTED
     }
 
-    /**
-     * Value object representing vendor contact information for email notifications.
-     */
-    public record VendorContact(String name, String email) implements java.io.Serializable {}
 }

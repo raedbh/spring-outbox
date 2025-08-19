@@ -24,8 +24,7 @@ import org.mapstruct.Mapping;
 import org.springframework.core.convert.converter.Converter;
 
 import email.contracts.EmailMessageBody;
-import email.contracts.EmailMessageBody.Contact;
-import sample.sourcing.proposal.Proposal.VendorContact;
+import sample.email.EmailNotification.Contact;
 
 /**
  * @author Raed Ben Hamouda
@@ -41,7 +40,7 @@ public interface EmailNotificationConverter extends Converter<EmailNotification,
     @Mapping(target = "lookAndFeel", ignore = true)
     EmailMessageBody convert(EmailNotification source);
 
-    default List<Contact> createContactList(VendorContact vendorContact) {
-        return Collections.singletonList(new Contact(vendorContact.email(), vendorContact.name()));
+    default List<EmailMessageBody.Contact> createContactList(Contact vendorContact) {
+        return Collections.singletonList(new EmailMessageBody.Contact(vendorContact.email(), vendorContact.name()));
     }
 }

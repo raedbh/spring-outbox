@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 import io.github.raedbh.spring.outbox.core.CommandOutboxed;
-import sample.sourcing.proposal.Proposal.VendorContact;
 
 /**
  * Command to send email notification providing template parameters.
@@ -29,6 +28,12 @@ import sample.sourcing.proposal.Proposal.VendorContact;
  */
 public record EmailNotification(
   String type,
-  VendorContact to,
+  Contact to,
   Map<String, Serializable> templateParams
-) implements CommandOutboxed {}
+) implements CommandOutboxed {
+
+    /**
+     * Value object representing vendor contact information for email notifications.
+     */
+    public record Contact(String name, String email) implements Serializable {}
+}
