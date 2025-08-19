@@ -79,6 +79,12 @@ First, let's create a Spring Boot project with the necessary dependencies:
 Configure your main application class:
 
 ```java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import io.github.raedbh.spring.outbox.jpa.OutboxJpaRepositoryFactoryBean;
+
 @SpringBootApplication
 @EnableJpaRepositories(repositoryFactoryBeanClass = OutboxJpaRepositoryFactoryBean.class)
 public class S2PApplication {
@@ -110,6 +116,25 @@ spring.rabbitmq.password=<rabbitmq_password>
 ### The Proposal Aggregate
 
 ```java
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import javax.money.MonetaryAmount;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.ddd.types.Association;
+import org.springframework.util.Assert;
+
+import io.github.raedbh.spring.outbox.core.RootEntity;
+import sample.common.EntityIdentifier;
+import sample.email.EmailNotification;
+import sample.email.EmailNotification.Contact;
+import sample.sourcing.rfp.RequestForProposal;
+import sample.vendor.Vendor;
+
 @Entity
 @Table(name = "proposals")
 public class Proposal extends RootEntity implements AggregateRoot<Proposal, EntityIdentifier> {
@@ -126,7 +151,7 @@ public class Proposal extends RootEntity implements AggregateRoot<Proposal, Enti
     /**
      * Mark the proposal as awarded with vendor contact for notifications.
      */
-    public Proposal markAwarded(VendorContact vendorContact) {
+    public Proposal markAwarded(Contact vendorContact) {
         Assert.state(this.status == Status.UNDER_REVIEW,
           "Cannot award a proposal that is not under review!");
         
@@ -149,12 +174,17 @@ public class Proposal extends RootEntity implements AggregateRoot<Proposal, Enti
     public enum Status {
         CREATED, SUBMITTED, UNDER_REVIEW, AWARDED, REJECTED
     }
+    
 }
 ```
+> **Note**: The `AggregateRoot` and `Association` interfaces from jMolecules are optional and not required for Spring Outbox.
+> They're used here for better domain modeling, but you can use Spring Outbox with just the `RootEntity` class.
 
 ### The Domain Event and Command
 
 ```java
+import io.github.raedbh.spring.outbox.core.EventOutboxed;
+
 public class ProposalAwarded extends EventOutboxed<Proposal> {
     
     public ProposalAwarded(Proposal source, EmailNotification command) {
@@ -169,40 +199,144 @@ public class ProposalAwarded extends EventOutboxed<Proposal> {
 ```
 
 ```java
+import java.io.Serializable;
+import java.util.Map;
+
+import io.github.raedbh.spring.outbox.core.CommandOutboxed;
+
 public record EmailNotification(
   String type,
-  VendorContact to,
+  Contact to,
   Map<String, Serializable> templateParams
-) implements CommandOutboxed {}
+) implements CommandOutboxed {
+
+    public record Contact(String name, String email) implements Serializable {}
+}
 ```
 
-## Step 4: Implement the Domain Service
+## Step 4: Command Conversion with MapStruct
+
+Commands need conversion to message formats for external services. Here's how to convert `EmailNotification` using MapStruct:
 
 ```java
-@Service
-@Transactional
-public class ProposalManagement {
-    
-    private final ProposalRepository proposalRepository;
-    
-    public ProposalManagement(ProposalRepository proposalRepository) {
-        this.proposalRepository = proposalRepository;
-    }
-    
-    public Proposal awardProposal(EntityIdentifier proposalId, VendorContact vendorContact) {
-        Proposal proposal = proposalRepository.findById(proposalId)
-            .orElseThrow(() -> new ProposalNotFoundException(proposalId));
-        
-        // When this transaction commits, Spring Outbox will atomically:
-        // 1. Save the proposal changes
-        // 2. Insert an outbox record for the ProposalAwarded event
-        // 3. Insert an outbox record for the EmailNotification command
-        return proposalRepository.save(proposal.markAwarded(vendorContact));
+import java.util.Collections;
+import java.util.List;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.core.convert.converter.Converter;
+
+import email.contracts.EmailMessageBody;
+import sample.email.EmailNotification;
+import sample.email.EmailNotification.Contact;
+
+@Mapper(componentModel = "spring")
+public interface EmailNotificationConverter extends Converter<EmailNotification, EmailMessageBody> {
+
+    @Override
+    @Mapping(target = "to", expression = "java(createContactList(source.to()))")
+    @Mapping(target = "locale", expression = "java(java.util.Locale.ENGLISH)")
+    @Mapping(target = "cc", ignore = true)
+    @Mapping(target = "bcc", ignore = true)
+    @Mapping(target = "lookAndFeel", ignore = true)
+    EmailMessageBody convert(EmailNotification source);
+
+    default List<EmailMessageBody.Contact> createContactList(Contact vendorContact) {
+        return Collections.singletonList(new EmailMessageBody.Contact(vendorContact.email(), vendorContact.name()));
     }
 }
 ```
 
-## Step 5: Set Up Change Data Capture
+> **Note**: MapStruct is used here for clean command-to-message conversion, but it's not mandatory. You can implement conversion manually or use other mapping libraries.
+
+## Step 5: Implement the Repository Interface
+
+```java
+import java.util.List;
+
+import org.jmolecules.ddd.types.Association;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+import sample.common.EntityIdentifier;
+import sample.email.EmailNotification.Contact;
+import sample.sourcing.rfp.RequestForProposal;
+
+public interface Proposals extends CrudRepository<Proposal, EntityIdentifier> {
+    
+    List<Proposal> findByRfpOrderBySubmittedAt(Association<RequestForProposal, EntityIdentifier> rfp);
+    
+    /**
+     * Award a proposal for a given RFP and mark it as the winning bid.
+     * When a proposal is awarded, all other proposals for the same RFP are rejected.
+     */
+    @Transactional
+    default void award(EntityIdentifier proposalId, Contact vendorContact) {
+        Proposal awardedProposal = findById(proposalId)
+            .orElseThrow(() -> new IllegalArgumentException("Proposal not found"));
+        List<Proposal> allProposals = findByRfpOrderBySubmittedAt(awardedProposal.getRfp());
+        
+        allProposals.forEach(proposal -> {
+            if (proposal.equals(awardedProposal)) {
+                // When this transaction commits, Spring Outbox will atomically:
+                // 1. Save the proposal changes  
+                // 2. Insert outbox records for events and commands
+                proposal.markAwarded(vendorContact);
+            } else {
+                proposal.markRejected();
+            }
+            save(proposal);
+        });
+    }
+}
+```
+
+## Step 6: The Proposal REST Controller
+
+```java
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import sample.common.EntityIdentifier;
+import sample.email.EmailNotification.Contact;
+import sample.sourcing.proposal.Proposal;
+import sample.sourcing.proposal.Proposals;
+import sample.vendor.Vendor;
+import sample.vendor.Vendors;
+
+@Controller
+@RequestMapping("/proposals")
+public class ProposalController {
+    
+    private final Proposals proposals;
+    private final Vendors vendors;
+    
+    public ProposalController(Proposals proposals, Vendors vendors) {
+        this.proposals = proposals;
+        this.vendors = vendors;
+    }
+    
+    @PostMapping("/{id}/award")
+    public ResponseEntity<?> awardProposal(@PathVariable("id") String proposalId) {
+        
+        Proposal proposal = proposals.findById(EntityIdentifier.fromString(proposalId))
+            .orElseThrow(() -> new IllegalArgumentException("Proposal not found"));
+        Vendor vendor = vendors.findById(proposal.getVendor().getId())
+            .orElseThrow(() -> new IllegalArgumentException("Vendor not found"));
+        
+        Contact vendorContact = new Contact(vendor.getName(), vendor.getEmail());
+        proposals.award(EntityIdentifier.fromString(proposalId), vendorContact);
+        return ResponseEntity.ok().build();
+    }
+    
+    // Other endpoints...
+}
+```
+
+## Step 7: Set Up Change Data Capture
 
 The Debezium connector detects new entries in the outbox table and transmits them to RabbitMQ. Follow these steps:
 
@@ -234,26 +368,7 @@ docker run -d \
 
 > **Note**: The `<db_user>` requires at least one of the `SUPER` or `REPLICATION CLIENT` privileges to read from the MySQL binary log.
 
-## Step 6: REST Endpoint Example
-
-```java
-@RestController
-@RequestMapping("/proposals")
-public class ProposalController {
-    
-    private final ProposalManagement proposalManagement;
-    
-    @PostMapping("/{id}/award")
-    public ResponseEntity<ProposalResponse> awardProposal(@PathVariable EntityIdentifier id) {
-        Proposal awarded = proposalManagement.awardProposal(id);
-        return ResponseEntity.ok(ProposalResponse.from(awarded));
-    }
-    
-    // Other endpoints...
-}
-```
-
-## Step 7: Consume Events and Commands
+## Step 8: Consume Events and Commands
 
 Spring Outbox publishes both events and commands. First, add the messaging dependency to consuming components:
 
@@ -270,12 +385,24 @@ Here's how different components consume the messages:
 ### Event Consumption (Within S2P App)
 
 ```java
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+import io.github.raedbh.spring.outbox.messaging.OutboxMessageBody;
+import sample.common.EntityIdentifier;
+import sample.sourcing.common.ProposalMessageBody;
+
 @Component
 class RfpEventHandlers {
 
     @Component
     static class ProposalAwardHandler {
 
+        private static final Logger LOGGER = LoggerFactory.getLogger(ProposalAwardHandler.class);
         private final RfpManagement rfpManagement;
 
         ProposalAwardHandler(RfpManagement rfpManagement) {
@@ -285,8 +412,9 @@ class RfpEventHandlers {
         @RabbitListener(queues = "rfp.proposals")
         void onProposalAwarded(@OutboxMessageBody(operation = "award") Optional<ProposalMessageBody> messageBody) {
             messageBody.ifPresent(body -> {
-                log.info("Received proposal awarded event for RFP: {}", body.rfpId());
-                rfpManagement.close(EntityIdentifier.fromString(body.rfpId()));
+                LOGGER.info("Received proposal awarded event for RFP: {} from Proposal: {}", 
+                  body.rfpId, body.id);
+                rfpManagement.close(EntityIdentifier.fromString(body.rfpId));
             });
         }
     }
@@ -296,15 +424,30 @@ class RfpEventHandlers {
 ### Command Processing (Email Service)
 
 ```java
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+import email.contracts.EmailMessageBody;
+import io.github.raedbh.spring.outbox.messaging.OutboxMessageBody;
+
 @Component
 public class EmailNotificationHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(EmailNotificationHandler.class);
     private final EmailSender emailSender;
+
+    public EmailNotificationHandler(EmailSender emailSender) {
+        this.emailSender = emailSender;
+    }
 
     @RabbitListener(queues = "emails")
     public void handleEmailNotification(@OutboxMessageBody Optional<EmailMessageBody> messageBody) {
         messageBody.ifPresent(email -> {
-            log.info("Received email notification for type: {} to: {}", 
+            logger.info("Received email notification for type: {} to: {}", 
               email.getType(), email.getTo());
             emailSender.send(email);
         });
@@ -314,7 +457,7 @@ public class EmailNotificationHandler {
 
 ## What Happens When You Award a Proposal?
 
-When you call the `awardProposal` method:
+When you call the `award` method:
 
 1. **Transactional Write**: The proposal status and outbox entries (event + command) are saved atomically
 2. **Change Capture**: Debezium detects the outbox table changes via MySQL binlog
