@@ -32,7 +32,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.5.5</spring-boot.version>
+        <spring-boot.version>3.5.8</spring-boot.version>
         <spring-framework.version>6.2.11</spring-framework.version>
     </properties>
 
