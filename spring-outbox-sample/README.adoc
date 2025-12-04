@@ -66,9 +66,17 @@ This starts the email service on port `8081`.
 
 == 4. Run Scenario
 In a new terminal:
+
+Linux/macOS:
 [source,bash]
 ----
 ./scenario.sh
+----
+
+Windows:
+[source,batch]
+----
+scenario.bat
 ----
 
 Here is an example of the output:
