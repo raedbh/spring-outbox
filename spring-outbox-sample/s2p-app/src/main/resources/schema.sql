@@ -1,7 +1,7 @@
 create
 database if not exists s2p;
 
-create table proposals
+create table if not exists proposals
 (
     id                binary(16)     not null primary key,
     rfp               binary(16)     null,
@@ -14,13 +14,13 @@ create table proposals
     constraint chk_status_range check (`status` between 0 and 4)
 );
 
-create table requirement_labels
+create table if not exists requirement_labels
 (
     id    binary(16)   not null primary key,
     label varchar(255) null
 );
 
-create table rfps
+create table if not exists rfps
 (
     id                  binary(16)   not null primary key,
     title               varchar(255) null,
@@ -34,7 +34,7 @@ create table rfps
     constraint chk_rfp_status_range check (`status` between 0 and 2)
 );
 
-create table requirements
+create table if not exists requirements
 (
     id                 binary(16)   not null primary key,
     rfp_id             binary(16)   null,
@@ -44,7 +44,7 @@ create table requirements
     constraint fk_requirements_rfp foreign key (rfp_id) references rfps (id)
 );
 
-create table vendors
+create table if not exists vendors
 (
     id    binary(16)   not null primary key,
     name  varchar(255) null,
