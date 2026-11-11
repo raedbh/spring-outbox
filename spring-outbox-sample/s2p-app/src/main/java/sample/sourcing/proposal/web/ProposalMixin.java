@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package sample.sourcing.proposal.web;
 
-import org.springframework.boot.jackson.JsonMixin;
+import org.springframework.boot.jackson.JacksonMixin;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -25,6 +25,6 @@ import sample.sourcing.proposal.Proposal;
 /**
  * @author Raed Ben Hamouda
  */
-@JsonMixin(Proposal.class)
+@JacksonMixin(Proposal.class)
 @JsonIgnoreProperties(value = {"new"})
 public abstract class ProposalMixin {}

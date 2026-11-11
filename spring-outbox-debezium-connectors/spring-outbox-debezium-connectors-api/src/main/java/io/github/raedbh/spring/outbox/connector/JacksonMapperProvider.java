@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 the original authors.
+ *  Copyright 2024-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package io.github.raedbh.spring.outbox.connector;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * @author Raed Ben Hamouda

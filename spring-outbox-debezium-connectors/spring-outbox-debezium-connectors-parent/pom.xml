@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.8</version>
+        <version>4.1.2</version>
         <relativePath/>
     </parent>
 
@@ -21,13 +21,15 @@
     <properties>
         <mysql.version>9.1.0</mysql.version>
         <postgresql.version>42.6.2</postgresql.version>
-        <mongodb.driver.version>5.2.0</mongodb.driver.version>
+        <mongodb.driver.version>5.6.0</mongodb.driver.version>
+        <!-- matches the kafka connect runtime the connectors core is built and tested against -->
+        <kafka.version>3.9.1</kafka.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <!--
-             NOTE: Spring Boot 3.5.0+ uses MongoDB BOM.
+             NOTE: Spring Boot 4.0+ uses MongoDB BOM.
              Normally we'd override via the mongodb.version property,
              but since the BOM starts at v5.4.0, we have to declare dependencies explicitly:
             -->
@@ -66,15 +68,10 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-test-classic</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

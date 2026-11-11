@@ -19,7 +19,7 @@
     <properties>
         <debezium.version>3.1.3.Final</debezium.version>
         <kafka.connect.version>3.9.1</kafka.connect.version>
-        <mongodb.driver.version>5.2.0</mongodb.driver.version>
+        <mongodb.driver.version>5.6.0</mongodb.driver.version>
     </properties>
 
     <dependencyManagement>
@@ -38,7 +38,7 @@
             </dependency>
 
             <!--
-             NOTE: Spring Boot 3.5.0+ uses MongoDB BOM.
+             NOTE: Spring Boot 4.0+ uses MongoDB BOM.
              Normally we'd override via the mongodb.version property,
              but since the BOM starts at v5.4.0, we have to declare dependencies explicitly:
             -->

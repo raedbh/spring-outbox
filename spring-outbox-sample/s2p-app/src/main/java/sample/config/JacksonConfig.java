@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package sample.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.zalando.jackson.datatype.money.MoneyModule;
 
-import com.fasterxml.jackson.databind.Module;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.datatype.moneta.MonetaMoneyModule;
 
 /**
  * @author Raed Ben Hamouda
@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.Module;
 class JacksonConfig {
 
     @Bean
-    Module moneyModule() {
-        return new MoneyModule().withDefaultFormatting();
+    JacksonModule moneyModule() {
+        return new MonetaMoneyModule().withDefaultFormatting();
     }
 }

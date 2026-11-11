@@ -1,5 +1,5 @@
 /*
- *  Copyright 2025 the original authors.
+ *  Copyright 2025-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package sample;
 import org.bson.UuidRepresentation;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
-import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.mongodb.MongoDBContainer;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -33,7 +33,7 @@ import com.mongodb.client.MongoClients;
  */
 public class MongoTestConfigurations {
 
-    static String replicaSetUrl = "mongodb://mongo:27017/?replicaSet=rs0&retryWrites=false";
+    static String replicaSetUrl = "mongodb://mongo:27017/?replicaSet=docker-rs&retryWrites=false";
 
     interface MongoConfiguration {
 
@@ -43,7 +43,7 @@ public class MongoTestConfigurations {
             return new MongoDBContainer("mongo:6.0.3")
               .withNetwork(network)
               .withNetworkAliases("mongo")
-              .withCommand("--replSet", "rs0")
+              .withReplicaSet()
               .withExposedPorts(27017);
         }
 

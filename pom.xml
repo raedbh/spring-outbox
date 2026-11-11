@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~  Copyright 2024-2025 the original authors.
+  ~  Copyright 2024-2026 the original authors.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.5.8</spring-boot.version>
-        <spring-framework.version>6.2.11</spring-framework.version>
+        <spring-boot.version>4.1.2</spring-boot.version>
+        <spring-framework.version>7.0.10</spring-framework.version>
     </properties>
 
     <licenses>

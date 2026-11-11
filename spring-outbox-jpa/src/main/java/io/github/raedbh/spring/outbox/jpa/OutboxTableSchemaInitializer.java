@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original authors.
+ *  Copyright 2024-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package io.github.raedbh.spring.outbox.jpa;
 import java.sql.SQLException;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
+import org.springframework.boot.hibernate.autoconfigure.HibernateProperties;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.TransactionStatus;

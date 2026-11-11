@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 the original authors.
+ *  Copyright 2024-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
+import org.testcontainers.mysql.MySQLContainer;
+import org.testcontainers.rabbitmq.RabbitMQContainer;
 
 import common.CommonTestConfigurations.NetworkConfiguration;
 import common.CommonTestConfigurations.RabbitConfiguration;
@@ -46,7 +46,7 @@ class MysqlRabbitTests extends AbstractIntegrationTests {
     static class MysqlRabbitConfiguration implements NetworkConfiguration, MySQLConfiguration, RabbitConfiguration {
 
         @Bean
-        GenericContainer<?> connectorContainer(Network network, MySQLContainer<?> mysqlContainer,
+        GenericContainer<?> connectorContainer(Network network, MySQLContainer mysqlContainer,
           RabbitMQContainer rabbitContainer) {
 
             Path dockerfilePath = TestUtils.resolveDockerfilePath("spring-outbox-debezium-connector-mysql-rabbit");

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 the original authors.
+ *  Copyright 2024-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.kafka.KafkaContainer;
+import org.testcontainers.rabbitmq.RabbitMQContainer;
 
 /**
  * @author Raed Ben Hamouda

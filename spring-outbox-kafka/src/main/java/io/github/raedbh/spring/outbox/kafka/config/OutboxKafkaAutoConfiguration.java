@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 the original authors.
+ *  Copyright 2024-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.support.DefaultKafkaHeaderMapper;
+import org.springframework.kafka.support.JsonKafkaHeaderMapper;
 import org.springframework.kafka.support.converter.MessagingMessageConverter;
 
 import static io.github.raedbh.spring.outbox.messaging.OutboxHeaders.EVENT_ENTITY_ID;
@@ -54,7 +54,7 @@ public class OutboxKafkaAutoConfiguration {
         rawMappedHeaders.put(EVENT_OCCURRED_AT, true);
         rawMappedHeaders.put(OPERATION, true);
 
-        DefaultKafkaHeaderMapper mapper = new DefaultKafkaHeaderMapper();
+        JsonKafkaHeaderMapper mapper = new JsonKafkaHeaderMapper();
         mapper.setRawMappedHeaders(rawMappedHeaders);
         mapper.setEncodeStrings(true);
 

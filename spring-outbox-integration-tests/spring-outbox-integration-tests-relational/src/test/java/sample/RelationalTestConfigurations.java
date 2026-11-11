@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 the original authors.
+ *  Copyright 2024-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package sample;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.mysql.MySQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 /**
@@ -33,8 +33,8 @@ public class RelationalTestConfigurations {
 
         @Bean
         @ServiceConnection
-        default MySQLContainer<?> mysqlContainer(Network network) {
-            return new MySQLContainer<>("mysql:8.3")
+        default MySQLContainer mysqlContainer(Network network) {
+            return new MySQLContainer("mysql:8.3")
               .withNetwork(network)
               .withNetworkAliases("mysql")
               .withDatabaseName("data")
@@ -47,8 +47,8 @@ public class RelationalTestConfigurations {
 
         @Bean
         @ServiceConnection
-        default PostgreSQLContainer<?> postgresContainer(Network network) {
-            return new PostgreSQLContainer<>(DockerImageName.parse("quay.io/debezium/postgres:15")
+        default PostgreSQLContainer postgresContainer(Network network) {
+            return new PostgreSQLContainer(DockerImageName.parse("quay.io/debezium/postgres:15")
               .asCompatibleSubstituteFor("postgres"))
               .withNetwork(network)
               .withNetworkAliases("postgres")
