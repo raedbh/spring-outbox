@@ -1,5 +1,5 @@
 /*
- *  Copyright 2025 the original authors.
+ *  Copyright 2025-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package io.github.raedbh.spring.outbox.connector.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -193,6 +196,15 @@ public class OutboxConnectorProperties {
         public void setFilePath(String filePath) {
             this.filePath = filePath;
         }
+
+        /**
+         * Returns the configured file path, or the absolute path of a new temporary file when none is configured.
+         *
+         * @param tempFilePrefix the prefix of the temporary file name; only used when no file path is configured
+         */
+        public String filePathOrTempFile(String tempFilePrefix) {
+            return resolveFilePath(filePath, tempFilePrefix);
+        }
     }
 
     public static class SchemaHistoryProperties {
@@ -214,6 +226,29 @@ public class OutboxConnectorProperties {
 
         public void setFilePath(String filePath) {
             this.filePath = filePath;
+        }
+
+        /**
+         * Returns the configured file path, or the absolute path of a new temporary file when none is configured.
+         *
+         * @param tempFilePrefix the prefix of the temporary file name; only used when no file path is configured
+         */
+        public String filePathOrTempFile(String tempFilePrefix) {
+            return resolveFilePath(filePath, tempFilePrefix);
+        }
+    }
+
+    // the temporary file is created only when needed, so a configured path leaves nothing behind
+    private static String resolveFilePath(String filePath, String tempFilePrefix) {
+
+        if (filePath != null) {
+            return filePath;
+        }
+
+        try {
+            return File.createTempFile(tempFilePrefix, ".dat").getAbsolutePath();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 }

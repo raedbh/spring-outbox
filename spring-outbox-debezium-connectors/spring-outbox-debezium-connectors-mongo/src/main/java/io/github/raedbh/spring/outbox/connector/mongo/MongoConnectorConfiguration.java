@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2025 the original authors.
+ *  Copyright 2025-2026 the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 
 package io.github.raedbh.spring.outbox.connector.mongo;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +24,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.github.raedbh.spring.outbox.connector.core.OutboxConnectorProperties;
-
-import static java.util.Objects.requireNonNullElse;
 
 @Configuration(proxyBeanMethods = false)
 public class MongoConnectorConfiguration {
@@ -46,13 +42,8 @@ public class MongoConnectorConfiguration {
 
         configMap.put("offset.storage", props.getOffsetStorage().getClassName());
 
-        try {
-            configMap.put("offset.storage.file.filename",
-              requireNonNullElse(props.getOffsetStorage().getFilePath(),
-                File.createTempFile("outbox-mongo-offset-", ".dat").getAbsolutePath()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        configMap.put("offset.storage.file.filename",
+          props.getOffsetStorage().filePathOrTempFile("outbox-mongo-offset-"));
 
         configMap.put("topic.prefix", props.getTopicPrefix());
 
