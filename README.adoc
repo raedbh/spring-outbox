@@ -1,18 +1,33 @@
 = Spring Outbox
 
-Spring Outbox is an implementation of the transactional outbox pattern that helps Spring developers implement an efficient event-driven architecture for microservices and monolithic applications.
+image:https://img.shields.io/maven-central/v/io.github.raedbh/spring-outbox-core?style=flat-square[Maven Central,link=https://central.sonatype.com/namespace/io.github.raedbh]
+image:https://img.shields.io/github/license/raedbh/spring-outbox?style=flat-square[License,link=LICENSE]
 
-== Implementation Key Considerations
+Spring Outbox is a *CDC-based* transactional outbox for Spring Boot.
+Your aggregates emit domain events, Spring Outbox stores them in the same transaction as your data,
+and a *Debezium connector streams them to Kafka or RabbitMQ* straight from the database log:
+no polling, no scheduler in your application.
 
-- When a domain event occurs, it generates one or more messages.
-- Each outbox entry represents either an event or a command.
-- An operation, part of an event, represents the action performed on the root entity (e.g., create, update, award) and helps consumers determine if deserialization is needed.
-- Decouple the outbox message producer and consumer to enable scalability and independent evolution.
-- Keep the Debezium connector simple by focusing on reading outbox entries and producing messages.
+* *Spring Boot 4 / Jackson 3* ready
+* *JPA* (MySQL, PostgreSQL) and *MongoDB*
+* *Kafka* and *RabbitMQ*, with ready-to-run Debezium connector images
+* *Domain-first API*: aggregates extend `RootEntity` and raise `EventOutboxed` events
+
+== How It Works
+
+. Your aggregate raises an event; Spring Outbox writes an outbox entry in the *same transaction* as the aggregate.
+. A Spring Outbox Debezium connector reads new entries from the *database log* (MySQL binlog, PostgreSQL logical replication, MongoDB change streams).
+. The connector publishes them to Kafka or RabbitMQ; consumers receive them with `@OutboxMessageBody`.
+
+== When to Use Spring Outbox
+
+Choose Spring Outbox when you need near-real-time, database-log-driven delivery without periodic polling
+or dependency on application instances.
+
+The connector needs the database log: binlog in row format for MySQL, `wal_level=logical` for PostgreSQL,
+a replica set for MongoDB.
 
 == Getting Started
-
-Spring Outbox provides a simple way to implement the transactional outbox pattern in your Spring applications.
 
 === Quick Start
 
@@ -45,6 +60,11 @@ public class Application {
     }
 }
 ----
++
+To let Spring Outbox create the outbox table on startup, set `spring.outbox.relational.auto-create=true`.
++
+NOTE: With MongoDB, depend on `spring-outbox-mongo` and use
+`@EnableMongoRepositories(repositoryFactoryBeanClass = OutboxMongoRepositoryFactoryBean.class)` instead.
 
 . *Create your aggregate root*
 +
@@ -59,13 +79,13 @@ import io.github.raedbh.spring.outbox.core.RootEntity;
 
 @Entity
 public class Order extends RootEntity {
-    
+
     private @Id UUID id;
     // other fields...
-    
+
     public Order markPaid() {
         // business logic
-        assignEvent(new OrderPlaced(this));
+        assignEvent(new OrderPaid(this));
         return this;
     }
 }
@@ -77,22 +97,97 @@ public class Order extends RootEntity {
 ----
 import io.github.raedbh.spring.outbox.core.EventOutboxed;
 
-public class OrderPlaced extends EventOutboxed<Order> {
-    
-    public OrderPlaced(Order source) {
+public class OrderPaid extends EventOutboxed<Order> {
+
+    public OrderPaid(Order source) {
         super(source);
     }
-    
+
     @Override
     public String getOperation() {
         return "payment";
     }
 }
 ----
++
+Saving the aggregate through its repository now stores an outbox entry in the same transaction.
 
-That's almost what you need to have outbox entries stored into the database. The remaining part involves using Debezium to capture changes and Spring Outbox messaging modules for downstream components to consume the messages.
+. *Run a connector* (here MySQL to RabbitMQ)
++
+[source,shell]
+----
+docker run -d \
+  -e SPRING_OUTBOX_CONNECTOR_DATABASE_HOSTNAME=mysql \
+  -e SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME=shop \
+  -e SPRING_OUTBOX_CONNECTOR_DATABASE_USER=root \
+  -e SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD=secret \
+  -e SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_ORDERPAID_ROUTINGKEY=shop.orders \
+  -e SPRING_RABBITMQ_HOST=rabbit \
+  -e SPRING_RABBITMQ_USERNAME=guest \
+  -e SPRING_RABBITMQ_PASSWORD=guest \
+  raed/spring-outbox-debezium-connector-mysql-rabbit:0.7.0
+----
++
+Each message type is routed by its own property, here `ORDERPAID` for the `OrderPaid` event.
+
+. *Consume the message*
++
+Add `spring-outbox-rabbit` to the consuming application, then receive the message body with `@OutboxMessageBody`:
++
+[source,java]
+----
+@RabbitListener(queues = "shop.orders")
+void onOrderPaid(@OutboxMessageBody(operation = "payment") Optional<OrderMessageBody> body) {
+    body.ifPresent(this::syncOrder);
+}
+----
++
+`OrderMessageBody` is the consumer's own representation of the event payload.
 
 For a complete implementation example, see the S2P application link:spring-outbox-sample[sample].
+
+=== Modules
+
+|===
+| Module | Use it for
+
+| `spring-outbox-jpa`
+| storing outbox entries with JPA (MySQL, PostgreSQL)
+
+| `spring-outbox-mongo`
+| storing outbox entries in MongoDB
+
+| `spring-outbox-rabbit`, `spring-outbox-kafka`
+| consuming outbox messages
+
+| `spring-outbox-bom`
+| aligning Spring Outbox versions
+
+| https://hub.docker.com/u/raed[Debezium connectors]
+| Docker images for `{mysql,postgres,mongo}-{kafka,rabbit}`
+|===
+
+=== Compatibility
+
+|===
+| Spring Outbox | Spring Boot | Java
+
+| 0.8.x
+| 4.1
+| 17+
+
+| 0.7.x
+| 3.5
+| 17+
+|===
+
+== Implementation Key Considerations
+
+- When a domain event occurs, it generates one or more messages.
+- Each outbox entry represents either an event or a command.
+- An operation, part of an event, represents the action performed on the root entity (e.g., create, update, award) and helps consumers determine if deserialization is needed.
+- Decouple the outbox message producer and consumer to enable scalability and independent evolution.
+- Keep the Debezium connector simple by focusing on reading outbox entries and producing messages.
 
 == Contribution
 
