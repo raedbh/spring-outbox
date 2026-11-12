@@ -38,7 +38,7 @@ a replica set for MongoDB.
 <dependency>
     <groupId>io.github.raedbh</groupId>
     <artifactId>spring-outbox-jpa</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
 </dependency>
 ----
 
@@ -125,7 +125,7 @@ docker run -d \
   -e SPRING_RABBITMQ_HOST=rabbit \
   -e SPRING_RABBITMQ_USERNAME=guest \
   -e SPRING_RABBITMQ_PASSWORD=guest \
-  raed/spring-outbox-debezium-connector-mysql-rabbit:0.7.0
+  raed/spring-outbox-debezium-connector-mysql-rabbit:0.8.0
 ----
 +
 Each message type is routed by its own property, here `ORDERPAID` for the `OrderPaid` event.
