@@ -44,8 +44,8 @@ services:
       SPRING_OUTBOX_CONNECTOR_DATABASE_DBNAME: s2p
       SPRING_OUTBOX_CONNECTOR_DATABASE_USER: root
       SPRING_OUTBOX_CONNECTOR_DATABASE_PASSWORD: secret
-      SPRING_OUTBOX_CONNECTOR_OFFSETSTORAGE_FILEPATH: /tmp/outbox-offset.dat
-      SPRING_OUTBOX_CONNECTOR_SCHEMAHISTORY_FILEPATH: /tmp/outbox-schema-history.dat
+      SPRING_OUTBOX_CONNECTOR_OFFSETSTORAGE_FILEPATH: /home/appuser/outbox-offset.dat
+      SPRING_OUTBOX_CONNECTOR_SCHEMAHISTORY_FILEPATH: /home/appuser/outbox-schema-history.dat
       SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_PROPOSALAWARDED_EXCHANGE: s2p.topic
       SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_PROPOSALAWARDED_ROUTINGKEY: "proposal.awarded"
       SPRING_OUTBOX_CONNECTOR_RABBIT_MESSAGES_EMAILNOTIFICATION_ROUTINGKEY: emails
@@ -54,9 +54,13 @@ services:
       SPRING_RABBITMQ_PASSWORD: secret
     ports:
       - '8090:8080'
+    volumes:
+      - connector:/home/appuser
 
 volumes:
   mysql:
     driver: local
   rabbit:
+    driver: local
+  connector:
     driver: local
